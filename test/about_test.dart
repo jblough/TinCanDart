@@ -1,0 +1,30 @@
+import 'dart:convert';
+
+import 'package:TinCanDart/src/about.dart';
+import 'package:test/test.dart';
+import 'package:uuid/uuid.dart';
+
+void main() {
+  test("should import about", () {
+    print(Uuid().v4());
+    print(Uuid().v4().toString());
+    final about = About.fromJson(json.decode(_json));
+    expect(about.version.length, 3);
+    expect(about.extensions.json.length, 1);
+    expect(about.extensions.json.keys.first.toString(),
+        "http://id.tincanapi.com/extension/powered-by");
+  });
+}
+
+final _json = """
+{
+  "extensions" : {
+    "http://id.tincanapi.com/extension/powered-by" : {
+      "name" : "xAPI Engine",
+      "version" : "2018.1.5.216",
+      "homePage" : "http://experienceapi.com/lrs-lms/lrs-for-lmss-home/"
+    }
+  },
+  "version" : [ "0.9", "0.95", "1.0.3" ]
+}
+""";
