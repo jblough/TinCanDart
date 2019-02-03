@@ -21,10 +21,10 @@ class Person {
     }
 
     return Person(
-      name: json['name'],
-      mbox: json['mbox'],
-      mbox_sha1sum: json['mbox_sha1sum'],
-      openid: json['openid'],
+      name: json['name']?.cast<String>(),
+      mbox: json['mbox']?.cast<String>(),
+      mbox_sha1sum: json['mbox_sha1sum']?.cast<String>(),
+      openid: json['openid']?.cast<String>(),
       account: AgentAccount.listFromJson(json['account']),
     );
   }

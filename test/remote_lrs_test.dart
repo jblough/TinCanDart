@@ -4,7 +4,9 @@ import 'dart:typed_data';
 
 import 'package:TinCanDart/src/activity.dart';
 import 'package:TinCanDart/src/activity_definition.dart';
+import 'package:TinCanDart/src/activity_profile_document.dart';
 import 'package:TinCanDart/src/agent.dart';
+import 'package:TinCanDart/src/agent_profile_document.dart';
 import 'package:TinCanDart/src/attachment.dart';
 import 'package:TinCanDart/src/context.dart';
 import 'package:TinCanDart/src/context_activities.dart';
@@ -814,6 +816,17 @@ void main() {
         Assert.assertTrue(lrsRes.getSuccess());
     }
 */
+  test("should save state", () async {
+    final doc = StateDocument(
+      id: 'test',
+      activity: activity,
+      agent: agent,
+      content: Uint8List.fromList(utf8.encode('Test value')).buffer,
+    );
+
+    final save = await lrs.saveState(doc);
+    expect(save.success, isTrue);
+  });
 
 /*
     @Test
@@ -840,6 +853,33 @@ void main() {
         Assert.assertTrue(lrsResp.getSuccess());
     }
 */
+  test("should overwrite state", () async {
+    final clear = await lrs.clearState(activity, agent, null);
+    expect(clear.success, isTrue);
+
+    final doc = StateDocument(
+      id: 'test',
+      activity: activity,
+      agent: agent,
+      content: Uint8List.fromList(utf8.encode('Test value')).buffer,
+    );
+
+    final save = await lrs.saveState(doc);
+    expect(save.success, isTrue);
+
+    final retrieve = await lrs.retrieveState("test", activity, agent, null);
+    expect(retrieve.success, isTrue);
+
+    final doc2 = StateDocument(
+      id: 'testing',
+      activity: parent,
+      agent: agent,
+      content: Uint8List.fromList(utf8.encode('Test value')).buffer,
+      etag: retrieve.data.etag,
+    );
+    final stateResponse = await lrs.saveState(doc2);
+    expect(stateResponse.success, isTrue);
+  });
 
 /*
     @Test
@@ -917,7 +957,35 @@ void main() {
         Assert.assertTrue(currentSet.equals(correctSet));
     }
 */
+/*
+  test("should update state", () async {
+    final doc = StateDocument(
+      id: 'test',
+      activity: activity,
+      agent: agent,
+    );
 
+    final clear = await lrs.deleteState(doc);
+    expect(clear.success, isTrue);
+
+    final doc2 = StateDocument(
+      id: 'test',
+      activity: activity,
+      agent: agent,
+      contentType: 'application/json',
+      content: null, // changeSet.toString().getBytes("UTF-8")
+    );
+
+    final save = await lrs.saveState(doc2);
+    expect(save.success, isTrue);
+
+    final retrieveBeforeUpdate =
+        await lrs.retrieveState("test", activity, agent, null);
+    expect(retrieveBeforeUpdate.success, isTrue);
+
+    final StateDocument beforeDoc = retrieveBeforeUpdate.data;
+  });
+*/
 /*
     @Test
     public void testDeleteState() throws Exception {
@@ -930,6 +998,16 @@ void main() {
         Assert.assertTrue(lrsRes.getSuccess());
     }
 */
+  test("should delete state", () async {
+    final doc = StateDocument(
+      id: 'test',
+      activity: activity,
+      agent: agent,
+    );
+
+    final response = await lrs.deleteState(doc);
+    expect(response.success, isTrue);
+  });
 
 /*
     @Test
@@ -938,6 +1016,395 @@ void main() {
         Assert.assertTrue(lrsRes.getSuccess());
     }
  */
+  test("should clear state", () async {
+    final response = await lrs.clearState(activity, agent, null);
+    expect(response.success, isTrue);
+  });
+
+  /*
+    @Test
+    public void testRetrieveActivity() throws Exception {
+        ActivityLRSResponse lrsResponse = lrs.retrieveActivity(activity);
+        Assert.assertTrue(lrsResponse.getSuccess());
+
+        Activity returnedActivity = lrsResponse.getContent();
+        Assert.assertTrue(activity.getId().toString().equals(returnedActivity.getId().toString()));
+    }
+  */
+  test("should retrieve activity", () async {
+    final response = await lrs.retrieveActivity(activity);
+    expect(response.success, isTrue);
+
+    final returnedActivity = response.data;
+    expect(activity.id.toString(), returnedActivity.id.toString());
+  });
+
+  /*
+    @Test
+    public void testRetrieveActivityProfileIds() throws Exception {
+        ProfileKeysLRSResponse lrsRes = lrs.retrieveActivityProfileIds(activity);
+        Assert.assertTrue(lrsRes.getSuccess());
+    }
+  */
+  test("should retrieve activity profile ids", () async {
+    final response = await lrs.retrieveActivityProfileIds(activity);
+    expect(response.success, isTrue);
+  });
+
+  /*
+    @Test
+    public void testRetrieveActivityProfile() throws Exception {
+        ActivityProfileDocument doc = new ActivityProfileDocument();
+        doc.setActivity(activity);
+        doc.setId("test");
+
+        LRSResponse clear = lrs.deleteActivityProfile(doc);
+        Assert.assertTrue(clear.getSuccess());
+
+        doc.setContent("Test value2".getBytes("UTF-8"));
+
+        LRSResponse save = lrs.saveActivityProfile(doc);
+        Assert.assertTrue(save.getSuccess());
+
+        ActivityProfileLRSResponse lrsRes = lrs.retrieveActivityProfile("test", activity);
+        Assert.assertEquals("\"6e6e6c11d7e0bffe0369873a2a5fd751ab2ea64f\"", lrsRes.getContent().getEtag());
+        Assert.assertTrue(lrsRes.getSuccess());
+    }
+  */
+  test("should retrieve activity profile", () async {
+    final doc = ActivityProfileDocument(
+      id: 'test',
+      activity: activity,
+    );
+
+    final response = await lrs.deleteActivityProfile(doc);
+    expect(response.success, isTrue);
+
+    final doc2 = ActivityProfileDocument(
+      id: 'test',
+      activity: activity,
+      content: Uint8List.fromList(utf8.encode('Test value2')).buffer,
+    );
+
+    final save = await lrs.saveActivityProfile(doc2);
+    expect(save.success, isTrue);
+
+    final retrieveResponse =
+        await lrs.retrieveActivityProfile("test", activity);
+    expect(retrieveResponse.data.etag,
+        '"6e6e6c11d7e0bffe0369873a2a5fd751ab2ea64f"');
+    expect(retrieveResponse.success, isTrue);
+  });
+
+  /*
+    @Test
+    public void testSaveActivityProfile() throws Exception {
+        ActivityProfileDocument doc = new ActivityProfileDocument();
+        doc.setActivity(activity);
+        doc.setId("test");
+
+        LRSResponse clear = lrs.deleteActivityProfile(doc);
+        Assert.assertTrue(clear.getSuccess());
+
+        doc.setContent("Test value2".getBytes("UTF-8"));
+
+        LRSResponse lrsRes = lrs.saveActivityProfile(doc);
+        Assert.assertTrue(lrsRes.getSuccess());
+    }
+   */
+  test("should save activity profile", () async {
+    final doc = ActivityProfileDocument(
+      id: 'test',
+      activity: activity,
+    );
+
+    final response = await lrs.deleteActivityProfile(doc);
+    expect(response.success, isTrue);
+
+    final doc2 = ActivityProfileDocument(
+      id: 'test',
+      activity: activity,
+      content: Uint8List.fromList(utf8.encode('Test value2')).buffer,
+    );
+
+    final save = await lrs.saveActivityProfile(doc2);
+    expect(save.success, isTrue);
+  });
+
+  /*
+    @Test
+    public void testOverwriteActivityProfile() throws Exception {
+        ActivityProfileDocument doc = new ActivityProfileDocument();
+        doc.setActivity(activity);
+        doc.setId("test");
+
+        LRSResponse clear = lrs.deleteActivityProfile(doc);
+        Assert.assertTrue(clear.getSuccess());
+
+        doc.setContent("Test value2".getBytes("UTF-8"));
+
+        LRSResponse save = lrs.saveActivityProfile(doc);
+        Assert.assertTrue(save.getSuccess());
+
+        ActivityProfileLRSResponse retrieve = lrs.retrieveActivityProfile("test", activity);
+        Assert.assertTrue(retrieve.getSuccess());
+
+        doc.setEtag(retrieve.getContent().getEtag());
+        doc.setId("test2");
+        doc.setContent("Test value3".getBytes("UTF-8"));
+
+        LRSResponse lrsResp = lrs.saveActivityProfile(doc);
+        Assert.assertTrue(lrsResp.getSuccess());
+    }
+  */
+  test("should overwrite activity profile", () async {
+    final response = await lrs.deleteActivityProfile(ActivityProfileDocument(
+      id: 'test',
+      activity: activity,
+    ));
+    expect(response.success, isTrue);
+
+    final save = await lrs.saveActivityProfile(
+      ActivityProfileDocument(
+        id: 'test',
+        activity: activity,
+        content: Uint8List.fromList(utf8.encode('Test value2')).buffer,
+      ),
+    );
+    expect(save.success, isTrue);
+
+    final retrieve = await lrs.retrieveActivityProfile("test", activity);
+    expect(retrieve.success, isTrue);
+
+    final lrsResp = await lrs.saveActivityProfile(ActivityProfileDocument(
+      id: 'test2',
+      activity: activity,
+      etag: retrieve.data.etag,
+      content: Uint8List.fromList(utf8.encode('Test value3')).buffer,
+    ));
+    expect(lrsResp.success, isTrue);
+  });
+
+  /*
+    @Test
+    public void testDeleteActivityProfile() throws Exception {
+        ActivityProfileDocument doc = new ActivityProfileDocument();
+        doc.setActivity(activity);
+        doc.setId("test");
+
+        LRSResponse lrsRes = lrs.deleteActivityProfile(doc);
+        Assert.assertTrue(lrsRes.getSuccess());
+    }
+  */
+  test("should delete activity profile", () async {
+    final response = await lrs.deleteActivityProfile(ActivityProfileDocument(
+      id: 'test',
+      activity: activity,
+    ));
+    expect(response.success, isTrue);
+  });
+
+  /*
+    @Test
+    public void testRetrievePerson() throws Exception {
+        PersonLRSResponse lrsResponse = lrs.retrievePerson(agent);
+        Assert.assertTrue(lrsResponse.getSuccess());
+
+        Person person = lrsResponse.getContent();
+        Assert.assertTrue(agent.getName().equals(person.getName().get(0)));
+        Assert.assertTrue(agent.getMbox().equals(person.getMbox().get(0)));
+    }
+  */
+  test("should retrieve person", () async {
+    final response = await lrs.retrievePerson(agent);
+    expect(response.success, isTrue);
+
+    final person = response.data;
+    expect(person.name[0], agent.name);
+    expect(person.mbox[0], agent.mbox);
+  });
+
+  /*
+    @Test
+    public void testRetrieveAgentProfileIds() throws Exception {
+        ProfileKeysLRSResponse lrsRes = lrs.retrieveAgentProfileIds(agent);
+        Assert.assertTrue(lrsRes.getSuccess());
+    }
+  */
+  test("should retrieve agent profile ids", () async {
+    final response = await lrs.retrieveAgentProfileIds(agent);
+    expect(response.success, isTrue);
+  });
+
+  /*
+    @Test
+    public void testRetrieveAgentProfile() throws Exception {
+        AgentProfileDocument doc = new AgentProfileDocument();
+        doc.setAgent(agent);
+        doc.setId("test");
+
+        LRSResponse clear = lrs.deleteAgentProfile(doc);
+        Assert.assertTrue(clear.getSuccess());
+
+        doc.setContent("Test value4".getBytes("UTF-8"));
+
+        LRSResponse save = lrs.saveAgentProfile(doc);
+        Assert.assertTrue(save.getSuccess());
+
+        AgentProfileLRSResponse lrsRes = lrs.retrieveAgentProfile("test", agent);
+        Assert.assertEquals("\"da16d3e0cbd55e0f13558ad0ecfd2605e2238c71\"", lrsRes.getContent().getEtag());
+        Assert.assertTrue(lrsRes.getSuccess());
+    }
+  */
+  test("should retrieve agent profile", () async {
+    final response = await lrs.deleteAgentProfile(AgentProfileDocument(
+      id: 'test',
+      agent: agent,
+    ));
+    expect(response.success, isTrue);
+
+    final save = await lrs.saveAgentProfile(AgentProfileDocument(
+      id: 'test',
+      agent: agent,
+      content: Uint8List.fromList(utf8.encode('Test value4')).buffer,
+    ));
+    expect(save.success, isTrue);
+
+    final retrieve = await lrs.retrieveAgentProfile("test", agent);
+    expect(retrieve.success, isTrue);
+    expect(retrieve.data.etag, '"da16d3e0cbd55e0f13558ad0ecfd2605e2238c71"');
+  });
+
+  /*
+    @Test
+    public void testSaveAgentProfile() throws Exception {
+        AgentProfileDocument doc = new AgentProfileDocument();
+        doc.setAgent(agent);
+        doc.setId("test");
+
+        LRSResponse clear = lrs.deleteAgentProfile(doc);
+        Assert.assertTrue(clear.getSuccess());
+
+        doc.setContent("Test value".getBytes("UTF-8"));
+
+        LRSResponse lrsRes = lrs.saveAgentProfile(doc);
+        Assert.assertTrue(lrsRes.getSuccess());
+    }
+  */
+
+  /*
+    @Test
+    public void testUpdateAgentProfile() throws Exception {
+        ObjectMapper mapper = Mapper.getInstance();
+        ObjectNode changeSet = mapper.createObjectNode();  // What changes are to be made
+        ObjectNode correctSet = mapper.createObjectNode(); // What the correct content should be after change
+        ObjectNode currentSet = mapper.createObjectNode(); // What the actual content is after change
+
+        // Load initial change set
+        String data = "{ \"firstName\" : \"Dave\", \"lastName\" : \"Smith\", \"State\" : \"CO\" }";
+        Map<String, String> changeSetMap = mapper.readValue(data, Map.class);
+        for (String k : changeSetMap.keySet()) {
+            String v = changeSetMap.get(k);
+            changeSet.put(k, v);
+        }
+        Map<String, String> correctSetMap = changeSetMap; // In the beginning, these are equal
+        for (String k : correctSetMap.keySet()) {
+            String v = correctSetMap.get(k);
+            correctSet.put(k, v);
+        }
+
+        AgentProfileDocument doc = new AgentProfileDocument();
+        doc.setAgent(agent);
+        doc.setId("test");
+
+        LRSResponse clear = lrs.deleteAgentProfile(doc);
+        Assert.assertTrue(clear.getSuccess());
+
+        doc.setContentType("application/json");
+        doc.setContent(changeSet.toString().getBytes("UTF-8"));
+
+        LRSResponse save = lrs.saveAgentProfile(doc);
+        Assert.assertTrue(save.getSuccess());
+        AgentProfileLRSResponse retrieveBeforeUpdate = lrs.retrieveAgentProfile("test", agent);
+        Assert.assertTrue(retrieveBeforeUpdate.getSuccess());
+        AgentProfileDocument beforeDoc = retrieveBeforeUpdate.getContent();
+        Map<String, String> c = mapper.readValue(new String(beforeDoc.getContent(), "UTF-8"), Map.class);
+        for (String k : c.keySet()) {
+            String v = c.get(k);
+            currentSet.put(k, v);
+        }
+        Assert.assertTrue(currentSet.equals(correctSet));
+
+        doc.setContentType("application/json");
+        data = "{ \"lastName\" : \"Jones\", \"City\" : \"Colorado Springs\" }";
+        changeSet.removeAll();
+        changeSetMap = mapper.readValue(data, Map.class);
+        for (String k : changeSetMap.keySet()) {
+            String v = changeSetMap.get(k);
+            changeSet.put(k, v);
+        }
+
+        doc.setContent(changeSet.toString().getBytes("UTF-8"));
+
+        // Update the correct set with the changes
+        for (String k : changeSetMap.keySet()) {
+            String v = changeSetMap.get(k);
+            correctSet.put(k, v);
+        }
+
+        currentSet.removeAll();
+        LRSResponse update = lrs.updateAgentProfile(doc);
+        Assert.assertTrue(update.getSuccess());
+        AgentProfileLRSResponse retrieveAfterUpdate = lrs.retrieveAgentProfile("test", agent);
+        Assert.assertTrue(retrieveAfterUpdate.getSuccess());
+        AgentProfileDocument afterDoc = retrieveAfterUpdate.getContent();
+           Map<String, String> ac = mapper.readValue(new String(afterDoc.getContent(), "UTF-8"), Map.class);
+        for (String k : ac.keySet()) {
+            String v = ac.get(k);
+            currentSet.put(k, v);
+        }
+        Assert.assertTrue(currentSet.equals(correctSet));
+    }
+  */
+
+  /*
+    @Test
+    public void testOverwriteAgentProfile() throws Exception {
+        AgentProfileDocument doc = new AgentProfileDocument();
+        doc.setAgent(agent);
+        doc.setId("test");
+
+        LRSResponse clear = lrs.deleteAgentProfile(doc);
+        Assert.assertTrue(clear.getSuccess());
+
+        doc.setContent("Test value4".getBytes("UTF-8"));
+
+        LRSResponse save = lrs.saveAgentProfile(doc);
+        Assert.assertTrue(save.getSuccess());
+
+        AgentProfileLRSResponse retrieve = lrs.retrieveAgentProfile("test", agent);
+        Assert.assertTrue(retrieve.getSuccess());
+
+        doc.setEtag(retrieve.getContent().getEtag());
+        doc.setId("test2");
+        doc.setContent("Test value5".getBytes("UTF-8"));
+
+        LRSResponse lrsResp = lrs.saveAgentProfile(doc);
+        Assert.assertTrue(lrsResp.getSuccess());
+    }
+  */
+
+  /*
+    @Test
+    public void testDeleteAgentProfile() throws Exception {
+        AgentProfileDocument doc = new AgentProfileDocument();
+        doc.setAgent(agent);
+        doc.setId("test");
+
+        LRSResponse lrsRes = lrs.deleteAgentProfile(doc);
+        Assert.assertTrue(lrsRes.getSuccess());
+    }  
+  */
 
   /*
 
@@ -1087,55 +1554,6 @@ void main() {
     }
 
     @Test
-    public void testRetrieveActivity() throws Exception {
-        ActivityLRSResponse lrsResponse = lrs.retrieveActivity(activity);
-        Assert.assertTrue(lrsResponse.getSuccess());
-
-        Activity returnedActivity = lrsResponse.getContent();
-        Assert.assertTrue(activity.getId().toString().equals(returnedActivity.getId().toString()));
-    }
-
-    @Test
-    public void testRetrieveActivityProfileIds() throws Exception {
-        ProfileKeysLRSResponse lrsRes = lrs.retrieveActivityProfileIds(activity);
-        Assert.assertTrue(lrsRes.getSuccess());
-    }
-
-    @Test
-    public void testRetrieveActivityProfile() throws Exception {
-        ActivityProfileDocument doc = new ActivityProfileDocument();
-        doc.setActivity(activity);
-        doc.setId("test");
-
-        LRSResponse clear = lrs.deleteActivityProfile(doc);
-        Assert.assertTrue(clear.getSuccess());
-
-        doc.setContent("Test value2".getBytes("UTF-8"));
-
-        LRSResponse save = lrs.saveActivityProfile(doc);
-        Assert.assertTrue(save.getSuccess());
-
-        ActivityProfileLRSResponse lrsRes = lrs.retrieveActivityProfile("test", activity);
-        Assert.assertEquals("\"6e6e6c11d7e0bffe0369873a2a5fd751ab2ea64f\"", lrsRes.getContent().getEtag());
-        Assert.assertTrue(lrsRes.getSuccess());
-    }
-
-    @Test
-    public void testSaveActivityProfile() throws Exception {
-        ActivityProfileDocument doc = new ActivityProfileDocument();
-        doc.setActivity(activity);
-        doc.setId("test");
-
-        LRSResponse clear = lrs.deleteActivityProfile(doc);
-        Assert.assertTrue(clear.getSuccess());
-
-        doc.setContent("Test value2".getBytes("UTF-8"));
-
-        LRSResponse lrsRes = lrs.saveActivityProfile(doc);
-        Assert.assertTrue(lrsRes.getSuccess());
-    }
-
-    @Test
     public void testUpdateActivityProfile() throws Exception {
         ObjectMapper mapper = Mapper.getInstance();
         ObjectNode changeSet = mapper.createObjectNode();  // What changes are to be made
@@ -1209,197 +1627,5 @@ void main() {
         Assert.assertTrue(currentSet.equals(correctSet));
     }
 
-    @Test
-    public void testOverwriteActivityProfile() throws Exception {
-        ActivityProfileDocument doc = new ActivityProfileDocument();
-        doc.setActivity(activity);
-        doc.setId("test");
-
-        LRSResponse clear = lrs.deleteActivityProfile(doc);
-        Assert.assertTrue(clear.getSuccess());
-
-        doc.setContent("Test value2".getBytes("UTF-8"));
-
-        LRSResponse save = lrs.saveActivityProfile(doc);
-        Assert.assertTrue(save.getSuccess());
-
-        ActivityProfileLRSResponse retrieve = lrs.retrieveActivityProfile("test", activity);
-        Assert.assertTrue(retrieve.getSuccess());
-
-        doc.setEtag(retrieve.getContent().getEtag());
-        doc.setId("test2");
-        doc.setContent("Test value3".getBytes("UTF-8"));
-
-        LRSResponse lrsResp = lrs.saveActivityProfile(doc);
-        Assert.assertTrue(lrsResp.getSuccess());
-    }
-
-    @Test
-    public void testDeleteActivityProfile() throws Exception {
-        ActivityProfileDocument doc = new ActivityProfileDocument();
-        doc.setActivity(activity);
-        doc.setId("test");
-
-        LRSResponse lrsRes = lrs.deleteActivityProfile(doc);
-        Assert.assertTrue(lrsRes.getSuccess());
-    }
-
-    @Test
-    public void testRetrievePerson() throws Exception {
-        PersonLRSResponse lrsResponse = lrs.retrievePerson(agent);
-        Assert.assertTrue(lrsResponse.getSuccess());
-
-        Person person = lrsResponse.getContent();
-        Assert.assertTrue(agent.getName().equals(person.getName().get(0)));
-        Assert.assertTrue(agent.getMbox().equals(person.getMbox().get(0)));
-    }
-
-    @Test
-    public void testRetrieveAgentProfileIds() throws Exception {
-        ProfileKeysLRSResponse lrsRes = lrs.retrieveAgentProfileIds(agent);
-        Assert.assertTrue(lrsRes.getSuccess());
-    }
-
-    @Test
-    public void testRetrieveAgentProfile() throws Exception {
-        AgentProfileDocument doc = new AgentProfileDocument();
-        doc.setAgent(agent);
-        doc.setId("test");
-
-        LRSResponse clear = lrs.deleteAgentProfile(doc);
-        Assert.assertTrue(clear.getSuccess());
-
-        doc.setContent("Test value4".getBytes("UTF-8"));
-
-        LRSResponse save = lrs.saveAgentProfile(doc);
-        Assert.assertTrue(save.getSuccess());
-
-        AgentProfileLRSResponse lrsRes = lrs.retrieveAgentProfile("test", agent);
-        Assert.assertEquals("\"da16d3e0cbd55e0f13558ad0ecfd2605e2238c71\"", lrsRes.getContent().getEtag());
-        Assert.assertTrue(lrsRes.getSuccess());
-    }
-
-    @Test
-    public void testSaveAgentProfile() throws Exception {
-        AgentProfileDocument doc = new AgentProfileDocument();
-        doc.setAgent(agent);
-        doc.setId("test");
-
-        LRSResponse clear = lrs.deleteAgentProfile(doc);
-        Assert.assertTrue(clear.getSuccess());
-
-        doc.setContent("Test value".getBytes("UTF-8"));
-
-        LRSResponse lrsRes = lrs.saveAgentProfile(doc);
-        Assert.assertTrue(lrsRes.getSuccess());
-    }
-
-    @Test
-    public void testUpdateAgentProfile() throws Exception {
-        ObjectMapper mapper = Mapper.getInstance();
-        ObjectNode changeSet = mapper.createObjectNode();  // What changes are to be made
-        ObjectNode correctSet = mapper.createObjectNode(); // What the correct content should be after change
-        ObjectNode currentSet = mapper.createObjectNode(); // What the actual content is after change
-
-        // Load initial change set
-        String data = "{ \"firstName\" : \"Dave\", \"lastName\" : \"Smith\", \"State\" : \"CO\" }";
-        Map<String, String> changeSetMap = mapper.readValue(data, Map.class);
-        for (String k : changeSetMap.keySet()) {
-            String v = changeSetMap.get(k);
-            changeSet.put(k, v);
-        }
-        Map<String, String> correctSetMap = changeSetMap; // In the beginning, these are equal
-        for (String k : correctSetMap.keySet()) {
-            String v = correctSetMap.get(k);
-            correctSet.put(k, v);
-        }
-
-        AgentProfileDocument doc = new AgentProfileDocument();
-        doc.setAgent(agent);
-        doc.setId("test");
-
-        LRSResponse clear = lrs.deleteAgentProfile(doc);
-        Assert.assertTrue(clear.getSuccess());
-
-        doc.setContentType("application/json");
-        doc.setContent(changeSet.toString().getBytes("UTF-8"));
-
-        LRSResponse save = lrs.saveAgentProfile(doc);
-        Assert.assertTrue(save.getSuccess());
-        AgentProfileLRSResponse retrieveBeforeUpdate = lrs.retrieveAgentProfile("test", agent);
-        Assert.assertTrue(retrieveBeforeUpdate.getSuccess());
-        AgentProfileDocument beforeDoc = retrieveBeforeUpdate.getContent();
-        Map<String, String> c = mapper.readValue(new String(beforeDoc.getContent(), "UTF-8"), Map.class);
-        for (String k : c.keySet()) {
-            String v = c.get(k);
-            currentSet.put(k, v);
-        }
-        Assert.assertTrue(currentSet.equals(correctSet));
-
-        doc.setContentType("application/json");
-        data = "{ \"lastName\" : \"Jones\", \"City\" : \"Colorado Springs\" }";
-        changeSet.removeAll();
-        changeSetMap = mapper.readValue(data, Map.class);
-        for (String k : changeSetMap.keySet()) {
-            String v = changeSetMap.get(k);
-            changeSet.put(k, v);
-        }
-
-        doc.setContent(changeSet.toString().getBytes("UTF-8"));
-
-        // Update the correct set with the changes
-        for (String k : changeSetMap.keySet()) {
-            String v = changeSetMap.get(k);
-            correctSet.put(k, v);
-        }
-
-        currentSet.removeAll();
-        LRSResponse update = lrs.updateAgentProfile(doc);
-        Assert.assertTrue(update.getSuccess());
-        AgentProfileLRSResponse retrieveAfterUpdate = lrs.retrieveAgentProfile("test", agent);
-        Assert.assertTrue(retrieveAfterUpdate.getSuccess());
-        AgentProfileDocument afterDoc = retrieveAfterUpdate.getContent();
-           Map<String, String> ac = mapper.readValue(new String(afterDoc.getContent(), "UTF-8"), Map.class);
-        for (String k : ac.keySet()) {
-            String v = ac.get(k);
-            currentSet.put(k, v);
-        }
-        Assert.assertTrue(currentSet.equals(correctSet));
-    }
-
-    @Test
-    public void testOverwriteAgentProfile() throws Exception {
-        AgentProfileDocument doc = new AgentProfileDocument();
-        doc.setAgent(agent);
-        doc.setId("test");
-
-        LRSResponse clear = lrs.deleteAgentProfile(doc);
-        Assert.assertTrue(clear.getSuccess());
-
-        doc.setContent("Test value4".getBytes("UTF-8"));
-
-        LRSResponse save = lrs.saveAgentProfile(doc);
-        Assert.assertTrue(save.getSuccess());
-
-        AgentProfileLRSResponse retrieve = lrs.retrieveAgentProfile("test", agent);
-        Assert.assertTrue(retrieve.getSuccess());
-
-        doc.setEtag(retrieve.getContent().getEtag());
-        doc.setId("test2");
-        doc.setContent("Test value5".getBytes("UTF-8"));
-
-        LRSResponse lrsResp = lrs.saveAgentProfile(doc);
-        Assert.assertTrue(lrsResp.getSuccess());
-    }
-
-    @Test
-    public void testDeleteAgentProfile() throws Exception {
-        AgentProfileDocument doc = new AgentProfileDocument();
-        doc.setAgent(agent);
-        doc.setId("test");
-
-        LRSResponse lrsRes = lrs.deleteAgentProfile(doc);
-        Assert.assertTrue(lrsRes.getSuccess());
-    }  
    */
 }

@@ -6,6 +6,7 @@ import 'package:TinCanDart/src/activity.dart';
 import 'package:TinCanDart/src/activity_profile_document.dart';
 import 'package:TinCanDart/src/agent.dart';
 import 'package:TinCanDart/src/agent_profile_document.dart';
+import 'package:TinCanDart/src/document.dart';
 import 'package:TinCanDart/src/lrs.dart';
 import 'package:TinCanDart/src/lrs_response.dart';
 import 'package:TinCanDart/src/person.dart';
@@ -67,39 +68,127 @@ class RemoteLRS extends LRS {
   */
 
   @override
-  Future<LRSResponse> deleteAgentProfile(AgentProfileDocument profile) {
-    return null;
+  Future<LRSResponse> deleteAgentProfile(AgentProfileDocument profile) async {
+    final params = {
+      'profileId': profile.id,
+      'agent': _agentToString(profile.agent),
+    };
+
+    return await _deleteDocument("agents/profile", params);
   }
 
   @override
-  Future<LRSResponse> updateAgentProfile(AgentProfileDocument profile) {
-    return null;
+  Future<LRSResponse> updateAgentProfile(AgentProfileDocument profile) async {
+    final params = {
+      'profileId': profile.id,
+      'agent': _agentToString(profile.agent),
+    };
+
+    return await _updateDocument("agents/profile", params, profile);
   }
 
   @override
-  Future<LRSResponse> saveAgentProfile(AgentProfileDocument profile) {
-    return null;
+  Future<LRSResponse> saveAgentProfile(AgentProfileDocument profile) async {
+    final params = {
+      'profileId': profile.id,
+      'agent': _agentToString(profile.agent),
+    };
+
+    return await _saveDocument("agents/profile", params, profile);
   }
 
   @override
   Future<LRSResponse<AgentProfileDocument>> retrieveAgentProfile(
-      String id, Agent agent) {
-    return null;
+      String id, Agent agent) async {
+    final params = {
+      'profileId': id,
+      'agent': _agentToString(agent),
+    };
+
+    final document = AgentProfileDocument(
+      id: id,
+      agent: agent,
+    );
+    return await _getAgentProfileDocument('agents/profile', params, document);
+    /*
+        HashMap<String, String> queryParams = new HashMap<String, String>();
+        queryParams.put("profileId", id);
+        queryParams.put("agent", agent.toJSON(this.getVersion(), this.usePrettyJSON()));
+
+        AgentProfileDocument profileDocument = new AgentProfileDocument();
+        profileDocument.setId(id);
+        profileDocument.setAgent(agent);
+
+        LRSResponse lrsResp = getDocument("agents/profile", queryParams, profileDocument);
+
+        AgentProfileLRSResponse lrsResponse = new AgentProfileLRSResponse(lrsResp.getRequest(), lrsResp.getResponse());
+        lrsResponse.setSuccess(lrsResp.getSuccess());
+
+        if (lrsResponse.getResponse().getStatus() == 200) {
+            lrsResponse.setContent(profileDocument);
+        }
+
+        return lrsResponse;
+     */
   }
 
   @override
-  Future<LRSResponse<List<String>>> retrieveAgentProfileIds(Agent agent) {
-    return null;
+  Future<LRSResponse<List<String>>> retrieveAgentProfileIds(Agent agent) async {
+    final params = {
+      'agent': _agentToString(agent),
+    };
+    return _getProfileKeys("agents/profile", params);
   }
 
   @override
-  Future<LRSResponse<Person>> retrievePerson(Agent agent) {
-    return null;
+  Future<LRSResponse<Person>> retrievePerson(Agent agent) async {
+    final params = {
+      'agent': _agentToString(agent),
+    };
+    final response = await _makeRequest('agents', 'GET', queryParams: params);
+    if (response?.statusCode == 200) {
+      print(response.body);
+      return LRSResponse<Person>(
+          success: true, data: Person.fromJson(json.decode(response.body)));
+    } else {
+      return LRSResponse(success: false, errMsg: response?.body);
+    }
+    /*
+      HTTPRequest request = new HTTPRequest();
+        request.setMethod(HttpMethod.GET.asString());
+        request.setResource("agents");
+        request.setQueryParams(new HashMap<String, String>());
+        request.getQueryParams().put("agent", agent.toJSON(this.getVersion(), this.usePrettyJSON()));
+
+        HTTPResponse response = makeSyncRequest(request);
+        int status = response.getStatus();
+
+        PersonLRSResponse lrsResponse = new PersonLRSResponse(request, response);
+
+        if (status == 200) {
+            lrsResponse.setSuccess(true);
+            try {
+                lrsResponse.setContent(new Person(new StringOfJSON(response.getContent())));
+            } catch (Exception ex) {
+                lrsResponse.setErrMsg("Exception: " + ex.toString());
+                lrsResponse.setSuccess(false);
+            }
+        }
+        else {
+            lrsResponse.setSuccess(false);
+        }
+
+        return lrsResponse;
+     */
   }
 
   @override
   Future<LRSResponse> deleteActivityProfile(ActivityProfileDocument profile) {
-    return null;
+    final params = {
+      'profileId': profile.id,
+      'activityId': profile.activity.id.toString(),
+    };
+    return _deleteDocument("activities/profile", params);
   }
 
   @override
@@ -109,24 +198,106 @@ class RemoteLRS extends LRS {
 
   @override
   Future<LRSResponse> saveActivityProfile(ActivityProfileDocument profile) {
-    return null;
+    final params = {
+      'profileId': profile.id,
+      'activityId': profile.activity.id.toString(),
+    };
+    return _saveDocument("activities/profile", params, profile);
   }
 
   @override
   Future<LRSResponse<ActivityProfileDocument>> retrieveActivityProfile(
-      String id, Activity activity) {
-    return null;
+      String id, Activity activity) async {
+    final params = {
+      'profileId': id,
+      'activityId': activity.id.toString(),
+    };
+
+    final profileDocument = ActivityProfileDocument(
+      id: id,
+      activity: activity,
+    );
+
+    return await _getActivityProfileDocument(
+        "activities/profile", params, profileDocument);
+
+    /*
+      HashMap<String, String> queryParams = new HashMap<String, String>();
+        queryParams.put("profileId", id);
+        queryParams.put("activityId", activity.getId().toString());
+
+        ActivityProfileDocument profileDocument = new ActivityProfileDocument();
+        profileDocument.setId(id);
+        profileDocument.setActivity(activity);
+
+        LRSResponse lrsResp = getDocument("activities/profile", queryParams, profileDocument);
+
+        ActivityProfileLRSResponse lrsResponse = new ActivityProfileLRSResponse(lrsResp.getRequest(), lrsResp.getResponse());
+        lrsResponse.setSuccess(lrsResp.getSuccess());
+
+        if (lrsResponse.getResponse().getStatus() == 200) {
+            lrsResponse.setContent(profileDocument);
+        }
+
+        return lrsResponse;
+     */
   }
 
   @override
   Future<LRSResponse<List<String>>> retrieveActivityProfileIds(
-      Activity activity) {
-    return null;
+      Activity activity) async {
+    final params = {
+      'activityId': activity.id.toString(),
+    };
+    return _getProfileKeys("activities/profile", params);
   }
 
   @override
-  Future<LRSResponse<Activity>> retrieveActivity(Activity activity) {
-    return null;
+  Future<LRSResponse<Activity>> retrieveActivity(Activity activity) async {
+    final params = {
+      'activityId': activity.id.toString(),
+    };
+    final response =
+        await _makeRequest('activities', 'GET', queryParams: params);
+
+    if (response?.statusCode == 200) {
+      return LRSResponse<Activity>(
+        success: true,
+        data: Activity.fromJson(json.decode(response.body)),
+      );
+    } else {
+      return LRSResponse(
+        success: false,
+        errMsg: response?.body,
+      );
+    }
+    /*
+       HTTPRequest request = new HTTPRequest();
+        request.setMethod(HttpMethod.GET.asString());
+        request.setResource("activities");
+        request.setQueryParams(new HashMap<String, String>());
+        request.getQueryParams().put("activityId", activity.getId().toString());
+
+        HTTPResponse response = makeSyncRequest(request);
+        int status = response.getStatus();
+
+        ActivityLRSResponse lrsResponse = new ActivityLRSResponse(request, response);
+
+        if (status == 200) {
+            lrsResponse.setSuccess(true);
+            try {
+                lrsResponse.setContent(new Activity(new StringOfJSON(response.getContent())));
+            } catch (Exception ex) {
+                lrsResponse.setErrMsg("Exception: " + ex.toString());
+                lrsResponse.setSuccess(false);
+            }
+        }
+        else {
+            lrsResponse.setSuccess(false);
+        }
+
+        return lrsResponse;
+     */
   }
 
   @override
@@ -134,12 +305,12 @@ class RemoteLRS extends LRS {
       [Uuid registration]) async {
     final params = {
       'activityId': activity.id.toString(),
-      'agent': agentToString(agent),
+      'agent': _agentToString(agent),
     };
     if (registration != null) {
       params['registration'] = registration.toString();
     }
-    return await deleteDocument('activities/state', params);
+    return await _deleteDocument('activities/state', params);
     /*
           HashMap<String, String> queryParams = new HashMap<String, String>();
 
@@ -154,8 +325,16 @@ class RemoteLRS extends LRS {
   }
 
   @override
-  Future<LRSResponse> deleteState(StateDocument state) {
-    return null;
+  Future<LRSResponse> deleteState(StateDocument state) async {
+    final params = {
+      'stateId': state.id,
+      'activityId': state.activity.id.toString(),
+      'agent': _agentToString(state.agent),
+    };
+    if (state.registration != null) {
+      params['registration'] = state.registration.toString();
+    }
+    return await _deleteDocument('activities/state', params);
   }
 
   @override
@@ -168,10 +347,10 @@ class RemoteLRS extends LRS {
     final params = {
       'stateId': state.id,
       'activityId': state.activity.id.toString(),
-      'agent': agentToString(state.agent),
+      'agent': _agentToString(state.agent),
     };
 
-    return await saveDocument('activities/state', params, state);
+    return await _saveDocument('activities/state', params, state);
     /*
       HashMap<String,String> queryParams = new HashMap<String,String>();
 
@@ -189,7 +368,7 @@ class RemoteLRS extends LRS {
     final params = {
       'stateId': id,
       'activityId': activity.id.toString(),
-      'agent': agentToString(agent),
+      'agent': _agentToString(agent),
     };
 
     final document = StateDocument(
@@ -198,7 +377,7 @@ class RemoteLRS extends LRS {
       agent: agent,
     );
 
-    return await getDocument('activities/state', params, document);
+    return await _getStateDocument('activities/state', params, document);
     /*
       HashMap<String, String> queryParams = new HashMap<String, String>();
         queryParams.put("stateId", id);
@@ -229,12 +408,12 @@ class RemoteLRS extends LRS {
       [Uuid registration]) async {
     final params = {
       'activityId': activity.id.toString(),
-      'agent': agentToString(agent),
+      'agent': _agentToString(agent),
     };
     if (registration != null) {
       params['registration'] = registration.toString();
     }
-    return await getProfileKeys('activities/state', params);
+    return await _getProfileKeys('activities/state', params);
   }
 
   @override
@@ -588,7 +767,7 @@ class RemoteLRS extends LRS {
       headers['Authorization'] = this.auth;
     }
 
-    //print(url);
+    print(url);
     //http.MultipartRequest()
     var response;
     switch (verb.toUpperCase()) {
@@ -612,11 +791,11 @@ class RemoteLRS extends LRS {
     return response;
   }
 
-  String agentToString(Agent agent) {
+  String _agentToString(Agent agent) {
     return json.encode(agent.toJson(_version));
   }
 
-  Future<LRSResponse<List<String>>> getProfileKeys(
+  Future<LRSResponse<List<String>>> _getProfileKeys(
       String resource, Map<String, String> params) async {
     final response = await _makeRequest(resource, 'GET', queryParams: params);
     //print('Response : ${response?.body}');
@@ -659,7 +838,7 @@ class RemoteLRS extends LRS {
      */
   }
 
-  Future<LRSResponse> deleteDocument(
+  Future<LRSResponse> _deleteDocument(
       String resource, Map<String, String> params) async {
     final response =
         await _makeRequest(resource, 'DELETE', queryParams: params);
@@ -686,8 +865,8 @@ class RemoteLRS extends LRS {
      */
   }
 
-  Future<LRSResponse> saveDocument(String resource, Map<String, String> params,
-      StateDocument document) async {
+  Future<LRSResponse> _saveDocument(
+      String resource, Map<String, String> params, Document document) async {
     final headers = {
       'content-type': document.contentType ?? 'application/octet-stream',
     };
@@ -699,6 +878,7 @@ class RemoteLRS extends LRS {
         additionalHeaders: headers,
         body: document.content?.asInt8List());
 
+    print("Response : ${response?.body}");
     return LRSResponse(success: response?.statusCode == 204);
     /*
          HTTPRequest request = new HTTPRequest();
@@ -728,7 +908,7 @@ class RemoteLRS extends LRS {
      */
   }
 
-  Future<LRSResponse<StateDocument>> getDocument(String resource,
+  Future<LRSResponse<StateDocument>> _getStateDocument(String resource,
       Map<String, String> params, StateDocument document) async {
     final response = await _makeRequest(resource, 'GET', queryParams: params);
     if (response?.statusCode == 200) {
@@ -749,6 +929,89 @@ class RemoteLRS extends LRS {
     } else {
       return LRSResponse<StateDocument>(success: false, errMsg: response?.body);
     }
+  }
+
+  Future<LRSResponse<AgentProfileDocument>> _getAgentProfileDocument(
+      String resource,
+      Map<String, String> params,
+      AgentProfileDocument document) async {
+    final response = await _makeRequest(resource, 'GET', queryParams: params);
+    if (response?.statusCode == 200) {
+      final data = AgentProfileDocument(
+        id: document.id,
+        agent: document.agent,
+        contentType: response.headers[HttpHeaders.contentTypeHeader],
+        content: response.bodyBytes.buffer,
+        etag: response.headers[HttpHeaders.etagHeader],
+        timestamp:
+            DateTime.tryParse(response.headers[HttpHeaders.lastModifiedHeader]),
+      );
+      return LRSResponse<AgentProfileDocument>(success: true, data: data);
+    } else {
+      return LRSResponse(success: false, errMsg: response?.body);
+    }
+  }
+
+  Future<LRSResponse<ActivityProfileDocument>> _getActivityProfileDocument(
+      String resource,
+      Map<String, String> params,
+      ActivityProfileDocument document) async {
+    final response = await _makeRequest(resource, 'GET', queryParams: params);
+    if (response?.statusCode == 200) {
+      final data = ActivityProfileDocument(
+        id: document.id,
+        activity: document.activity,
+        contentType: response.headers[HttpHeaders.contentTypeHeader],
+        content: response.bodyBytes.buffer,
+        etag: response.headers[HttpHeaders.etagHeader],
+        timestamp:
+            DateTime.tryParse(response.headers[HttpHeaders.lastModifiedHeader]),
+      );
+      return LRSResponse<ActivityProfileDocument>(success: true, data: data);
+    } else {
+      return LRSResponse(success: false, errMsg: response?.body);
+    }
+  }
+
+  Future<LRSResponse> _updateDocument(
+      String resource, Map<String, String> params, Document document) async {
+    Map<String, String> headers;
+    if (document.etag != null) {
+      headers = {'If-Match': document.etag};
+    }
+    final response = await _makeRequest(resource, 'POST',
+        queryParams: params, additionalHeaders: headers);
+    if (response?.statusCode == 204) {
+      return LRSResponse(success: true);
+    } else {
+      return LRSResponse(success: false, errMsg: response?.body);
+    }
+    /*
+      HTTPRequest request = new HTTPRequest();
+        request.setMethod(HttpMethod.POST.asString());
+        request.setResource(resource);
+        request.setQueryParams(queryParams);
+        request.setContentType(document.getContentType());
+        request.setContent(document.getContent());
+        if (document.getEtag() != null) {
+            request.setHeaders(new HashMap<String, String>());
+            request.getHeaders().put("If-Match", document.getEtag());
+        }
+
+        HTTPResponse response = makeSyncRequest(request);
+
+        LRSResponse lrsResponse = new LRSResponse(request, response);
+
+        if (response.getStatus() == 204) {
+            lrsResponse.setSuccess(true);
+        }
+        else {
+            lrsResponse.setSuccess(false);
+        }
+
+        return lrsResponse;
+     */
+  }
 /*
       HTTPRequest request = new HTTPRequest();
         request.setMethod(HttpMethod.GET.asString());
@@ -775,7 +1038,7 @@ class RemoteLRS extends LRS {
 
         return lrsResponse;    
  */
-  }
+}
 
 /*
 
@@ -929,4 +1192,3 @@ class RemoteLRS extends LRS {
         return response;
     }
    */
-}
