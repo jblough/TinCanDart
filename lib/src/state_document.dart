@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:TinCanDart/src/activity.dart';
 import 'package:TinCanDart/src/agent.dart';
 import 'package:TinCanDart/src/document.dart';
+import 'package:TinCanDart/src/versions.dart';
 
 class StateDocument extends Document {
   final Activity activity;
@@ -24,4 +25,17 @@ class StateDocument extends Document {
             timestamp: timestamp,
             contentType: contentType,
             content: content);
+
+  Map<String, dynamic> toJson(Version version) {
+    return {
+      'id': id,
+      'etag': etag,
+      'timestamp': timestamp?.toIso8601String(),
+      'contentType': contentType,
+      'content': content,
+      'activity': activity?.toJson(version),
+      'agent': agent?.toJson(version),
+      'registration': registration, // UUID
+    };
+  }
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:TinCanDart/src/about.dart';
 import 'package:TinCanDart/src/activity.dart';
@@ -8,7 +9,6 @@ import 'package:TinCanDart/src/agent_profile_document.dart';
 import 'package:TinCanDart/src/lrs.dart';
 import 'package:TinCanDart/src/lrs_response.dart';
 import 'package:TinCanDart/src/person.dart';
-import 'package:TinCanDart/src/state.dart';
 import 'package:TinCanDart/src/state_document.dart';
 import 'package:TinCanDart/src/statement.dart';
 import 'package:TinCanDart/src/statements_query.dart';
@@ -130,9 +130,27 @@ class RemoteLRS extends LRS {
   }
 
   @override
-  Future<LRSResponse> clearState(
-      Activity activity, Agent agent, Uuid registration) {
-    return null;
+  Future<LRSResponse> clearState(Activity activity, Agent agent,
+      [Uuid registration]) async {
+    final params = {
+      'activityId': activity.id.toString(),
+      'agent': agentToString(agent),
+    };
+    if (registration != null) {
+      params['registration'] = registration.toString();
+    }
+    return await deleteDocument('activities/state', params);
+    /*
+          HashMap<String, String> queryParams = new HashMap<String, String>();
+
+        queryParams.put("activityId", activity.getId().toString());
+        queryParams.put("agent", agent.toJSON(this.getVersion(), this.usePrettyJSON()));
+        if (registration != null) {
+            queryParams.put("registration", registration.toString());
+        }
+        return deleteDocument("activities/state", queryParams);
+
+     */
   }
 
   @override
@@ -146,29 +164,132 @@ class RemoteLRS extends LRS {
   }
 
   @override
-  Future<LRSResponse> saveState(StateDocument state) {
-    return null;
+  Future<LRSResponse> saveState(StateDocument state) async {
+    final params = {
+      'stateId': state.id,
+      'activityId': state.activity.id.toString(),
+      'agent': agentToString(state.agent),
+    };
+
+    return await saveDocument('activities/state', params, state);
+    /*
+      HashMap<String,String> queryParams = new HashMap<String,String>();
+
+        queryParams.put("stateId", state.getId());
+        queryParams.put("activityId", state.getActivity().getId().toString());
+        queryParams.put("agent", state.getAgent().toJSON(this.getVersion(), this.usePrettyJSON()));
+
+        return saveDocument("activities/state", queryParams, state);
+       */
   }
 
   @override
-  Future<LRSResponse<State>> retrieveState(
-      String id, Activity activity, Agent agent, Uuid registration) {
-    return null;
+  Future<LRSResponse<StateDocument>> retrieveState(
+      String id, Activity activity, Agent agent, Uuid registration) async {
+    final params = {
+      'stateId': id,
+      'activityId': activity.id.toString(),
+      'agent': agentToString(agent),
+    };
+
+    final document = StateDocument(
+      id: id,
+      activity: activity,
+      agent: agent,
+    );
+
+    return await getDocument('activities/state', params, document);
+    /*
+      HashMap<String, String> queryParams = new HashMap<String, String>();
+        queryParams.put("stateId", id);
+        queryParams.put("activityId", activity.getId().toString());
+        queryParams.put("agent", agent.toJSON(this.getVersion(), this.usePrettyJSON()));
+
+        StateDocument stateDocument = new StateDocument();
+        stateDocument.setId(id);
+        stateDocument.setActivity(activity);
+        stateDocument.setAgent(agent);
+
+        LRSResponse lrsResp = getDocument("activities/state", queryParams, stateDocument);
+
+        StateLRSResponse lrsResponse = new StateLRSResponse(lrsResp.getRequest(), lrsResp.getResponse());
+        lrsResponse.setSuccess(lrsResp.getSuccess());
+
+        if (lrsResponse.getResponse().getStatus() == 200) {
+            lrsResponse.setContent(stateDocument);
+        }
+
+        return lrsResponse;
+     */
   }
 
   @override
   Future<LRSResponse<List<String>>> retrieveStateIds(
-      Activity activity, Agent agent, Uuid registration) {
-    return null;
+      Activity activity, Agent agent,
+      [Uuid registration]) async {
+    final params = {
+      'activityId': activity.id.toString(),
+      'agent': agentToString(agent),
+    };
+    if (registration != null) {
+      params['registration'] = registration.toString();
+    }
+    return await getProfileKeys('activities/state', params);
   }
 
   @override
-  Future<LRSResponse<StatementsResult>> moreStatements(String moreURL) {
-    return null;
+  Future<LRSResponse<StatementsResult>> moreStatements(String moreURL) async {
+    if (moreURL == null) {
+      return null;
+    }
+
+    final port = (endpoint.port == -1) ? '' : ':${endpoint.port}';
+    final resource = '${endpoint.scheme}://${endpoint.host}$port$moreURL';
+    final response = await _makeRequest(resource, 'GET');
+
+    if (response?.statusCode == 200) {
+      final results = StatementsResult.fromJson(json.decode(response?.body));
+      return LRSResponse<StatementsResult>(success: true, data: results);
+    } else {
+      return LRSResponse<StatementsResult>(
+          success: false, errMsg: response?.body);
+    }
   }
 
   @override
-  Future<LRSResponse<StatementsResult>> queryStatements(StatementsQuery query) {
+  Future<LRSResponse<StatementsResult>> queryStatements(
+      StatementsQuery query) async {
+    final response = await _makeRequest('statements', 'GET',
+        queryParams: query.toParameterMap(_version));
+
+    print(response?.statusCode);
+    print(response?.body);
+
+    if (response?.statusCode == 200) {
+      final result = StatementsResult.fromJson(json.decode(response.body));
+      return LRSResponse<StatementsResult>(success: true, data: result);
+    } else {
+      return LRSResponse<StatementsResult>(
+          success: false, errMsg: response?.body);
+    }
+    /*
+        StatementsResultLRSResponse lrsResponse = new StatementsResultLRSResponse();
+
+        lrsResponse.setRequest(new HTTPRequest());
+        lrsResponse.getRequest().setMethod(HttpMethod.GET.asString());
+        lrsResponse.getRequest().setResource("statements");
+
+        try {
+            lrsResponse.getRequest().setQueryParams(query.toParameterMap());
+        } catch (IOException ex) {
+            lrsResponse.setErrMsg("Exception: " + ex.toString());
+            return lrsResponse;
+        }
+
+        HTTPResponse response = makeSyncRequest(lrsResponse.getRequest());
+
+        lrsResponse.setResponse(response);
+     */
     return null;
   }
 
@@ -179,14 +300,92 @@ class RemoteLRS extends LRS {
   }
 
   @override
-  Future<LRSResponse<Statement>> retrieveStatement(
-      String id, bool attachments) {
-    return null;
+  Future<LRSResponse<Statement>> retrieveStatement(String id,
+      [bool attachments = false]) async {
+    final params = {'statement': id, 'attachments': attachments.toString()};
+
+    final response =
+        await _makeRequest('statements', 'GET', queryParams: params);
+
+    if (response?.statusCode == 200) {
+      final statement = Statement.fromJson(json.decode(response.body));
+      return LRSResponse<Statement>(
+        success: true,
+        data: statement,
+      );
+    } else {
+      return LRSResponse<Statement>(success: false, errMsg: response?.body);
+    }
+    /*
+        HTTPRequest request = new HTTPRequest();
+        request.setMethod(HttpMethod.GET.asString());
+        request.setResource("statements");
+        request.setQueryParams(params);
+
+        HTTPResponse response = makeSyncRequest(request);
+        int status = response.getStatus();
+
+        StatementLRSResponse lrsResponse = new StatementLRSResponse(request, response);
+
+        if (status == 200) {
+            lrsResponse.setSuccess(true);
+            try {
+                JsonNode contentNode = (new StringOfJSON(response.getContent())).toJSONNode();
+                if (! (contentNode.findPath("statements").isMissingNode())) {
+                    contentNode = contentNode.findPath("statements").get(0);
+                }
+
+                Statement stmt = new Statement (contentNode);
+                for (Map.Entry<String, byte[]> entry : response.getAttachments().entrySet()) {
+                    for (Attachment a : stmt.getAttachments()) {
+                        if (entry.getKey().equals(a.getSha2())) {
+                            a.setContent(entry.getValue());
+                        }
+                    }
+                }
+
+                lrsResponse.setContent(stmt);
+            } catch (Exception ex) {
+                lrsResponse.setErrMsg("Exception: " + ex.toString());
+                lrsResponse.setSuccess(false);
+            }
+        }
+        else {
+            lrsResponse.setSuccess(false);
+        }
+
+        return lrsResponse;
+     */
   }
 
   @override
   Future<LRSResponse<StatementsResult>> saveStatements(
       List<Statement> statements) async {
+    if (statements.length == 0) {
+      return LRSResponse<StatementsResult>(success: true);
+    }
+
+    final body = json.encode(
+        statements.map((statement) => statement.toJson(_version)).toList());
+    final response = await _makeRequest('statements', 'POST',
+        additionalHeaders: {'content-type': 'application/json'}, body: body);
+    print('Response status : ${response?.statusCode}');
+    print('Response : ${response?.body}');
+
+    if (response?.statusCode == 200) {
+      final List ids = json.decode(response.body);
+      List<Statement> saved = [];
+      for (var ctr = 0; ctr < ids.length; ctr++) {
+        saved.add(statements[ctr].copyWith(id: ids[ctr]));
+      }
+      return LRSResponse<StatementsResult>(
+          success: true,
+          data: StatementsResult(
+            statements: saved,
+          ));
+    } else {
+      return LRSResponse<StatementsResult>(success: false);
+    }
     /*
     StatementsResultLRSResponse lrsResponse = new StatementsResultLRSResponse();
         if (statements.size() == 0) {
@@ -252,7 +451,7 @@ class RemoteLRS extends LRS {
         (statement.id == null) ? null : {'statementId': statement.id};
 
     final body = json.encode(statement.toJson(_version));
-    print('Sending : $body');
+    //print('Sending : $body');
 
     final response =
         await _makeRequest('statements', verb, queryParams: params, body: body);
@@ -412,6 +611,172 @@ class RemoteLRS extends LRS {
 
     return response;
   }
+
+  String agentToString(Agent agent) {
+    return json.encode(agent.toJson(_version));
+  }
+
+  Future<LRSResponse<List<String>>> getProfileKeys(
+      String resource, Map<String, String> params) async {
+    final response = await _makeRequest(resource, 'GET', queryParams: params);
+    //print('Response : ${response?.body}');
+    if (response?.statusCode == 200) {
+      final List<dynamic> data = json.decode(response?.body);
+      return LRSResponse<List<String>>(
+          success: true, data: data.cast<String>());
+    } else {
+      return LRSResponse<List<String>>(success: false, errMsg: response?.body);
+    }
+    /*
+          HTTPRequest request = new HTTPRequest();
+        request.setMethod(HttpMethod.GET.asString());
+        request.setResource(resource);
+        request.setQueryParams(queryParams);
+
+        HTTPResponse response = makeSyncRequest(request);
+
+        ProfileKeysLRSResponse lrsResponse = new ProfileKeysLRSResponse(request, response);
+
+        if (response.getStatus() == 200) {
+            lrsResponse.setSuccess(true);
+            try {
+                Iterator it = Mapper.getInstance().readValue(response.getContent(), ArrayNode.class).elements();
+
+                lrsResponse.setContent(new ArrayList<String>());
+                while (it.hasNext()) {
+                    lrsResponse.getContent().add(it.next().toString());
+                }
+            } catch (Exception ex) {
+                lrsResponse.setErrMsg("Exception: " + ex.toString());
+                lrsResponse.setSuccess(false);
+            }
+        }
+        else {
+            lrsResponse.setSuccess(false);
+        }
+
+        return lrsResponse;
+     */
+  }
+
+  Future<LRSResponse> deleteDocument(
+      String resource, Map<String, String> params) async {
+    final response =
+        await _makeRequest(resource, 'DELETE', queryParams: params);
+    return LRSResponse(success: (response?.statusCode == 204));
+    /*
+      HTTPRequest request = new HTTPRequest();
+
+        request.setMethod(HttpMethod.DELETE.asString());
+        request.setResource(resource);
+        request.setQueryParams(queryParams);
+
+        HTTPResponse response = makeSyncRequest(request);
+
+        LRSResponse lrsResponse = new LRSResponse(request, response);
+
+        if (response.getStatus() == 204) {
+            lrsResponse.setSuccess(true);
+        }
+        else {
+            lrsResponse.setSuccess(false);
+        }
+
+        return lrsResponse;
+     */
+  }
+
+  Future<LRSResponse> saveDocument(String resource, Map<String, String> params,
+      StateDocument document) async {
+    final headers = {
+      'content-type': document.contentType ?? 'application/octet-stream',
+    };
+    if (document.etag != null) {
+      headers['If-Match'] = document.etag;
+    }
+    final response = await _makeRequest(resource, 'PUT',
+        queryParams: params,
+        additionalHeaders: headers,
+        body: document.content?.asInt8List());
+
+    return LRSResponse(success: response?.statusCode == 204);
+    /*
+         HTTPRequest request = new HTTPRequest();
+        request.setMethod(HttpMethod.PUT.asString());
+        request.setResource(resource);
+        request.setQueryParams(queryParams);
+        request.setContentType(document.getContentType());
+        request.setContent(document.getContent());
+        if (document.getEtag() != null) {
+            request.setHeaders(new HashMap<String, String>());
+            request.getHeaders().put("If-Match", document.getEtag());
+        }
+
+        HTTPResponse response = makeSyncRequest(request);
+
+        LRSResponse lrsResponse = new LRSResponse(request, response);
+
+        if (response.getStatus() == 204) {
+            lrsResponse.setSuccess(true);
+        }
+        else {
+            lrsResponse.setSuccess(false);
+        }
+
+        return lrsResponse;
+
+     */
+  }
+
+  Future<LRSResponse<StateDocument>> getDocument(String resource,
+      Map<String, String> params, StateDocument document) async {
+    final response = await _makeRequest(resource, 'GET', queryParams: params);
+    if (response?.statusCode == 200) {
+      final data = StateDocument(
+        id: document.id,
+        agent: document.agent,
+        activity: document.activity,
+        contentType: response.headers[HttpHeaders.contentTypeHeader],
+        content: response.bodyBytes.buffer,
+        registration: document.registration,
+        etag: response.headers[HttpHeaders.etagHeader],
+        timestamp:
+            DateTime.tryParse(response.headers[HttpHeaders.lastModifiedHeader]),
+      );
+      return LRSResponse<StateDocument>(success: true, data: data);
+    } else if (response?.statusCode == 404) {
+      return LRSResponse<StateDocument>(success: true, data: document);
+    } else {
+      return LRSResponse<StateDocument>(success: false, errMsg: response?.body);
+    }
+/*
+      HTTPRequest request = new HTTPRequest();
+        request.setMethod(HttpMethod.GET.asString());
+        request.setResource(resource);
+        request.setQueryParams(queryParams);
+
+        HTTPResponse response = makeSyncRequest(request);
+
+        LRSResponse lrsResponse = new LRSResponse(request, response);
+
+        if (response.getStatus() == 200) {
+            document.setContent(response.getContentBytes());
+            document.setContentType(response.getContentType());
+            document.setTimestamp(response.getLastModified());
+            document.setEtag(response.getEtag());
+            lrsResponse.setSuccess(true);
+        }
+        else if (response.getStatus() == 404) {
+            lrsResponse.setSuccess(true);
+        }
+        else {
+            lrsResponse.setSuccess(false);
+        }
+
+        return lrsResponse;    
+ */
+  }
+
 /*
 
     private HTTPResponse makeSyncRequest(HTTPRequest req) {

@@ -5,7 +5,6 @@ import 'package:TinCanDart/src/agent.dart';
 import 'package:TinCanDart/src/agent_profile_document.dart';
 import 'package:TinCanDart/src/lrs_response.dart';
 import 'package:TinCanDart/src/person.dart';
-import 'package:TinCanDart/src/state.dart';
 import 'package:TinCanDart/src/state_document.dart';
 import 'package:TinCanDart/src/statement.dart';
 import 'package:TinCanDart/src/statements_query.dart';
@@ -36,7 +35,7 @@ abstract class LRS {
   Future<LRSResponse<List<String>>> retrieveStateIds(
       Activity activity, Agent agent, Uuid registration);
 
-  Future<LRSResponse<State>> retrieveState(
+  Future<LRSResponse<StateDocument>> retrieveState(
       String id, Activity activity, Agent agent, Uuid registration);
 
   Future<LRSResponse> saveState(StateDocument state);

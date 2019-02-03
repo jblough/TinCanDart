@@ -2,9 +2,9 @@ import 'package:TinCanDart/src/statement.dart';
 
 class StatementsResult {
   final List<Statement> statements;
-  final String more;
+  final String moreUrl;
 
-  StatementsResult({this.statements, this.more});
+  StatementsResult({this.statements, this.moreUrl});
 
   factory StatementsResult.fromJson(Map<String, dynamic> json) {
     if (json == null) {
@@ -18,7 +18,7 @@ class StatementsResult {
 
     return StatementsResult(
       statements: list,
-      more: json['more'],
+      moreUrl: json['more'],
     );
   }
 }

@@ -14,8 +14,10 @@ import 'package:TinCanDart/src/parsing_utils.dart';
 import 'package:TinCanDart/src/remote_lrs.dart';
 import 'package:TinCanDart/src/result.dart';
 import 'package:TinCanDart/src/score.dart';
+import 'package:TinCanDart/src/state_document.dart';
 import 'package:TinCanDart/src/statement.dart';
 import 'package:TinCanDart/src/statement_ref.dart';
+import 'package:TinCanDart/src/statements_query.dart';
 import 'package:TinCanDart/src/substatement.dart';
 import 'package:TinCanDart/src/verb.dart';
 import 'package:TinCanDart/src/versions.dart';
@@ -653,64 +655,6 @@ void main() {
   });
 
   /*
-
-    @Test
-    public void testSaveStatementWithAttachment() throws Exception {
-        Statement statement = new Statement();
-        statement.setActor(agent);
-        statement.setVerb(verb);
-        statement.setObject(activity);
-        statement.addAttachment(attachment1);
-
-        StatementLRSResponse lrsRes = lrs.saveStatement(statement);
-        Assert.assertTrue(lrsRes.getSuccess());
-        Assert.assertEquals(statement, lrsRes.getContent());
-        Assert.assertNotNull(lrsRes.getContent().getId());
-        Assert.assertNotNull(lrsRes.getResponse().getContent());
-    }
-
-    @Test
-    public void testSaveStatementWithAttachments() throws Exception {
-        Statement statement = new Statement();
-        statement.setActor(agent);
-        statement.setVerb(verb);
-        statement.setObject(activity);
-        statement.addAttachment(attachment1);
-        statement.addAttachment(attachment2);
-
-        StatementLRSResponse lrsRes = lrs.saveStatement(statement);
-        Assert.assertTrue(lrsRes.getSuccess());
-        Assert.assertEquals(statement, lrsRes.getContent());
-        Assert.assertNotNull(lrsRes.getContent().getId());
-        Assert.assertNotNull(lrsRes.getResponse().getContent());
-    }
-
-    @Test
-    public void testSaveStatementsWithAttachment() throws Exception {
-        Statement statement = new Statement();
-        statement.setActor(agent);
-        statement.setVerb(verb);
-        statement.setObject(activity);
-        statement.addAttachment(attachment1);
-
-        List<Statement> statementList = new ArrayList<Statement>();
-        statementList.add(statement);
-
-        statement = new Statement();
-        statement.setActor(agent);
-        statement.setVerb(verb);
-        statement.setObject(activity);
-        statementList.add(statement);
-
-        StatementsResultLRSResponse lrsResultResp = lrs.saveStatements(statementList);
-        Assert.assertTrue(lrsResultResp.getSuccess());
-        Assert.assertEquals(statement, lrsResultResp.getContent().getStatements().get(1));
-        Assert.assertNotNull(lrsResultResp.getContent().getStatements().get(0).getId());
-        Assert.assertNotNull(lrsResultResp.getContent().getStatements().get(1).getId());
-        Assert.assertNotNull(lrsResultResp.getResponse().getContent());
-    }
-
-
     @Test
     public void testRetrieveStatement() throws Exception {
         Statement statement = new Statement();
@@ -726,61 +670,26 @@ void main() {
         StatementLRSResponse retRes = lrs.retrieveStatement(saveRes.getContent().getId().toString(), false);
         Assert.assertTrue(retRes.getSuccess());
     }
+   */
+  test("should retrieve statement", () async {
+    final statement = Statement(
+      id: Uuid().v4().toString(),
+      timestamp: DateTime.now(),
+      actor: agent,
+      verb: verb,
+      object: activity,
+      context: context,
+      result: result,
+    );
 
-    @Test
-    public void testRetrieveStatementWithAttachment() throws Exception {
-        Statement statement = new Statement();
-        statement.setActor(agent);
-        statement.setVerb(verb);
-        statement.setObject(activity);
-        statement.addAttachment(attachment1);
+    final saveResponse = await lrs.saveStatement(statement);
+    expect(saveResponse.success, isTrue);
 
-        StatementLRSResponse saveRes = lrs.saveStatement(statement);
-        Assert.assertTrue(saveRes.getSuccess());
+    final getResponse = await lrs.retrieveStatement(saveResponse.data.id);
+    expect(getResponse.success, isTrue);
+  });
 
-        StatementLRSResponse retRes = lrs.retrieveStatement(saveRes.getContent().getId().toString(), true);
-        Assert.assertTrue(retRes.getSuccess());
-
-        String hash1, hash2;
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        digest.update(attachment1.getContent());
-        byte[] hash = digest.digest();
-        hash1 = new String(Hex.encodeHex(hash));
-
-        digest.update(retRes.getContent().getAttachments().get(0).getContent());
-        hash = digest.digest();
-        hash2 = new String(Hex.encodeHex(hash));
-
-        Assert.assertEquals(hash1, hash2);
-    }
-
-    @Test
-    public void testRetrieveStatementWithBinaryAttachment() throws Exception {
-        Statement statement = new Statement();
-        statement.setActor(agent);
-        statement.setVerb(verb);
-        statement.setObject(activity);
-        statement.addAttachment(attachment3);
-
-        StatementLRSResponse saveRes = lrs.saveStatement(statement);
-        Assert.assertTrue(saveRes.getSuccess());
-
-        StatementLRSResponse retRes = lrs.retrieveStatement(saveRes.getContent().getId().toString(), true);
-        Assert.assertTrue(retRes.getSuccess());
-
-        String hash1, hash2;
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        digest.update(attachment3.getContent());
-        byte[] hash = digest.digest();
-        hash1 = new String(Hex.encodeHex(hash));
-
-        digest.update(retRes.getContent().getAttachments().get(0).getContent());
-        hash = digest.digest();
-        hash2 = new String(Hex.encodeHex(hash));
-
-        Assert.assertEquals(hash1, hash2);
-    }
-
+  /*
     @Test
     public void testQueryStatements() throws Exception {
         StatementsQuery query = new StatementsQuery();
@@ -795,42 +704,23 @@ void main() {
         StatementsResultLRSResponse lrsRes = lrs.queryStatements(query);
         Assert.assertTrue(lrsRes.getSuccess());
     }
+   */
+  test("should query statements", () async {
+    final query = StatementsQuery(
+      agent: agent,
+      verbID: verb.id,
+      activityID: parent.id,
+      relatedActivities: true,
+      relatedAgents: true,
+      format: QueryResultFormat.IDS,
+      limit: 10,
+    );
 
-    @Test
-    public void testQueryStatementsWithAttachments() throws Exception {
-        Statement statement = new Statement();
-        statement.setActor(agent);
-        statement.setVerb(verb);
-        statement.setObject(activity);
-        statement.addAttachment(attachment1);
+    final response = await lrs.queryStatements(query);
+    expect(response.success, isTrue);
+  });
 
-        StatementLRSResponse lrsRes = lrs.saveStatement(statement);
-        Assert.assertTrue(lrsRes.getSuccess());
-        Assert.assertEquals(statement, lrsRes.getContent());
-        Assert.assertNotNull(lrsRes.getContent().getId());
-        Assert.assertNotNull(lrsRes.getResponse().getContent());
-
-        StatementsQuery query = new StatementsQuery();
-        query.setFormat(QueryResultFormat.EXACT);
-        query.setLimit(10);
-        query.setAttachments(true);
-
-        StatementsResultLRSResponse lrsStmntRes = lrs.queryStatements(query);
-        Assert.assertTrue(lrsStmntRes.getSuccess());
-
-        String hash1, hash2;
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        digest.update(attachment1.getContent());
-        byte[] hash = digest.digest();
-        hash1 = new String(Hex.encodeHex(hash));
-
-        digest.update(lrsStmntRes.getContent().getStatements().get(0).getAttachments().get(0).getContent());
-        hash = digest.digest();
-        hash2 = new String(Hex.encodeHex(hash));
-
-        Assert.assertEquals(hash1, hash2);
-    }
-
+/*
     @Test
     public void testMoreStatements() throws Exception {
         StatementsQuery query = new StatementsQuery();
@@ -843,13 +733,34 @@ void main() {
         StatementsResultLRSResponse moreRes = lrs.moreStatements(queryRes.getContent().getMoreURL());
         Assert.assertTrue(moreRes.getSuccess());
     }
+*/
+  test("should get more statements", () async {
+    final query = StatementsQuery(
+      format: QueryResultFormat.IDS,
+      limit: 2,
+    );
 
+    final response = await lrs.queryStatements(query);
+    expect(response.success, isTrue);
+    expect(response.data.moreUrl, isNotNull);
+
+    final moreResponse = await lrs.moreStatements(response.data.moreUrl);
+    expect(moreResponse.success, isTrue);
+  });
+
+/*
     @Test
     public void testRetrieveStateIds() throws Exception {
         ProfileKeysLRSResponse lrsRes = lrs.retrieveStateIds(activity, agent, null);
         Assert.assertTrue(lrsRes.getSuccess());
     }
+*/
+  test("should retrieve state ids", () async {
+    final response = await lrs.retrieveStateIds(activity, agent, null);
+    expect(response.success, isTrue);
+  });
 
+/*
     @Test
     public void testRetrieveState() throws Exception {
         LRSResponse clear = lrs.clearState(activity, agent, null);
@@ -868,7 +779,29 @@ void main() {
         Assert.assertEquals("\"c140f82cb70e3884ad729b5055b7eaa81c795f1f\"", lrsRes.getContent().getEtag());
         Assert.assertTrue(lrsRes.getSuccess());
     }
+*/
+  test("should retrieve state", () async {
+    final clear = await lrs.clearState(activity, agent, null);
+    expect(clear.success, isTrue);
 
+    final doc = StateDocument(
+      id: 'test',
+      activity: activity,
+      agent: agent,
+      content: Uint8List.fromList(utf8.encode('Test value')).buffer,
+    );
+
+    final save = await lrs.saveState(doc);
+    expect(save.success, isTrue);
+
+    final stateResponse =
+        await lrs.retrieveState('test', activity, agent, null);
+    expect(stateResponse.success, isTrue);
+    expect(
+        stateResponse.data.etag, '"c140f82cb70e3884ad729b5055b7eaa81c795f1f"');
+  });
+
+/*
     @Test
     public void testSaveState() throws Exception {
         StateDocument doc = new StateDocument();
@@ -880,7 +813,9 @@ void main() {
         LRSResponse lrsRes = lrs.saveState(doc);
         Assert.assertTrue(lrsRes.getSuccess());
     }
+*/
 
+/*
     @Test
     public void testOverwriteState() throws Exception {
         LRSResponse clear = lrs.clearState(activity, agent, null);
@@ -904,7 +839,9 @@ void main() {
         LRSResponse lrsResp = lrs.saveState(doc);
         Assert.assertTrue(lrsResp.getSuccess());
     }
+*/
 
+/*
     @Test
     public void testUpdateState() throws Exception {
         ObjectMapper mapper = Mapper.getInstance();
@@ -979,7 +916,9 @@ void main() {
         }
         Assert.assertTrue(currentSet.equals(correctSet));
     }
+*/
 
+/*
     @Test
     public void testDeleteState() throws Exception {
         StateDocument doc = new StateDocument();
@@ -990,11 +929,161 @@ void main() {
         LRSResponse lrsRes = lrs.deleteState(doc);
         Assert.assertTrue(lrsRes.getSuccess());
     }
+*/
 
+/*
     @Test
     public void testClearState() throws Exception {
         LRSResponse lrsRes = lrs.clearState(activity, agent, null);
         Assert.assertTrue(lrsRes.getSuccess());
+    }
+ */
+
+  /*
+
+    @Test
+    public void testSaveStatementWithAttachment() throws Exception {
+        Statement statement = new Statement();
+        statement.setActor(agent);
+        statement.setVerb(verb);
+        statement.setObject(activity);
+        statement.addAttachment(attachment1);
+
+        StatementLRSResponse lrsRes = lrs.saveStatement(statement);
+        Assert.assertTrue(lrsRes.getSuccess());
+        Assert.assertEquals(statement, lrsRes.getContent());
+        Assert.assertNotNull(lrsRes.getContent().getId());
+        Assert.assertNotNull(lrsRes.getResponse().getContent());
+    }
+
+    @Test
+    public void testSaveStatementWithAttachments() throws Exception {
+        Statement statement = new Statement();
+        statement.setActor(agent);
+        statement.setVerb(verb);
+        statement.setObject(activity);
+        statement.addAttachment(attachment1);
+        statement.addAttachment(attachment2);
+
+        StatementLRSResponse lrsRes = lrs.saveStatement(statement);
+        Assert.assertTrue(lrsRes.getSuccess());
+        Assert.assertEquals(statement, lrsRes.getContent());
+        Assert.assertNotNull(lrsRes.getContent().getId());
+        Assert.assertNotNull(lrsRes.getResponse().getContent());
+    }
+
+    @Test
+    public void testSaveStatementsWithAttachment() throws Exception {
+        Statement statement = new Statement();
+        statement.setActor(agent);
+        statement.setVerb(verb);
+        statement.setObject(activity);
+        statement.addAttachment(attachment1);
+
+        List<Statement> statementList = new ArrayList<Statement>();
+        statementList.add(statement);
+
+        statement = new Statement();
+        statement.setActor(agent);
+        statement.setVerb(verb);
+        statement.setObject(activity);
+        statementList.add(statement);
+
+        StatementsResultLRSResponse lrsResultResp = lrs.saveStatements(statementList);
+        Assert.assertTrue(lrsResultResp.getSuccess());
+        Assert.assertEquals(statement, lrsResultResp.getContent().getStatements().get(1));
+        Assert.assertNotNull(lrsResultResp.getContent().getStatements().get(0).getId());
+        Assert.assertNotNull(lrsResultResp.getContent().getStatements().get(1).getId());
+        Assert.assertNotNull(lrsResultResp.getResponse().getContent());
+    }
+
+    @Test
+    public void testRetrieveStatementWithAttachment() throws Exception {
+        Statement statement = new Statement();
+        statement.setActor(agent);
+        statement.setVerb(verb);
+        statement.setObject(activity);
+        statement.addAttachment(attachment1);
+
+        StatementLRSResponse saveRes = lrs.saveStatement(statement);
+        Assert.assertTrue(saveRes.getSuccess());
+
+        StatementLRSResponse retRes = lrs.retrieveStatement(saveRes.getContent().getId().toString(), true);
+        Assert.assertTrue(retRes.getSuccess());
+
+        String hash1, hash2;
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        digest.update(attachment1.getContent());
+        byte[] hash = digest.digest();
+        hash1 = new String(Hex.encodeHex(hash));
+
+        digest.update(retRes.getContent().getAttachments().get(0).getContent());
+        hash = digest.digest();
+        hash2 = new String(Hex.encodeHex(hash));
+
+        Assert.assertEquals(hash1, hash2);
+    }
+
+    @Test
+    public void testRetrieveStatementWithBinaryAttachment() throws Exception {
+        Statement statement = new Statement();
+        statement.setActor(agent);
+        statement.setVerb(verb);
+        statement.setObject(activity);
+        statement.addAttachment(attachment3);
+
+        StatementLRSResponse saveRes = lrs.saveStatement(statement);
+        Assert.assertTrue(saveRes.getSuccess());
+
+        StatementLRSResponse retRes = lrs.retrieveStatement(saveRes.getContent().getId().toString(), true);
+        Assert.assertTrue(retRes.getSuccess());
+
+        String hash1, hash2;
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        digest.update(attachment3.getContent());
+        byte[] hash = digest.digest();
+        hash1 = new String(Hex.encodeHex(hash));
+
+        digest.update(retRes.getContent().getAttachments().get(0).getContent());
+        hash = digest.digest();
+        hash2 = new String(Hex.encodeHex(hash));
+
+        Assert.assertEquals(hash1, hash2);
+    }
+
+    @Test
+    public void testQueryStatementsWithAttachments() throws Exception {
+        Statement statement = new Statement();
+        statement.setActor(agent);
+        statement.setVerb(verb);
+        statement.setObject(activity);
+        statement.addAttachment(attachment1);
+
+        StatementLRSResponse lrsRes = lrs.saveStatement(statement);
+        Assert.assertTrue(lrsRes.getSuccess());
+        Assert.assertEquals(statement, lrsRes.getContent());
+        Assert.assertNotNull(lrsRes.getContent().getId());
+        Assert.assertNotNull(lrsRes.getResponse().getContent());
+
+        StatementsQuery query = new StatementsQuery();
+        query.setFormat(QueryResultFormat.EXACT);
+        query.setLimit(10);
+        query.setAttachments(true);
+
+        StatementsResultLRSResponse lrsStmntRes = lrs.queryStatements(query);
+        Assert.assertTrue(lrsStmntRes.getSuccess());
+
+        String hash1, hash2;
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        digest.update(attachment1.getContent());
+        byte[] hash = digest.digest();
+        hash1 = new String(Hex.encodeHex(hash));
+
+        digest.update(lrsStmntRes.getContent().getStatements().get(0).getAttachments().get(0).getContent());
+        hash = digest.digest();
+        hash2 = new String(Hex.encodeHex(hash));
+
+        Assert.assertEquals(hash1, hash2);
     }
 
     @Test

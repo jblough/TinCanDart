@@ -152,7 +152,7 @@ class StatementsQuery {
     }
 
     if (this.format != null) {
-      params['format'] = this.format.toString().toLowerCase();
+      params['format'] = this.format?.toString()?.split('.')[1]?.toLowerCase();
     }
 
     if (this.ascending != null) {

@@ -20,7 +20,7 @@ class Activity extends StatementTarget {
     );
   }
 
-  static List<Activity> listFromJson(List<Map<String, dynamic>> list) {
+  static List<Activity> listFromJson(List<dynamic> list) {
     if (list == null || list.isEmpty) {
       return null;
     }

@@ -11,6 +11,10 @@ class TinCanVersion {
   static Version latest() => Version.V103;
 
   static Version fromJsonString(String version) {
+    if (version == null) {
+      return null;
+    }
+    
     switch (version) {
       case "1.0.3":
         return Version.V103;

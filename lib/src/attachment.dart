@@ -40,7 +40,7 @@ class Attachment {
     );
   }
 
-  static List<Attachment> listFromJson(List<Map<String, dynamic>> list) {
+  static List<Attachment> listFromJson(List<dynamic> list) {
     if (list == null || list.isEmpty) {
       return null;
     }

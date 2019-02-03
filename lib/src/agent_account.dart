@@ -17,7 +17,7 @@ class AgentAccount {
     );
   }
 
-  static List<AgentAccount> listFromJson(List<Map<String, dynamic>> list) {
+  static List<AgentAccount> listFromJson(List<dynamic> list) {
     if (list == null || list.isEmpty) {
       return null;
     }
