@@ -52,13 +52,13 @@ class StatementsQuery {
     switch (version) {
       case Version.V09:
       case Version.V095:
-        return toParameterMapVersion095(version);
+        return _toParameterMapVersion095(version);
       default:
-        return toParameterMapVersion10x(version);
+        return _toParameterMapVersion10x(version);
     }
   }
 
-  Map<String, String> toParameterMapVersion095(Version version) {
+  Map<String, String> _toParameterMapVersion095(Version version) {
     final Map<String, String> params = {};
 
     if (this.verbID != null) {
@@ -112,7 +112,7 @@ class StatementsQuery {
     return params;
   }
 
-  Map<String, String> toParameterMapVersion10x(Version version) {
+  Map<String, String> _toParameterMapVersion10x(Version version) {
     Map<String, String> params = {};
 
     if (this.agent != null) {
