@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:TinCanDart/src/activity.dart';
 import 'package:TinCanDart/src/activity_definition.dart';
@@ -43,7 +41,7 @@ void main() {
   SubStatement subStatement;
   Attachment attachment1;
   Attachment attachment2;
-  //Attachment attachment3;
+  Attachment attachment3;
 
   setUpAll(() {
     print(Directory.current);
@@ -215,7 +213,7 @@ void main() {
      */
 
     attachment1 = Attachment(
-        content: Uint8List.fromList(utf8.encode('hello world')).buffer,
+        content: ParsingUtils.toBuffer('hello world'),
         contentType: "application/octet-stream",
         description: LanguageMap({'en-US': 'Test Description'}),
         display: LanguageMap({'en-US': 'Test Display'}),
@@ -233,7 +231,7 @@ void main() {
         attachment2.setUsageType(new URI("http://id.tincanapi.com/attachment/supporting_media"));
     */
     attachment2 = Attachment(
-      content: Uint8List.fromList(utf8.encode('hello world 2')).buffer,
+      content: ParsingUtils.toBuffer('hello world 2'),
       contentType: "text/plain",
       description: LanguageMap({'en-US': 'Test Description 2'}),
       display: LanguageMap({'en-US': 'Test Display 2'}),
@@ -251,13 +249,15 @@ void main() {
         attachment3.getDisplay().put("en-US", "Test Display 3");
         attachment3.setUsageType(new URI("http://id.tincanapi.com/attachment/supporting_media"));
      */
-    /*attachment3 = Attachment(
-        content: Uint8List.fromList(utf8.encode('hello world 2')).buffer,
-        contentType: "image/jpeg",
-        description: LanguageMap({'en-US': 'Test Description 3'}),
-        display: LanguageMap({'en-US': 'Test Display 3'}),
-        usageType:
-            Uri.parse('http://id.tincanapi.com/attachment/supporting_media'));*/
+    attachment3 = Attachment(
+      content:
+          ParsingUtils.listToBuffer(File('./test/image.jpg').readAsBytesSync()),
+      contentType: "image/jpeg",
+      description: LanguageMap({'en-US': 'Test Description 3'}),
+      display: LanguageMap({'en-US': 'Test Display 3'}),
+      usageType: ParsingUtils.toUri(
+          'http://id.tincanapi.com/attachment/supporting_media'),
+    );
   });
 
   setUp(() {
@@ -790,7 +790,7 @@ void main() {
       id: 'test',
       activity: activity,
       agent: agent,
-      content: Uint8List.fromList(utf8.encode('Test value')).buffer,
+      content: ParsingUtils.toBuffer('Test value'),
     );
 
     final save = await lrs.saveState(doc);
@@ -821,7 +821,7 @@ void main() {
       id: 'test',
       activity: activity,
       agent: agent,
-      content: Uint8List.fromList(utf8.encode('Test value')).buffer,
+      content: ParsingUtils.toBuffer('Test value'),
     );
 
     final save = await lrs.saveState(doc);
@@ -861,7 +861,7 @@ void main() {
       id: 'test',
       activity: activity,
       agent: agent,
-      content: Uint8List.fromList(utf8.encode('Test value')).buffer,
+      content: ParsingUtils.toBuffer('Test value'),
     );
 
     final save = await lrs.saveState(doc);
@@ -874,7 +874,7 @@ void main() {
       id: 'testing',
       activity: parent,
       agent: agent,
-      content: Uint8List.fromList(utf8.encode('Test value')).buffer,
+      content: ParsingUtils.toBuffer('Test value'),
       etag: retrieve.data.etag,
     );
     final stateResponse = await lrs.saveState(doc2);
@@ -985,8 +985,9 @@ void main() {
 
     final StateDocument beforeDoc = retrieveBeforeUpdate.data;
   });
-*/
-/*
+  */
+
+  /*
     @Test
     public void testDeleteState() throws Exception {
         StateDocument doc = new StateDocument();
@@ -997,7 +998,7 @@ void main() {
         LRSResponse lrsRes = lrs.deleteState(doc);
         Assert.assertTrue(lrsRes.getSuccess());
     }
-*/
+  */
   test("should delete state", () async {
     final doc = StateDocument(
       id: 'test',
@@ -1009,7 +1010,7 @@ void main() {
     expect(response.success, isTrue);
   });
 
-/*
+  /*
     @Test
     public void testClearState() throws Exception {
         LRSResponse lrsRes = lrs.clearState(activity, agent, null);
@@ -1083,7 +1084,7 @@ void main() {
     final doc2 = ActivityProfileDocument(
       id: 'test',
       activity: activity,
-      content: Uint8List.fromList(utf8.encode('Test value2')).buffer,
+      content: ParsingUtils.toBuffer('Test value2'),
     );
 
     final save = await lrs.saveActivityProfile(doc2);
@@ -1124,7 +1125,7 @@ void main() {
     final doc2 = ActivityProfileDocument(
       id: 'test',
       activity: activity,
-      content: Uint8List.fromList(utf8.encode('Test value2')).buffer,
+      content: ParsingUtils.toBuffer('Test value2'),
     );
 
     final save = await lrs.saveActivityProfile(doc2);
@@ -1168,7 +1169,7 @@ void main() {
       ActivityProfileDocument(
         id: 'test',
         activity: activity,
-        content: Uint8List.fromList(utf8.encode('Test value2')).buffer,
+        content: ParsingUtils.toBuffer('Test value2'),
       ),
     );
     expect(save.success, isTrue);
@@ -1180,7 +1181,7 @@ void main() {
       id: 'test2',
       activity: activity,
       etag: retrieve.data.etag,
-      content: Uint8List.fromList(utf8.encode('Test value3')).buffer,
+      content: ParsingUtils.toBuffer('Test value3'),
     ));
     expect(lrsResp.success, isTrue);
   });
@@ -1266,7 +1267,7 @@ void main() {
     final save = await lrs.saveAgentProfile(AgentProfileDocument(
       id: 'test',
       agent: agent,
-      content: Uint8List.fromList(utf8.encode('Test value4')).buffer,
+      content: ParsingUtils.toBuffer('Test value4'),
     ));
     expect(save.success, isTrue);
 
@@ -1291,6 +1292,20 @@ void main() {
         Assert.assertTrue(lrsRes.getSuccess());
     }
   */
+  test("should save agent profile", () async {
+    final response = await lrs.deleteAgentProfile(AgentProfileDocument(
+      id: 'test',
+      agent: agent,
+    ));
+    expect(response.success, isTrue);
+
+    final save = await lrs.saveAgentProfile(AgentProfileDocument(
+      id: 'test',
+      agent: agent,
+      content: ParsingUtils.toBuffer('Test value'),
+    ));
+    expect(save.success, isTrue);
+  });
 
   /*
     @Test
@@ -1393,6 +1408,31 @@ void main() {
         Assert.assertTrue(lrsResp.getSuccess());
     }
   */
+  test("should overwrite agent profile", () async {
+    final response = await lrs.deleteAgentProfile(AgentProfileDocument(
+      id: 'test',
+      agent: agent,
+    ));
+    expect(response.success, isTrue);
+
+    final save = await lrs.saveAgentProfile(AgentProfileDocument(
+      id: 'test',
+      agent: agent,
+      content: ParsingUtils.toBuffer('Test value4'),
+    ));
+    expect(save.success, isTrue);
+
+    final retrieve = await lrs.retrieveAgentProfile("test", agent);
+    expect(retrieve.success, isTrue);
+
+    final overwrite = await lrs.saveAgentProfile(AgentProfileDocument(
+      id: 'test2',
+      agent: agent,
+      etag: retrieve.data.etag,
+      content: ParsingUtils.toBuffer('Test value5'),
+    ));
+    expect(overwrite.success, isTrue);
+  });
 
   /*
     @Test
@@ -1405,9 +1445,15 @@ void main() {
         Assert.assertTrue(lrsRes.getSuccess());
     }  
   */
+  test("should delete agent profile", () async {
+    final response = await lrs.deleteAgentProfile(AgentProfileDocument(
+      id: 'test',
+      agent: agent,
+    ));
+    expect(response.success, isTrue);
+  });
 
   /*
-
     @Test
     public void testSaveStatementWithAttachment() throws Exception {
         Statement statement = new Statement();
@@ -1422,6 +1468,17 @@ void main() {
         Assert.assertNotNull(lrsRes.getContent().getId());
         Assert.assertNotNull(lrsRes.getResponse().getContent());
     }
+   */
+  test("should save statement with attachment", () async {
+    final statement = Statement(
+        actor: agent, verb: verb, object: activity, attachments: [attachment1]);
+
+    final response = await lrs.saveStatement(statement);
+    expect(response.success, isTrue);
+    expect(response.data.id, isNotNull);
+  });
+
+  /*
 
     @Test
     public void testSaveStatementWithAttachments() throws Exception {

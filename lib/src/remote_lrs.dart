@@ -6,9 +6,11 @@ import 'package:TinCanDart/src/activity.dart';
 import 'package:TinCanDart/src/activity_profile_document.dart';
 import 'package:TinCanDart/src/agent.dart';
 import 'package:TinCanDart/src/agent_profile_document.dart';
+import 'package:TinCanDart/src/attachment.dart';
 import 'package:TinCanDart/src/document.dart';
 import 'package:TinCanDart/src/lrs.dart';
 import 'package:TinCanDart/src/lrs_response.dart';
+import 'package:TinCanDart/src/multipart_helper.dart';
 import 'package:TinCanDart/src/person.dart';
 import 'package:TinCanDart/src/state_document.dart';
 import 'package:TinCanDart/src/statement.dart';
@@ -16,6 +18,7 @@ import 'package:TinCanDart/src/statements_query.dart';
 import 'package:TinCanDart/src/statements_result.dart';
 import 'package:TinCanDart/src/versions.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:uuid/uuid.dart';
 
 /// Class used to communicate with a TinCan API endpoint
@@ -546,8 +549,16 @@ class RemoteLRS extends LRS {
 
     final body = json.encode(
         statements.map((statement) => statement.toJson(_version)).toList());
+    final attachments = <Attachment>[];
+    statements?.forEach((statement) {
+      if (statement.attachments?.isNotEmpty == true) {
+        attachments.addAll(statement.attachments);
+      }
+    });
     final response = await _makeRequest('statements', 'POST',
-        additionalHeaders: {'content-type': 'application/json'}, body: body);
+        additionalHeaders: {'content-type': 'application/json'},
+        body: body,
+        attachments: (attachments.isEmpty) ? null : attachments);
     print('Response status : ${response?.statusCode}');
     print('Response : ${response?.body}');
 
@@ -630,18 +641,24 @@ class RemoteLRS extends LRS {
         (statement.id == null) ? null : {'statementId': statement.id};
 
     final body = json.encode(statement.toJson(_version));
-    //print('Sending : $body');
 
-    final response =
-        await _makeRequest('statements', verb, queryParams: params, body: body);
+    final response = await _makeRequest('statements', verb,
+        queryParams: params, body: body, attachments: statement.attachments);
     print(response?.statusCode);
-    print(response?.body);
+    dynamic responseBody;
+    if (response.runtimeType.toString() == 'StreamedResponse') {
+      http.StreamedResponse streamedResponse = response;
+      final data = await streamedResponse.stream.bytesToString();
+      responseBody = data;
+    } else {
+      responseBody = response?.body;
+    }
 
     if (response?.statusCode == 200) {
       return LRSResponse<Statement>(
         success: true,
         data: statement.copyWith(
-          id: response.body,
+          id: json.decode(responseBody)[0],
         ),
       );
     } else if (response?.statusCode == 204) {
@@ -650,61 +667,8 @@ class RemoteLRS extends LRS {
         data: statement,
       );
     } else {
-      return LRSResponse<Statement>(success: false, errMsg: response?.body);
+      return LRSResponse<Statement>(success: false, errMsg: responseBody);
     }
-
-    /*
-      StatementLRSResponse lrsResponse = new StatementLRSResponse();
-        lrsResponse.setRequest(new HTTPRequest());
-
-        lrsResponse.getRequest().setResource("statements");
-        lrsResponse.getRequest().setContentType("application/json");
-
-        try {
-            lrsResponse.getRequest().setContent(statement.toJSON(this.getVersion(), this.usePrettyJSON()).getBytes("UTF-8"));
-        } catch (IOException ex) {
-            lrsResponse.setErrMsg("Exception: " + ex.toString());
-            return lrsResponse;
-        }
-
-        if (statement.hasAttachmentsWithContent()) {
-            lrsResponse.getRequest().setPartList(statement.getPartList());
-        }
-
-        if (statement.getId() == null) {
-            lrsResponse.getRequest().setMethod(HttpMethod.POST.asString());
-        }
-        else {
-            lrsResponse.getRequest().setMethod(HttpMethod.PUT.asString());
-            lrsResponse.getRequest().setQueryParams(new HashMap<String, String>());
-            lrsResponse.getRequest().getQueryParams().put("statementId", statement.getId().toString());
-        }
-
-        lrsResponse.setResponse(makeSyncRequest(lrsResponse.getRequest()));
-        int status = lrsResponse.getResponse().getStatus();
-
-        lrsResponse.setContent(statement);
-
-        // TODO: handle 409 conflict, etc.
-        if (status == 200) {
-            lrsResponse.setSuccess(true);
-            String content = lrsResponse.getResponse().getContent();
-            try {
-                lrsResponse.getContent().setId(UUID.fromString(Mapper.getInstance().readValue(content, ArrayNode.class).get(0).textValue()));
-            } catch (Exception ex) {
-                lrsResponse.setErrMsg("Exception: " + ex.toString());
-                lrsResponse.setSuccess(false);
-            }
-        }
-        else if (status == 204) {
-            lrsResponse.setSuccess(true);
-        }
-        else {
-            lrsResponse.setSuccess(false);
-        }
-
-        return lrsResponse;
-     */
   }
 
   @override
@@ -735,10 +699,14 @@ class RemoteLRS extends LRS {
   }
 
 // Make request (probably async)
-  Future<http.Response> _makeRequest(String resource, String verb,
-      {Map<String, String> queryParams,
-      Map<String, String> additionalHeaders,
-      body: dynamic}) async {
+  Future _makeRequest(
+    String resource,
+    String verb, {
+    Map<String, String> queryParams,
+    Map<String, String> additionalHeaders,
+    body: dynamic,
+    List<Attachment> attachments,
+  }) async {
     // resource, endpoint (from this), query parameters, headers
     String url = (resource.startsWith('http'))
         ? resource
@@ -768,27 +736,62 @@ class RemoteLRS extends LRS {
     }
 
     print(url);
-    //http.MultipartRequest()
-    var response;
-    switch (verb.toUpperCase()) {
-      case 'GET':
-        response = _client.get(url, headers: headers);
-        break;
-      case 'POST':
-        response = _client.post(url, headers: headers, body: body);
-        break;
-      case 'PUT':
-        response = _client.put(url, headers: headers, body: body);
-        break;
-      case 'DELETE':
-        response = _client.delete(url, headers: headers);
-        break;
-      case 'PATCH':
-        response = _client.patch(url, headers: headers, body: body);
-        break;
-    }
 
-    return response;
+    if (attachments?.isNotEmpty == true) {
+      final boundary = MultipartHelper.generateBoundaryString();
+      headers.remove('content-type');
+      headers['Content-Type'] = 'multipart/mixed; boundary=$boundary';
+      final streamedRequest =
+          http.StreamedRequest(verb.toUpperCase(), Uri.parse(url))
+            ..headers.addAll(headers);
+
+      streamedRequest.sink.add(utf8.encode('--$boundary\r\n'));
+      streamedRequest.sink
+          .add(utf8.encode('Content-Type: application/json\r\n\r\n'));
+      streamedRequest.sink.add(utf8.encode('$body\r\n'));
+
+      attachments?.forEach((attachment) {
+        final contentType = MediaType.parse(
+            attachment.contentType ?? 'application/octet-stream');
+
+        // Write boundary
+        streamedRequest.sink.add(utf8.encode('--$boundary\r\n'));
+        // Write headers
+        final hash = 'X-Experience-API-Hash: ${attachment.sha2}';
+        var header =
+            'Content-Type: $contentType\r\nContent-Transfer-Encoding: binary;\r\n$hash';
+
+        streamedRequest.sink.add(utf8.encode('$header\r\n\r\n'));
+        streamedRequest.sink.add(attachment.content.asInt8List());
+      });
+
+      // Closing boundary line
+      streamedRequest.sink.add(utf8.encode('\r\n--$boundary--\r\n'));
+      streamedRequest.sink.close();
+
+      return await streamedRequest.send();
+    } else {
+      var response;
+      switch (verb.toUpperCase()) {
+        case 'GET':
+          response = _client.get(url, headers: headers);
+          break;
+        case 'POST':
+          response = _client.post(url, headers: headers, body: body);
+          break;
+        case 'PUT':
+          response = _client.put(url, headers: headers, body: body);
+          break;
+        case 'DELETE':
+          response = _client.delete(url, headers: headers);
+          break;
+        case 'PATCH':
+          response = _client.patch(url, headers: headers, body: body);
+          break;
+      }
+
+      return response;
+    }
   }
 
   String _agentToString(Agent agent) {

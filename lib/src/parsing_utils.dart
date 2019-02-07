@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:TinCanDart/src/activity.dart';
 import 'package:TinCanDart/src/agent.dart';
 import 'package:TinCanDart/src/statement_ref.dart';
@@ -50,5 +53,13 @@ class ParsingUtils {
     }
 
     return uri;
+  }
+
+  static ByteBuffer toBuffer(String value) {
+    return Uint8List.fromList(utf8.encode(value)).buffer;
+  }
+
+  static ByteBuffer listToBuffer(List<int> bytes) {
+    return Uint8List.fromList(bytes).buffer;
   }
 }

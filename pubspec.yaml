@@ -8,9 +8,10 @@ environment:
   sdk: '>=2.0.0 <3.0.0'
 
 dependencies:
-#  path: ^1.4.1
+  #  path: ^1.4.1
   http: any
   uuid: any
+  crypto: any
 
 dev_dependencies:
   test: ^1.0.0
