@@ -1688,7 +1688,34 @@ void main() {
 
         Assert.assertEquals(hash1, hash2);
     }
+  */
+  test("should query statement with attachments", () async {
+    final statement = Statement(
+      actor: agent,
+      verb: verb,
+      object: activity,
+      attachments: [attachment1],
+    );
 
+    final saved = await lrs.saveStatement(statement);
+    expect(saved.success, isTrue);
+
+    final query = StatementsQuery(
+      format: QueryResultFormat.EXACT,
+      limit: 10,
+      attachments: true,
+    );
+
+    final queryResult = await lrs.queryStatements(query);
+    expect(queryResult.success, isTrue);
+
+    final calculated = sha256.convert(
+        queryResult.data.statements[0].attachments[0].content.asInt8List());
+    final expected = sha256.convert(attachment1.content.asInt8List());
+    expect(calculated, expected);
+  });
+
+  /*
     @Test
     public void testUpdateActivityProfile() throws Exception {
         ObjectMapper mapper = Mapper.getInstance();

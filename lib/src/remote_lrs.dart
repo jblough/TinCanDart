@@ -444,15 +444,46 @@ class RemoteLRS extends LRS {
         queryParams: query.toParameterMap(_version));
 
     print(response?.statusCode);
-    print(response?.body);
+    //print(response?.body);
+
+    dynamic responseBody;
+    if (response.runtimeType.toString() == 'StreamedResponse') {
+      http.StreamedResponse streamedResponse = response;
+      final data = await streamedResponse.stream.bytesToString();
+      responseBody = data;
+    } else {
+      responseBody = response?.body;
+    }
+    //print('Response : $responseBody');
 
     if (response?.statusCode == 200) {
-      final result = StatementsResult.fromJson(json.decode(response.body));
-      return LRSResponse<StatementsResult>(success: true, data: result);
+      if (response.headers['content-type']
+              ?.startsWith('multipart/mixed; boundary=') ==
+          true) {
+        // Parse mixed data
+        final contentType = response.headers['content-type'];
+        print(contentType);
+        //print(response.body);
+        final boundary = contentType.split('boundary=')[1];
+        final statement = Statement.fromMixedMultipart(boundary, response.body);
+        return LRSResponse<StatementsResult>(
+          success: true,
+          data: StatementsResult(
+            statements: statement,
+          ),
+        );
+      } else {
+        final statement = Statement.fromJson(json.decode(response.body));
+        return LRSResponse<StatementsResult>(
+          success: true,
+          data: StatementsResult(statements: [statement]),
+        );
+      }
     } else {
       return LRSResponse<StatementsResult>(
           success: false, errMsg: response?.body);
     }
+
     /*
         StatementsResultLRSResponse lrsResponse = new StatementsResultLRSResponse();
 
