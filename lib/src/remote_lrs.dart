@@ -443,7 +443,8 @@ class RemoteLRS extends LRS {
     final response = await _makeRequest('statements', 'GET',
         queryParams: query.toParameterMap(_version));
 
-    print(response?.statusCode);
+    //print(response?.statusCode);
+    //print(response?.runtimeType);
     //print(response?.body);
 
     dynamic responseBody;
@@ -473,10 +474,10 @@ class RemoteLRS extends LRS {
           ),
         );
       } else {
-        final statement = Statement.fromJson(json.decode(response.body));
+        final decoded = json.decode(responseBody);
         return LRSResponse<StatementsResult>(
           success: true,
-          data: StatementsResult(statements: [statement]),
+          data: StatementsResult.fromJson(decoded),
         );
       }
     } else {

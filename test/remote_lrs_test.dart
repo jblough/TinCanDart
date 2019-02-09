@@ -25,6 +25,21 @@ import 'package:crypto/crypto.dart';
 import 'package:test/test.dart';
 import 'package:uuid/uuid.dart';
 
+void compareStatements(Statement statement1, Statement statement2) {
+  // Convert both statements to JSON maps
+  final json1 = statement1.toJson(TinCanVersion.latest());
+  final json2 = statement2.toJson(TinCanVersion.latest());
+
+  // If either of the statements doesn't have the id defined, remove it for the comparison
+  if (statement1.id == null || statement2.id == null) {
+    json1.remove('id');
+    json2.remove('id');
+  }
+
+  // Compare the maps
+  expect(json1, json2);
+}
+
 void main() {
   var endpoint;
   var username;
@@ -279,7 +294,7 @@ void main() {
     }
    */
 
-  test("should pull about", () async {
+  test("should retrieve about", () async {
     final about = await lrs.about();
     expect(about.success, isTrue);
   });
@@ -441,7 +456,7 @@ void main() {
     expect(statement.id, isNull);
     final response = await lrs.saveStatement(statement);
     expect(response.success, isTrue);
-    expect(response.data.id, isNotNull);
+    compareStatements(response.data, statement);
   });
 
   /*
@@ -471,6 +486,7 @@ void main() {
     final response = await lrs.saveStatement(statement);
     expect(response.success, isTrue);
     expect(response.data.id, originalId);
+    compareStatements(response.data, statement);
   });
 
   /*
@@ -497,7 +513,7 @@ void main() {
 
     final response = await lrs.saveStatement(statement);
     expect(response.success, isTrue);
-    expect(response.data.context, isNotNull);
+    compareStatements(response.data, statement);
   });
 
   /*
@@ -526,7 +542,7 @@ void main() {
 
     final response = await lrs.saveStatement(statement);
     expect(response.success, isTrue);
-    expect(response.data.result, isNotNull);
+    compareStatements(response.data, statement);
   });
 
   /*
@@ -543,7 +559,7 @@ void main() {
         Assert.assertEquals(statement, lrsRes.getContent());
     }
    */
-  test("should save statement with statementref", () async {
+  test("should save statement with StatementRef", () async {
     final statement = Statement(
       id: Uuid().v4().toString(),
       timestamp: DateTime.now(),
@@ -554,7 +570,8 @@ void main() {
 
     final response = await lrs.saveStatement(statement);
     expect(response.success, isTrue);
-    expect(response.data.object, isNotNull);
+    //expect(response.data.object, isNotNull);
+    compareStatements(response.data, statement);
   });
 
   /*
@@ -582,7 +599,8 @@ void main() {
 
     final response = await lrs.saveStatement(statement);
     expect(response.success, isTrue);
-    expect(response.data.object, isNotNull);
+    //expect(response.data.object, isNotNull);
+    compareStatements(response.data, statement);
   });
 
   /*
@@ -1477,6 +1495,7 @@ void main() {
     final response = await lrs.saveStatement(statement);
     expect(response.success, isTrue);
     expect(response.data.id, isNotNull);
+    compareStatements(response.data, statement);
   });
 
   /*
@@ -1506,6 +1525,7 @@ void main() {
     final response = await lrs.saveStatement(statement);
     expect(response.success, isTrue);
     expect(response.data.id, isNotNull);
+    compareStatements(response.data, statement);
   });
 
   /*
@@ -1552,6 +1572,8 @@ void main() {
 
     final response = await lrs.saveStatements(statements);
     expect(response.success, isTrue);
+    compareStatements(response.data.statements[1], statement2);
+    expect(response.data, isNotNull);
     expect(response.data.statements[0].id, isNotNull);
     expect(response.data.statements[1].id, isNotNull);
   });
