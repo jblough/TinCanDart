@@ -21,6 +21,7 @@ import 'package:TinCanDart/src/statements_query.dart';
 import 'package:TinCanDart/src/substatement.dart';
 import 'package:TinCanDart/src/verb.dart';
 import 'package:TinCanDart/src/versions.dart';
+import 'package:crypto/crypto.dart';
 import 'package:test/test.dart';
 import 'package:uuid/uuid.dart';
 
@@ -300,8 +301,8 @@ void main() {
     }
    */
   test("should throw exception on endpoint bad url", () {
-    expect(RemoteLRS(endpoint: ParsingUtils.toUri("test")),
-        throwsA(TypeMatcher<FormatException>()));
+    expect(
+        RemoteLRS(endpoint: ParsingUtils.toUri("test")), throwsFormatException);
   });
 
   /*
@@ -1597,6 +1598,10 @@ void main() {
 
     final retrieved = await lrs.retrieveStatement(saved.data.id, true);
     expect(retrieved.success, isTrue);
+    final calculated =
+        sha256.convert(retrieved.data.attachments[0].content.asInt8List());
+    final expected = sha256.convert(attachment1.content.asInt8List());
+    expect(calculated, expected);
   });
 
   /*
@@ -1627,7 +1632,28 @@ void main() {
 
         Assert.assertEquals(hash1, hash2);
     }
+  */
+  test("should retrieve statement with binary attachment", () async {
+    final statement = Statement(
+      actor: agent,
+      verb: verb,
+      object: activity,
+      attachments: [attachment3],
+    );
 
+    final saved = await lrs.saveStatement(statement);
+    expect(saved.success, isTrue);
+
+    final retrieved = await lrs.retrieveStatement(saved.data.id, true);
+    expect(retrieved.success, isTrue);
+
+    final calculated =
+        sha256.convert(retrieved.data.attachments[0].content.asInt8List());
+    final expected = sha256.convert(attachment3.content.asInt8List());
+    expect(calculated, expected);
+  });
+
+  /*
     @Test
     public void testQueryStatementsWithAttachments() throws Exception {
         Statement statement = new Statement();

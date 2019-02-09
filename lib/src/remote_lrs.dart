@@ -494,7 +494,7 @@ class RemoteLRS extends LRS {
           true) {
         // Parse mixed data
         final contentType = response.headers['content-type'];
-        //print(contentType);
+        print(contentType);
         //print(response.body);
         final boundary = contentType.split('boundary=')[1];
         final statement = Statement.fromMixedMultipart(boundary, response.body);

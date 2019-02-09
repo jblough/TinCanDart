@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:TinCanDart/src/activity.dart';
@@ -56,7 +55,7 @@ class ParsingUtils {
   }
 
   static ByteBuffer toBuffer(String value) {
-    return Uint8List.fromList(utf8.encode(value)).buffer;
+    return Uint8List.fromList(value.codeUnits).buffer;
   }
 
   static ByteBuffer listToBuffer(List<int> bytes) {

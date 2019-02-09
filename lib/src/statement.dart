@@ -139,11 +139,11 @@ class Statement {
         } else {
           final hash = mixedPart._headers['X-Experience-API-Hash'];
           final length = mixedPart._headers['Content-Length'];
+          //print('length from header - $length');
+          //print('length from body - ${mixedPart._body.length}');
           statements?.forEach((statement) {
             statement.attachments?.forEach((attachment) {
-              if (attachment.sha2 == hash &&
-                  attachment.length == length &&
-                  attachment.content == null) {
+              if (attachment.sha2 == hash && attachment.content == null) {
                 attachment.content = ParsingUtils.listToBuffer(mixedPart._body);
               }
             });
@@ -207,7 +207,18 @@ class _MixedPart {
           mixedPart._headers[match[1]] = match[2];
         }
       } else {
-        mixedPart._body.addAll(utf8.encode(line));
+        //print('converting ${line.length} to ${line.codeUnits.length}');
+        mixedPart._body.addAll(line.codeUnits);
+        var expectedLength = mixedPart._headers['Content-Length'];
+        var calculatedLength = mixedPart._body.length;
+        //print('expected $expectedLength is $calculatedLength');
+        if (expectedLength != null &&
+            int.tryParse(expectedLength) > calculatedLength) {
+          mixedPart._body.addAll([13, 10]);
+
+          //calculatedLength = mixedPart._body.length;
+          //print('NOW expected $expectedLength is $calculatedLength');
+        }
       }
     });
 
