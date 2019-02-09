@@ -10,7 +10,7 @@ import 'package:TinCanDart/src/attachment.dart';
 import 'package:TinCanDart/src/document.dart';
 import 'package:TinCanDart/src/lrs.dart';
 import 'package:TinCanDart/src/lrs_response.dart';
-import 'package:TinCanDart/src/multipart_helper.dart';
+import 'package:TinCanDart/src/multipart_mixed_request.dart';
 import 'package:TinCanDart/src/person.dart';
 import 'package:TinCanDart/src/state_document.dart';
 import 'package:TinCanDart/src/statement.dart';
@@ -18,7 +18,6 @@ import 'package:TinCanDart/src/statements_query.dart';
 import 'package:TinCanDart/src/statements_result.dart';
 import 'package:TinCanDart/src/versions.dart';
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
 import 'package:uuid/uuid.dart';
 
 /// Class used to communicate with a TinCan API endpoint
@@ -486,15 +485,30 @@ class RemoteLRS extends LRS {
       [bool attachments = false]) async {
     final params = {'statement': id, 'attachments': attachments.toString()};
 
-    final response =
+    final http.Response response =
         await _makeRequest('statements', 'GET', queryParams: params);
 
     if (response?.statusCode == 200) {
-      final statement = Statement.fromJson(json.decode(response.body));
-      return LRSResponse<Statement>(
-        success: true,
-        data: statement,
-      );
+      if (response.headers['content-type']
+              ?.startsWith('multipart/mixed; boundary=') ==
+          true) {
+        // Parse mixed data
+        final contentType = response.headers['content-type'];
+        //print(contentType);
+        //print(response.body);
+        final boundary = contentType.split('boundary=')[1];
+        final statement = Statement.fromMixedMultipart(boundary, response.body);
+        return LRSResponse<Statement>(
+          success: true,
+          data: statement[0],
+        );
+      } else {
+        final statement = Statement.fromJson(json.decode(response.body));
+        return LRSResponse<Statement>(
+          success: true,
+          data: statement,
+        );
+      }
     } else {
       return LRSResponse<Statement>(success: false, errMsg: response?.body);
     }
@@ -560,10 +574,19 @@ class RemoteLRS extends LRS {
         body: body,
         attachments: (attachments.isEmpty) ? null : attachments);
     print('Response status : ${response?.statusCode}');
-    print('Response : ${response?.body}');
+
+    dynamic responseBody;
+    if (response.runtimeType.toString() == 'StreamedResponse') {
+      http.StreamedResponse streamedResponse = response;
+      final data = await streamedResponse.stream.bytesToString();
+      responseBody = data;
+    } else {
+      responseBody = response?.body;
+    }
+    print('Response : $responseBody');
 
     if (response?.statusCode == 200) {
-      final List ids = json.decode(response.body);
+      final List ids = json.decode(responseBody);
       List<Statement> saved = [];
       for (var ctr = 0; ctr < ids.length; ctr++) {
         saved.add(statements[ctr].copyWith(id: ids[ctr]));
@@ -738,38 +761,11 @@ class RemoteLRS extends LRS {
     print(url);
 
     if (attachments?.isNotEmpty == true) {
-      final boundary = MultipartHelper.generateBoundaryString();
-      headers.remove('content-type');
-      headers['Content-Type'] = 'multipart/mixed; boundary=$boundary';
-      final streamedRequest =
-          http.StreamedRequest(verb.toUpperCase(), Uri.parse(url))
-            ..headers.addAll(headers);
-
-      streamedRequest.sink.add(utf8.encode('--$boundary\r\n'));
-      streamedRequest.sink
-          .add(utf8.encode('Content-Type: application/json\r\n\r\n'));
-      streamedRequest.sink.add(utf8.encode('$body\r\n'));
-
-      attachments?.forEach((attachment) {
-        final contentType = MediaType.parse(
-            attachment.contentType ?? 'application/octet-stream');
-
-        // Write boundary
-        streamedRequest.sink.add(utf8.encode('--$boundary\r\n'));
-        // Write headers
-        final hash = 'X-Experience-API-Hash: ${attachment.sha2}';
-        var header =
-            'Content-Type: $contentType\r\nContent-Transfer-Encoding: binary;\r\n$hash';
-
-        streamedRequest.sink.add(utf8.encode('$header\r\n\r\n'));
-        streamedRequest.sink.add(attachment.content.asInt8List());
-      });
-
-      // Closing boundary line
-      streamedRequest.sink.add(utf8.encode('\r\n--$boundary--\r\n'));
-      streamedRequest.sink.close();
-
-      return await streamedRequest.send();
+      final request =
+          MultipartMixedRequest(verb.toUpperCase(), Uri.parse(url), body);
+      request.headers.addAll(headers);
+      request.attachments.addAll(attachments);
+      return await request.send();
     } else {
       var response;
       switch (verb.toUpperCase()) {

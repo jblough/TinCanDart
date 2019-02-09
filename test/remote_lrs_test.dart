@@ -1479,7 +1479,6 @@ void main() {
   });
 
   /*
-
     @Test
     public void testSaveStatementWithAttachments() throws Exception {
         Statement statement = new Statement();
@@ -1495,7 +1494,20 @@ void main() {
         Assert.assertNotNull(lrsRes.getContent().getId());
         Assert.assertNotNull(lrsRes.getResponse().getContent());
     }
+   */
+  test("should save statement with multiple attachments", () async {
+    final statement = Statement(
+        actor: agent,
+        verb: verb,
+        object: activity,
+        attachments: [attachment1, attachment2]);
 
+    final response = await lrs.saveStatement(statement);
+    expect(response.success, isTrue);
+    expect(response.data.id, isNotNull);
+  });
+
+  /*
     @Test
     public void testSaveStatementsWithAttachment() throws Exception {
         Statement statement = new Statement();
@@ -1520,6 +1532,30 @@ void main() {
         Assert.assertNotNull(lrsResultResp.getContent().getStatements().get(1).getId());
         Assert.assertNotNull(lrsResultResp.getResponse().getContent());
     }
+   */
+  test("should save statements with attachment", () async {
+    final statement1 = Statement(
+      actor: agent,
+      verb: verb,
+      object: activity,
+      attachments: [attachment1],
+    );
+
+    final statement2 = Statement(
+      actor: agent,
+      verb: verb,
+      object: activity,
+    );
+
+    final statements = [statement1, statement2];
+
+    final response = await lrs.saveStatements(statements);
+    expect(response.success, isTrue);
+    expect(response.data.statements[0].id, isNotNull);
+    expect(response.data.statements[1].id, isNotNull);
+  });
+
+  /*
 
     @Test
     public void testRetrieveStatementWithAttachment() throws Exception {
@@ -1547,6 +1583,23 @@ void main() {
 
         Assert.assertEquals(hash1, hash2);
     }
+   */
+  test("should retrieve statement with attachment", () async {
+    final statement = Statement(
+      actor: agent,
+      verb: verb,
+      object: activity,
+      attachments: [attachment1],
+    );
+
+    final saved = await lrs.saveStatement(statement);
+    expect(saved.success, isTrue);
+
+    final retrieved = await lrs.retrieveStatement(saved.data.id, true);
+    expect(retrieved.success, isTrue);
+  });
+
+  /*
 
     @Test
     public void testRetrieveStatementWithBinaryAttachment() throws Exception {

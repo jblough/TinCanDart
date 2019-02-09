@@ -1,5 +1,5 @@
 class LanguageMap {
-  final Map<String, String> map;
+  final Map<String, dynamic> map;
 
   LanguageMap(this.map);
 

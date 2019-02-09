@@ -12,7 +12,7 @@ class Attachment {
   final int length;
   final String sha2;
   final Uri fileUrl;
-  final ByteBuffer content;
+  ByteBuffer content;
 
   Attachment({
     this.usageType,
@@ -36,15 +36,23 @@ class Attachment {
     }
 
     return Attachment(
-      usageType: json['usageType'],
-      display: json['display'],
-      description: json['description'],
+      usageType: _toUri(json['usageType']),
+      display: LanguageMap.fromJson(json['display']),
+      description: LanguageMap.fromJson(json['description']),
       contentType: json['contentType'],
       length: json['length'],
       sha2: json['sha2'],
-      fileUrl: json['fileUrl'],
+      fileUrl: _toUri(json['fileUrl']),
       content: content,
     );
+  }
+
+  static Uri _toUri(String value) {
+    if (value == null) {
+      return null;
+    }
+
+    return Uri.tryParse(value);
   }
 
   static List<Attachment> listFromJson(List<dynamic> list) {
