@@ -116,18 +116,25 @@ class Statement {
         ? _MixedReader(body.codeUnits)
         : _MixedReader(body);
 
-    // TODO - See about making sure this is robust enough to handle different
-    // LRS sources
+    // TODO - See about making sure this is robust enough
     var line = reader.readNextLine(); // Boundary (or blank line)
     if (line.isEmpty || line == '\r\n') {
       line = reader.readNextLine(); // Boundary
     }
+
+    // Read the headers
+    Map<String, dynamic> headers = {};
     while (line.isNotEmpty && line != '\r\n') {
       line = reader.readNextLine(); // Headers
+      final match = headerRegExp.firstMatch(line);
+      if (match != null) {
+        headers[match[1]] = match[2];
+      }
     }
 
-    // Read the statements
-    final jsonData = reader.readNextLine();
+    // Read the Statements
+    int length = int.tryParse(headers['Content-Length']);
+    final jsonData = String.fromCharCodes(reader.readNextBinary(length));
     final Map<String, dynamic> jsonBody = json.decode(jsonData);
     if (jsonBody.containsKey('statements')) {
       final List jsonStatements = jsonBody['statements'];
@@ -146,7 +153,7 @@ class Statement {
 
     // Read the attachments
     while (!reader.done()) {
-      Map<String, dynamic> headers = {};
+      headers.clear();
       line = reader.readNextLine(); // Boundary
       while (!reader.done() && line.isNotEmpty && line != '\r\n') {
         line = reader.readNextLine(); // Headers
@@ -222,7 +229,8 @@ class _MixedReader {
     // Read next 'bytes to read' number of bytes into buffer and return
     final buffer =
         bytes.sublist(_currentPosition, _currentPosition + bytesToRead);
-    _currentPosition += bytesToRead;
+    // Add 2 characters for the \r\n after the binary part
+    _currentPosition += bytesToRead + 2;
     return buffer;
   }
 }
