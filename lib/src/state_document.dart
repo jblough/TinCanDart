@@ -38,4 +38,26 @@ class StateDocument extends Document {
       'registration': registration, // UUID
     };
   }
+
+  StateDocument copyWith({
+    Activity activity,
+    Agent agent,
+    String registration,
+    String id,
+    String etag,
+    DateTime timestamp,
+    String contentType,
+    ByteBuffer content,
+  }) {
+    return StateDocument(
+      activity: activity ?? this.activity,
+      agent: agent ?? this.agent,
+      registration: registration ?? this.registration,
+      id: id ?? this.id,
+      etag: etag ?? this.etag,
+      timestamp: timestamp ?? this.timestamp,
+      contentType: contentType ?? this.contentType,
+      content: content ?? this.content,
+    );
+  }
 }

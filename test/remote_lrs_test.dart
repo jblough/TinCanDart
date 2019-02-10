@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:TinCanDart/src/activity.dart';
@@ -317,7 +318,7 @@ void main() {
    */
   test("should throw exception on endpoint bad url", () {
     expect(
-        RemoteLRS(endpoint: ParsingUtils.toUri("test")), throwsFormatException);
+        RemoteLRS(endpoint: ParsingUtils.toUri('test')), throwsFormatException);
   });
 
   /*
@@ -886,7 +887,7 @@ void main() {
     final save = await lrs.saveState(doc);
     expect(save.success, isTrue);
 
-    final retrieve = await lrs.retrieveState("test", activity, agent, null);
+    final retrieve = await lrs.retrieveState('test', activity, agent, null);
     expect(retrieve.success, isTrue);
 
     final doc2 = StateDocument(
@@ -976,8 +977,26 @@ void main() {
         Assert.assertTrue(currentSet.equals(correctSet));
     }
 */
-/* - TODO THIS IS NEXT!!!
+
   test("should update state", () async {
+    // What changes are to be made
+    Map<String, String> changeSet = {};
+    // What the correct content should be after change
+    Map<String, String> correctSet = {};
+    // What the actual content is after change
+    Map<String, String> currentSet = {};
+
+    // Load initial change set
+    Map<String, String> changeSetMap = {'x': 'foo', 'y': 'bar'};
+    changeSetMap.forEach((key, value) {
+      changeSet[key] = value;
+    });
+    Map<String, String> correctSetMap =
+        changeSetMap; // In the beginning, these are equal
+    correctSetMap.forEach((key, value) {
+      correctSet[key] = value;
+    });
+
     final doc = StateDocument(
       id: 'test',
       activity: activity,
@@ -987,26 +1006,59 @@ void main() {
     final clear = await lrs.deleteState(doc);
     expect(clear.success, isTrue);
 
-    final doc2 = StateDocument(
-      id: 'test',
-      activity: activity,
-      agent: agent,
+    final doc2 = doc.copyWith(
       contentType: 'application/json',
-      content: null, // changeSet.toString().getBytes("UTF-8")
+      content: ParsingUtils.toBuffer(json.encode(changeSet)),
     );
 
     final save = await lrs.saveState(doc2);
     expect(save.success, isTrue);
 
     final retrieveBeforeUpdate =
-        await lrs.retrieveState("test", activity, agent, null);
+        await lrs.retrieveState('test', activity, agent, null);
     expect(retrieveBeforeUpdate.success, isTrue);
 
-    final StateDocument beforeDoc = retrieveBeforeUpdate.data;
+    final beforeDoc = retrieveBeforeUpdate.data;
+    final c = json.decode(String.fromCharCodes(beforeDoc.content.asInt8List()));
+    c.forEach((key, value) {
+      currentSet[key] = value;
+    });
+    expect(currentSet, correctSet);
 
-    final update = await lrs.updateState(doc);
+    changeSetMap = {'x': 'bash', 'z': 'faz'};
+    changeSet.clear();
+    changeSetMap.forEach((key, value) {
+      changeSet[key] = value;
+    });
+
+    final doc3 = doc2.copyWith(
+      contentType: 'application/json',
+      content: ParsingUtils.toBuffer(json.encode(changeSet)),
+    );
+
+    // Update the correct set with the changes
+    changeSetMap.forEach((key, value) {
+      correctSet[key] = value;
+    });
+
+    currentSet.clear();
+
+    final update = await lrs.updateState(doc3);
+    expect(update.success, isTrue);
+
+    final retrieveAfterUpdate =
+        await lrs.retrieveState('test', activity, agent, null);
+    expect(retrieveAfterUpdate.success, isTrue);
+
+    final afterDoc = retrieveAfterUpdate.data;
+    final ac = json.decode(String.fromCharCodes(afterDoc.content.asInt8List()));
+    ac.forEach((key, value) {
+      currentSet[key] = value;
+    });
+
+    expect(currentSet, correctSet);
   });
-*/
+
   /*
     @Test
     public void testDeleteState() throws Exception {
@@ -1111,7 +1163,7 @@ void main() {
     expect(save.success, isTrue);
 
     final retrieveResponse =
-        await lrs.retrieveActivityProfile("test", activity);
+        await lrs.retrieveActivityProfile('test', activity);
     expect(retrieveResponse.data.etag,
         '"6e6e6c11d7e0bffe0369873a2a5fd751ab2ea64f"');
     expect(retrieveResponse.success, isTrue);
@@ -1194,7 +1246,7 @@ void main() {
     );
     expect(save.success, isTrue);
 
-    final retrieve = await lrs.retrieveActivityProfile("test", activity);
+    final retrieve = await lrs.retrieveActivityProfile('test', activity);
     expect(retrieve.success, isTrue);
 
     final lrsResp = await lrs.saveActivityProfile(ActivityProfileDocument(
@@ -1291,7 +1343,7 @@ void main() {
     ));
     expect(save.success, isTrue);
 
-    final retrieve = await lrs.retrieveAgentProfile("test", agent);
+    final retrieve = await lrs.retrieveAgentProfile('test', agent);
     expect(retrieve.success, isTrue);
     expect(retrieve.data.etag, '"da16d3e0cbd55e0f13558ad0ecfd2605e2238c71"');
   });
@@ -1401,6 +1453,86 @@ void main() {
         Assert.assertTrue(currentSet.equals(correctSet));
     }
   */
+  test("should update agent profile", () async {
+    // What changes are to be made
+    Map<String, String> changeSet = {};
+    // What the correct content should be after change
+    Map<String, String> correctSet = {};
+    // What the actual content is after change
+    Map<String, String> currentSet = {};
+
+    // Load initial change set
+    Map<String, String> changeSetMap = {
+      'firstName': 'Dave',
+      'lastName': 'Smith',
+      'State': 'CO'
+    };
+    changeSetMap.forEach((key, value) {
+      changeSet[key] = value;
+    });
+    Map<String, String> correctSetMap =
+        changeSetMap; // In the beginning, these are equal
+    correctSetMap.forEach((key, value) {
+      correctSet[key] = value;
+    });
+
+    final doc = AgentProfileDocument(
+      id: 'test',
+      agent: agent,
+    );
+
+    final clear = await lrs.deleteAgentProfile(doc);
+    expect(clear.success, isTrue);
+
+    final doc2 = doc.copyWith(
+      contentType: 'application/json',
+      content: ParsingUtils.toBuffer(json.encode(changeSet)),
+    );
+
+    final save = await lrs.saveAgentProfile(doc2);
+    expect(save.success, isTrue);
+
+    final retrieveBeforeUpdate = await lrs.retrieveAgentProfile('test', agent);
+    expect(retrieveBeforeUpdate.success, isTrue);
+    final beforeDoc = retrieveBeforeUpdate.data;
+    final c = json.decode(String.fromCharCodes(beforeDoc.content.asInt8List()));
+    c.forEach((key, value) {
+      currentSet[key] = value;
+    });
+    expect(currentSet, correctSet);
+
+    changeSetMap = {'lastName': 'Jones', 'City': 'Colorado Springs'};
+    changeSet.clear();
+    changeSetMap.forEach((key, value) {
+      changeSet[key] = value;
+    });
+
+    final doc3 = doc2.copyWith(
+      contentType: 'application/json',
+      content: ParsingUtils.toBuffer(json.encode(changeSet)),
+    );
+
+    // Update the correct set with the changes
+    changeSetMap.forEach((key, value) {
+      correctSet[key] = value;
+    });
+
+    currentSet.clear();
+
+    final update = await lrs.updateAgentProfile(doc3);
+    expect(update.success, isTrue);
+
+    final retrieveAfterUpdate = await lrs.retrieveAgentProfile('test', agent);
+    expect(retrieveAfterUpdate.success, isTrue);
+
+    final afterDoc = retrieveAfterUpdate.data;
+    final ac = json.decode(String.fromCharCodes(afterDoc.content.asInt8List()));
+    ac.forEach((key, value) {
+      currentSet[key] = value;
+    });
+
+    expect(currentSet, correctSet);
+  });
 
   /*
     @Test
@@ -1442,7 +1574,7 @@ void main() {
     ));
     expect(save.success, isTrue);
 
-    final retrieve = await lrs.retrieveAgentProfile("test", agent);
+    final retrieve = await lrs.retrieveAgentProfile('test', agent);
     expect(retrieve.success, isTrue);
 
     final overwrite = await lrs.saveAgentProfile(AgentProfileDocument(
@@ -1813,6 +1945,82 @@ void main() {
         }
         Assert.assertTrue(currentSet.equals(correctSet));
     }
-
    */
+
+  test("should update activity profile", () async {
+    // What changes are to be made
+    Map<String, String> changeSet = {};
+    // What the correct content should be after change
+    Map<String, String> correctSet = {};
+    // What the actual content is after change
+    Map<String, String> currentSet = {};
+
+    // Load initial change set
+    Map<String, String> changeSetMap = {'x': 'foo', 'y': 'bar'};
+    changeSetMap.forEach((key, value) {
+      changeSet[key] = value;
+    });
+    Map<String, String> correctSetMap =
+        changeSetMap; // In the beginning, these are equal
+    correctSetMap.forEach((key, value) {
+      correctSet[key] = value;
+    });
+
+    final doc = new ActivityProfileDocument(id: 'test', activity: activity);
+
+    final clear = await lrs.deleteActivityProfile(doc);
+    expect(clear.success, isTrue);
+
+    final doc2 = doc.copyWith(
+      contentType: 'application/json',
+      content: ParsingUtils.toBuffer(json.encode(changeSet)),
+    );
+
+    final save = await lrs.saveActivityProfile(doc2);
+    expect(save.success, isTrue);
+
+    final retrieveBeforeUpdate =
+        await lrs.retrieveActivityProfile('test', activity);
+    expect(retrieveBeforeUpdate.success, isTrue);
+
+    final beforeDoc = retrieveBeforeUpdate.data;
+    final c = json.decode(String.fromCharCodes(beforeDoc.content.asInt8List()));
+    c.forEach((key, value) {
+      currentSet[key] = value;
+    });
+    expect(currentSet, correctSet);
+
+    changeSetMap = {'x': 'bash', 'z': 'faz'};
+    changeSet.clear();
+    changeSetMap.forEach((key, value) {
+      changeSet[key] = value;
+    });
+
+    final doc3 = doc2.copyWith(
+      contentType: 'application/json',
+      content: ParsingUtils.toBuffer(json.encode(changeSet)),
+    );
+
+    // Update the correct set with the changes
+    changeSetMap.forEach((key, value) {
+      correctSet[key] = value;
+    });
+
+    currentSet.clear();
+
+    final update = await lrs.updateActivityProfile(doc3);
+    expect(update.success, isTrue);
+
+    final retrieveAfterUpdate =
+        await lrs.retrieveActivityProfile('test', activity);
+    expect(retrieveAfterUpdate.success, isTrue);
+
+    final afterDoc = retrieveAfterUpdate.data;
+    final ac = json.decode(String.fromCharCodes(afterDoc.content.asInt8List()));
+    ac.forEach((key, value) {
+      currentSet[key] = value;
+    });
+
+    expect(currentSet, correctSet);
+  });
 }

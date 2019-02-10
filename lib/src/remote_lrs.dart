@@ -966,8 +966,19 @@ class RemoteLRS extends LRS {
     if (document.etag != null) {
       headers = {'If-Match': document.etag};
     }
+
+    if (document.contentType != null) {
+      if (headers == null) {
+        headers = {'content-type': document.contentType};
+      } else {
+        headers['content-type'] = document.contentType;
+      }
+    }
+
     final response = await _makeRequest(resource, 'POST',
-        queryParams: params, additionalHeaders: headers);
+        queryParams: params,
+        additionalHeaders: headers,
+        body: document.content?.asInt8List());
     if (response?.statusCode == 204) {
       return LRSResponse(success: true);
     } else {
