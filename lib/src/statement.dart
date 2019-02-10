@@ -111,46 +111,66 @@ class Statement {
 
     final statements = <Statement>[];
 
-    // Read each line until another '--$boundary' is reached
-    // Then process the lines together int a statement and then add the attachments
-    var b = body as String;
-    final parts = b.split('--$boundary\r\n');
-    parts?.forEach((part) {
-      final mixedPart = _MixedPart.fromBody(part);
-      if (mixedPart != null) {
-        final contentType = mixedPart._headers['Content-Type'] as String;
-        if (contentType != null && contentType.startsWith('application/json')) {
-          final Map<String, dynamic> jsonBody =
-              json.decode(String.fromCharCodes(mixedPart._body));
-          if (jsonBody.containsKey('statements')) {
-            final List jsonStatements = jsonBody['statements'];
-            jsonStatements.forEach((jsonStatement) {
-              var statement = Statement.fromJson(jsonStatement);
-              if (statement != null) {
-                statements.add(statement);
-              }
-            });
-          } else {
-            var statement = Statement.fromJson(jsonBody);
-            if (statement != null) {
-              statements.add(statement);
-            }
-          }
-        } else {
-          final hash = mixedPart._headers['X-Experience-API-Hash'];
-          final length = mixedPart._headers['Content-Length'];
-          //print('length from header - $length');
-          //print('length from body - ${mixedPart._body.length}');
-          statements?.forEach((statement) {
-            statement.attachments?.forEach((attachment) {
-              if (attachment.sha2 == hash && attachment.content == null) {
-                attachment.content = ParsingUtils.listToBuffer(mixedPart._body);
-              }
-            });
-          });
+    final headerRegExp = RegExp(r'^(.*?): ?(.*?)$');
+    final reader = (body.runtimeType == String)
+        ? _MixedReader(body.codeUnits)
+        : _MixedReader(body);
+
+    // TODO - See about making sure this is robust enough to handle different
+    // LRS sources
+    var line = reader.readNextLine(); // Boundary (or blank line)
+    if (line.isEmpty || line == '\r\n') {
+      line = reader.readNextLine(); // Boundary
+    }
+    while (line.isNotEmpty && line != '\r\n') {
+      line = reader.readNextLine(); // Headers
+    }
+
+    // Read the statements
+    final jsonData = reader.readNextLine();
+    final Map<String, dynamic> jsonBody = json.decode(jsonData);
+    if (jsonBody.containsKey('statements')) {
+      final List jsonStatements = jsonBody['statements'];
+      jsonStatements.forEach((jsonStatement) {
+        var statement = Statement.fromJson(jsonStatement);
+        if (statement != null) {
+          statements.add(statement);
+        }
+      });
+    } else {
+      var statement = Statement.fromJson(jsonBody);
+      if (statement != null) {
+        statements.add(statement);
+      }
+    }
+
+    // Read the attachments
+    while (!reader.done()) {
+      Map<String, dynamic> headers = {};
+      line = reader.readNextLine(); // Boundary
+      while (!reader.done() && line.isNotEmpty && line != '\r\n') {
+        line = reader.readNextLine(); // Headers
+        final match = headerRegExp.firstMatch(line);
+        if (match != null) {
+          headers[match[1]] = match[2];
         }
       }
-    });
+
+      if (headers.isNotEmpty) {
+        int length = int.tryParse(headers['Content-Length']);
+        final bytes = reader.readNextBinary(length);
+
+        final hash = headers['X-Experience-API-Hash'];
+        statements?.forEach((statement) {
+          statement.attachments?.forEach((attachment) {
+            if (attachment.sha2 == hash && attachment.content == null) {
+              attachment.content = ParsingUtils.listToBuffer(bytes);
+            }
+          });
+        });
+      }
+    }
+
     /*
     Sample data:
 --fd8185b9145b4646bafa518a41d735e3
@@ -178,50 +198,31 @@ hello world 2
   }
 }
 
-class _MixedPart {
-  static final _headerRegExp = RegExp(r'^(.*?): ?(.*?)$');
+class _MixedReader {
+  final List<int> bytes;
+  int _currentPosition = 0;
 
-  Map<String, dynamic> _headers = {};
-  List<int> _body = [];
+  _MixedReader(this.bytes);
 
-  _MixedPart();
+  bool done() => _currentPosition >= bytes.length;
 
-  factory _MixedPart.fromBody(String part) {
-    if (part == null || part.isEmpty) {
-      return null;
+  String readNextLine() {
+    // Read up to next '\r\n';
+    final buffer = StringBuffer();
+
+    while (!buffer.toString().endsWith('\r\n') && !done()) {
+      buffer.writeCharCode(bytes[_currentPosition++]);
     }
 
-    final mixedPart = _MixedPart();
+    // Remove the trailing newline characters
+    return buffer.toString().replaceAll('\r\n', '');
+  }
 
-    // All lines until the first blank line are headers
-    // The part after the blank link is content
-    final lines = part.split('\r\n');
-    //print(lines.length);
-    bool passedHeaders = false;
-    lines.forEach((line) {
-      if (!passedHeaders && line.isEmpty) {
-        passedHeaders = true;
-      } else if (!passedHeaders) {
-        final match = _headerRegExp.firstMatch(line);
-        if (match != null) {
-          mixedPart._headers[match[1]] = match[2];
-        }
-      } else {
-        //print('converting ${line.length} to ${line.codeUnits.length}');
-        mixedPart._body.addAll(line.codeUnits);
-        var expectedLength = mixedPart._headers['Content-Length'];
-        var calculatedLength = mixedPart._body.length;
-        //print('expected $expectedLength is $calculatedLength');
-        if (expectedLength != null &&
-            int.tryParse(expectedLength) > calculatedLength) {
-          mixedPart._body.addAll([13, 10]);
-
-          //calculatedLength = mixedPart._body.length;
-          //print('NOW expected $expectedLength is $calculatedLength');
-        }
-      }
-    });
-
-    return mixedPart;
+  List<int> readNextBinary(int bytesToRead) {
+    // Read next 'bytes to read' number of bytes into buffer and return
+    final buffer =
+        bytes.sublist(_currentPosition, _currentPosition + bytesToRead);
+    _currentPosition += bytesToRead;
+    return buffer;
   }
 }

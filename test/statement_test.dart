@@ -1,14 +1,41 @@
+import 'dart:io';
+
+import 'package:TinCanDart/src/parsing_utils.dart';
 import 'package:TinCanDart/src/statement.dart';
 import 'package:test/test.dart';
 
 void main() {
   test("should import statement result", () {
     final boundary = '4d6a340e6ff64b27814b9b7095ebd26e';
-    final result =
-        Statement.fromMixedMultipart(boundary, body.replaceAll('\n', '\r\n'));
+    final result = Statement.fromMixedMultipart(
+        boundary, body.replaceAll('\n', '\r\n').codeUnits);
     expect(result, isNotNull);
     //expect(result.length, 1);
     expect(result[0].id, 'b1a21cd9-d1ed-4ded-87cb-fa9f40bb272b');
+  });
+
+  test("should import single statement result", () {
+    final boundary = '1416c651f2f54d0e9d178eb165492a0c';
+    final result =
+        Statement.fromMixedMultipart(boundary, body2.replaceAll('\n', '\r\n'));
+    expect(result, isNotNull);
+    //expect(result.length, 1);
+    print(String.fromCharCodes(result[0].attachments[0].content.asInt8List()));
+    expect(result[0].id, '7b47a074-1277-45c5-97be-a3c9c14e706d');
+    expect(result[0].attachments[0].content.asInt8List().length,
+        ParsingUtils.toBuffer('hello world').asInt8List().length);
+  });
+
+  test("should import binary image result", () {
+    final boundary = '92d88485da5d4d32bf29127824b3c836';
+    final payload = File('test/payload.data').readAsBytesSync();
+    print(payload.length);
+    final result = Statement.fromMixedMultipart(boundary, payload);
+    expect(result, isNotNull);
+    //expect(result.length, 1);
+    //print(String.fromCharCodes(result[0].attachments[0].content.asInt8List()));
+    expect(result[0].id, 'db6adf7c-09a9-4854-a2b9-bbf087f1371b');
+    expect(result[0].attachments[0].content.asInt8List().length, 50836);
   });
 }
 
@@ -33,4 +60,20 @@ Content-Type:text/plain
 
 hello world 2
 --4d6a340e6ff64b27814b9b7095ebd26e--
+''';
+
+final body2 = '''
+--1416c651f2f54d0e9d178eb165492a0c
+Content-Length:1039
+Content-Type:application/json; charset=UTF-8
+
+{"id":"7b47a074-1277-45c5-97be-a3c9c14e706d","actor":{"mbox":"mailto:tincanjava@tincanapi.com","objectType":"Agent","name":"Test Agent"},"verb":{"id":"http://adlnet.gov/expapi/verbs/experienced","display":{"en-US":"experienced"}},"timestamp":"2019-02-09T20:55:22.911Z","stored":"2019-02-09T20:55:22.911Z","authority":{"account":{"homePage":"http://cloud.scorm.com","name":"9L2Q71kgCTHPMGgqG-8"},"objectType":"Agent","name":"Unnamed Account"},"version":"1.0.0","attachments":[{"usageType":"http://id.tincanapi.com/attachment/supporting_media/","display":{"en-US":"Test Display"},"description":{"en-US":"Test Description"},"contentType":"application/octet-stream","length":11,"sha2":"b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"}],"object":{"id":"http://tincanapi.com/TinCanJava/Test/Unit/0/","definition":{"name":{"en-US":"TinCanJava Tests: Unit 0"},"description":{"en-US":"Unit test 0 in the test suite for the Tin Can Java library."},"type":"http://id.tincanapi.com/activitytype/unit-test/"},"objectType":"Activity"}}
+--1416c651f2f54d0e9d178eb165492a0c
+X-Experience-API-Hash:b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9
+Content-Transfer-Encoding:binary
+Content-Length:11
+Content-Type:application/octet-stream
+
+hello world
+--1416c651f2f54d0e9d178eb165492a0c--
 ''';

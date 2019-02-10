@@ -195,7 +195,12 @@ class RemoteLRS extends LRS {
 
   @override
   Future<LRSResponse> updateActivityProfile(ActivityProfileDocument profile) {
-    return null;
+    final params = {
+      'profileId': profile.id,
+      'activityId': profile.activity.id.toString(),
+    };
+
+    return _updateDocument("activities/profile", params, profile);
   }
 
   @override
@@ -341,7 +346,13 @@ class RemoteLRS extends LRS {
 
   @override
   Future<LRSResponse> updateState(StateDocument state) {
-    return null;
+    final params = {
+      'stateId': state.id,
+      'activityId': state.activity.id.toString(),
+      'agent': _agentToString(state.agent),
+    };
+
+    return _updateDocument("activities/state", params, state);
   }
 
   @override
@@ -466,7 +477,8 @@ class RemoteLRS extends LRS {
         print(contentType);
         //print(response.body);
         final boundary = contentType.split('boundary=')[1];
-        final statement = Statement.fromMixedMultipart(boundary, response.body);
+        final statement =
+            Statement.fromMixedMultipart(boundary, response.bodyBytes);
         return LRSResponse<StatementsResult>(
           success: true,
           data: StatementsResult(
@@ -509,81 +521,25 @@ class RemoteLRS extends LRS {
   @override
   Future<LRSResponse<Statement>> retrieveVoidedStatement(
       String id, bool attachments) {
-    return null;
+    final paramName =
+        (_version == Version.V095) ? "statementId" : "voidedStatementId";
+    final params = {
+      paramName: id,
+      'attachments': attachments.toString(),
+    };
+
+    return _getStatement(params);
   }
 
   @override
   Future<LRSResponse<Statement>> retrieveStatement(String id,
       [bool attachments = false]) async {
-    final params = {'statement': id, 'attachments': attachments.toString()};
+    final params = {
+      'statementId': id,
+      'attachments': attachments.toString(),
+    };
 
-    final http.Response response =
-        await _makeRequest('statements', 'GET', queryParams: params);
-
-    if (response?.statusCode == 200) {
-      if (response.headers['content-type']
-              ?.startsWith('multipart/mixed; boundary=') ==
-          true) {
-        // Parse mixed data
-        final contentType = response.headers['content-type'];
-        print(contentType);
-        //print(response.body);
-        final boundary = contentType.split('boundary=')[1];
-        final statement = Statement.fromMixedMultipart(boundary, response.body);
-        return LRSResponse<Statement>(
-          success: true,
-          data: statement[0],
-        );
-      } else {
-        final statement = Statement.fromJson(json.decode(response.body));
-        return LRSResponse<Statement>(
-          success: true,
-          data: statement,
-        );
-      }
-    } else {
-      return LRSResponse<Statement>(success: false, errMsg: response?.body);
-    }
-    /*
-        HTTPRequest request = new HTTPRequest();
-        request.setMethod(HttpMethod.GET.asString());
-        request.setResource("statements");
-        request.setQueryParams(params);
-
-        HTTPResponse response = makeSyncRequest(request);
-        int status = response.getStatus();
-
-        StatementLRSResponse lrsResponse = new StatementLRSResponse(request, response);
-
-        if (status == 200) {
-            lrsResponse.setSuccess(true);
-            try {
-                JsonNode contentNode = (new StringOfJSON(response.getContent())).toJSONNode();
-                if (! (contentNode.findPath("statements").isMissingNode())) {
-                    contentNode = contentNode.findPath("statements").get(0);
-                }
-
-                Statement stmt = new Statement (contentNode);
-                for (Map.Entry<String, byte[]> entry : response.getAttachments().entrySet()) {
-                    for (Attachment a : stmt.getAttachments()) {
-                        if (entry.getKey().equals(a.getSha2())) {
-                            a.setContent(entry.getValue());
-                        }
-                    }
-                }
-
-                lrsResponse.setContent(stmt);
-            } catch (Exception ex) {
-                lrsResponse.setErrMsg("Exception: " + ex.toString());
-                lrsResponse.setSuccess(false);
-            }
-        }
-        else {
-            lrsResponse.setSuccess(false);
-        }
-
-        return lrsResponse;
-     */
+    return _getStatement(params);
   }
 
   @override
@@ -1043,6 +999,80 @@ class RemoteLRS extends LRS {
         return lrsResponse;
      */
   }
+
+  Future<LRSResponse<Statement>> _getStatement(
+    Map<String, String> params,
+  ) async {
+    final http.Response response =
+        await _makeRequest('statements', 'GET', queryParams: params);
+
+    if (response?.statusCode == 200) {
+      if (response.headers['content-type']
+              ?.startsWith('multipart/mixed; boundary=') ==
+          true) {
+        // Parse mixed data
+        final contentType = response.headers['content-type'];
+        //print(contentType);
+        final boundary = contentType.split('boundary=')[1];
+        final statement =
+            Statement.fromMixedMultipart(boundary, response.bodyBytes);
+        return LRSResponse<Statement>(
+          success: true,
+          data: statement[0],
+        );
+      } else {
+        final statement = Statement.fromJson(json.decode(response.body));
+        return LRSResponse<Statement>(
+          success: true,
+          data: statement,
+        );
+      }
+    } else {
+      return LRSResponse<Statement>(success: false, errMsg: response?.body);
+    }
+
+    /*
+        HTTPRequest request = new HTTPRequest();
+        request.setMethod(HttpMethod.GET.asString());
+        request.setResource("statements");
+        request.setQueryParams(params);
+
+        HTTPResponse response = makeSyncRequest(request);
+        int status = response.getStatus();
+
+        StatementLRSResponse lrsResponse = new StatementLRSResponse(request, response);
+
+        if (status == 200) {
+            lrsResponse.setSuccess(true);
+            try {
+                JsonNode contentNode = (new StringOfJSON(response.getContent())).toJSONNode();
+                if (! (contentNode.findPath("statements").isMissingNode())) {
+                    contentNode = contentNode.findPath("statements").get(0);
+                }
+
+                Statement stmt = new Statement (contentNode);
+                for (Map.Entry<String, byte[]> entry : response.getAttachments().entrySet()) {
+                    for (Attachment a : stmt.getAttachments()) {
+                        if (entry.getKey().equals(a.getSha2())) {
+                            a.setContent(entry.getValue());
+                        }
+                    }
+                }
+
+                lrsResponse.setContent(stmt);
+            } catch (Exception ex) {
+                lrsResponse.setErrMsg("Exception: " + ex.toString());
+                lrsResponse.setSuccess(false);
+            }
+        }
+        else {
+            lrsResponse.setSuccess(false);
+        }
+
+        return lrsResponse;
+     */
+  }
+
 /*
       HTTPRequest request = new HTTPRequest();
         request.setMethod(HttpMethod.GET.asString());

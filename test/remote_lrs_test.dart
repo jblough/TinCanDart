@@ -81,7 +81,7 @@ void main() {
     });
 
     agent = Agent(
-      mbox: 'mailto:tincanjava@tincanapi.com',
+      mbox: 'mailto:tincandart@tincanapi.com',
       name: 'Test Agent',
     );
 
@@ -97,47 +97,47 @@ void main() {
 
     /*
         activity = new Activity();
-        activity.setId(new URI("http://tincanapi.com/TinCanJava/Test/Unit/0"));
+        activity.setId(new URI("http://tincanapi.com/TinCanDart/Test/Unit/0"));
         activity.setDefinition(new ActivityDefinition());
         activity.getDefinition().setType(new URI("http://id.tincanapi.com/activitytype/unit-test"));
         activity.getDefinition().setName(new LanguageMap());
-        activity.getDefinition().getName().put("en-US", "TinCanJava Tests: Unit 0");
+        activity.getDefinition().getName().put("en-US", "TinCanDart Tests: Unit 0");
         activity.getDefinition().setDescription(new LanguageMap());
-        activity.getDefinition().getDescription().put("en-US", "Unit test 0 in the test suite for the Tin Can Java library.");
+        activity.getDefinition().getDescription().put("en-US", "Unit test 0 in the test suite for the Tin Can Dart library.");
     */
     activity = Activity(
-      id: ParsingUtils.toUri('http://tincanapi.com/TinCanJava/Test/Unit/0'),
+      id: ParsingUtils.toUri('http://tincanapi.com/TinCanDart/Test/Unit/0'),
       definition: ActivityDefinition(
         type: ParsingUtils.toUri(
             'http://id.tincanapi.com/activitytype/unit-test'),
-        name: LanguageMap({'en-US': 'TinCanJava Tests: Unit 0'}),
+        name: LanguageMap({'en-US': 'TinCanDart Tests: Unit 0'}),
         description: LanguageMap({
-          'en-US': 'Unit test 0 in the test suite for the Tin Can Java library.'
+          'en-US': 'Unit test 0 in the test suite for the Tin Can Dart library.'
         }),
       ),
     );
 
     /*
         parent = new Activity();
-        parent.setId(new URI("http://tincanapi.com/TinCanJava/Test"));
+        parent.setId(new URI("http://tincanapi.com/TinCanDart/Test"));
         parent.setDefinition(new ActivityDefinition());
         parent.getDefinition().setType(new URI("http://id.tincanapi.com/activitytype/unit-test-suite"));
-        //parent.getDefinition().setMoreInfo(new URI("http://rusticisoftware.github.io/TinCanJava/"));
+        //parent.getDefinition().setMoreInfo(new URI("http://rusticisoftware.github.io/TinCanDart/"));
         parent.getDefinition().setName(new LanguageMap());
-        parent.getDefinition().getName().put("en-US", "TinCanJavava Tests");
+        parent.getDefinition().getName().put("en-US", "TinCanDart Tests");
         parent.getDefinition().setDescription(new LanguageMap());
-        parent.getDefinition().getDescription().put("en-US", "Unit test suite for the Tin Can Java library.");
+        parent.getDefinition().getDescription().put("en-US", "Unit test suite for the Tin Can Dart library.");
      */
     parent = Activity(
-      id: ParsingUtils.toUri('http://tincanapi.com/TinCanJava/Test'),
+      id: ParsingUtils.toUri('http://tincanapi.com/TinCanDart/Test'),
       definition: ActivityDefinition(
           type: ParsingUtils.toUri(
               'http://id.tincanapi.com/activitytype/unit-test-suite'),
           moreInfo: ParsingUtils.toUri(
-              'http://rusticisoftware.github.io/TinCanJava/'),
-          name: LanguageMap({'en-US': 'TinCanJavava Tests'}),
+              'http://rusticisoftware.github.io/TinCanDart/'),
+          name: LanguageMap({'en-US': 'TinCanDart Tests'}),
           description: LanguageMap(
-              {'en-US': 'Unit test suite for the Tin Can Java library.'})),
+              {'en-US': 'Unit test suite for the Tin Can Dart library.'})),
     );
 
     /*
@@ -303,7 +303,7 @@ void main() {
     var obj = RemoteLRS();
     expect(obj.endpoint, isNull);
 
-    String strURL = "http://tincanapi.com/test/TinCanJava";
+    String strURL = "http://tincanapi.com/test/TinCanDart";
     obj = RemoteLRS(endpoint: ParsingUtils.toUri(strURL));
     expect(obj.endpoint.toString(), '$strURL/');
   });
@@ -976,7 +976,7 @@ void main() {
         Assert.assertTrue(currentSet.equals(correctSet));
     }
 */
-/*
+/* - TODO THIS IS NEXT!!!
   test("should update state", () async {
     final doc = StateDocument(
       id: 'test',
@@ -1003,9 +1003,10 @@ void main() {
     expect(retrieveBeforeUpdate.success, isTrue);
 
     final StateDocument beforeDoc = retrieveBeforeUpdate.data;
-  });
-  */
 
+    final update = await lrs.updateState(doc);
+  });
+*/
   /*
     @Test
     public void testDeleteState() throws Exception {
@@ -1669,8 +1670,9 @@ void main() {
     final retrieved = await lrs.retrieveStatement(saved.data.id, true);
     expect(retrieved.success, isTrue);
 
-    final calculated =
-        sha256.convert(retrieved.data.attachments[0].content.asInt8List());
+    final take = attachment3.content.asInt8List().length;
+    final calculated = sha256.convert(
+        retrieved.data.attachments[0].content.asInt8List().take(take).toList());
     final expected = sha256.convert(attachment3.content.asInt8List());
     expect(calculated, expected);
   });
