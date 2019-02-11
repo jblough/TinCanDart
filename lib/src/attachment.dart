@@ -1,16 +1,17 @@
 import 'package:TinCanDart/src/attachment_content.dart';
 import 'package:TinCanDart/src/language_map.dart';
+import 'package:TinCanDart/src/validated_uri.dart';
 import 'package:TinCanDart/src/versions.dart';
 import 'package:crypto/crypto.dart' show sha256;
 
 class Attachment {
-  final Uri usageType;
+  final ValidatedUri usageType;
   final LanguageMap display;
   final LanguageMap description;
   final String contentType;
   final int length;
   final String sha2;
-  final Uri fileUrl;
+  final ValidatedUri fileUrl;
 
   AttachmentContent content;
 
@@ -38,23 +39,15 @@ class Attachment {
     }
 
     return Attachment(
-      usageType: _toUri(json['usageType']),
+      usageType: ValidatedUri.fromString(json['usageType']),
       display: LanguageMap.fromJson(json['display']),
       description: LanguageMap.fromJson(json['description']),
       contentType: json['contentType'],
       length: json['length'],
       sha2: json['sha2'],
-      fileUrl: _toUri(json['fileUrl']),
+      fileUrl: ValidatedUri.fromString(json['fileUrl']),
       content: content,
     );
-  }
-
-  static Uri _toUri(String value) {
-    if (value == null) {
-      return null;
-    }
-
-    return Uri.tryParse(value);
   }
 
   static List<Attachment> listFromJson(List<dynamic> list) {

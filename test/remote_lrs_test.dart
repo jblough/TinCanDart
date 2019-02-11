@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:TinCanDart/TinCanDart.dart';
 import 'package:TinCanDart/src/attachment_content.dart';
+import 'package:TinCanDart/src/validated_uri.dart';
 import 'package:crypto/crypto.dart';
 import 'package:test/test.dart';
 import 'package:uuid/uuid.dart';
@@ -68,14 +69,15 @@ void main() {
     );
 
     verb = Verb(
-      id: Uri.parse('http://adlnet.gov/expapi/verbs/experienced'),
+      id: ValidatedUri.fromString('http://adlnet.gov/expapi/verbs/experienced'),
       display: LanguageMap({'en-US': 'experienced'}),
     );
 
     activity = Activity(
-      id: ConversionUtils.toUri('http://tincanapi.com/TinCanDart/Test/Unit/0'),
+      id: ValidatedUri.fromString(
+          'http://tincanapi.com/TinCanDart/Test/Unit/0'),
       definition: ActivityDefinition(
-        type: ConversionUtils.toUri(
+        type: ValidatedUri.fromString(
             'http://id.tincanapi.com/activitytype/unit-test'),
         name: LanguageMap({'en-US': 'TinCanDart Tests: Unit 0'}),
         description: LanguageMap({
@@ -85,11 +87,11 @@ void main() {
     );
 
     parent = Activity(
-      id: ConversionUtils.toUri('http://tincanapi.com/TinCanDart/Test'),
+      id: ValidatedUri.fromString('http://tincanapi.com/TinCanDart/Test'),
       definition: ActivityDefinition(
-          type: ConversionUtils.toUri(
+          type: ValidatedUri.fromString(
               'http://id.tincanapi.com/activitytype/unit-test-suite'),
-          moreInfo: ConversionUtils.toUri(
+          moreInfo: ValidatedUri.fromString(
               'http://rusticisoftware.github.io/TinCanDart/'),
           name: LanguageMap({'en-US': 'TinCanDart Tests'}),
           description: LanguageMap(
@@ -136,7 +138,7 @@ void main() {
         contentType: "application/octet-stream",
         description: LanguageMap({'en-US': 'Test Description'}),
         display: LanguageMap({'en-US': 'Test Display'}),
-        usageType: ConversionUtils.toUri(
+        usageType: ValidatedUri.fromString(
             'http://id.tincanapi.com/attachment/supporting_media'));
 
     attachment2 = Attachment(
@@ -144,7 +146,7 @@ void main() {
       contentType: "text/plain",
       description: LanguageMap({'en-US': 'Test Description 2'}),
       display: LanguageMap({'en-US': 'Test Display 2'}),
-      usageType: ConversionUtils.toUri(
+      usageType: ValidatedUri.fromString(
           'http://id.tincanapi.com/attachment/supporting_media'),
     );
 
@@ -154,7 +156,7 @@ void main() {
       contentType: "image/jpeg",
       description: LanguageMap({'en-US': 'Test Description 3'}),
       display: LanguageMap({'en-US': 'Test Display 3'}),
-      usageType: ConversionUtils.toUri(
+      usageType: ValidatedUri.fromString(
           'http://id.tincanapi.com/attachment/supporting_media'),
     );
   });
@@ -162,7 +164,7 @@ void main() {
   setUp(() {
     lrs = RemoteLRS(
       version: Version.V103,
-      endpoint: ConversionUtils.toUri(endpoint),
+      endpoint: ValidatedUri.fromString(endpoint),
       username: username,
       password: password,
     );
@@ -178,7 +180,7 @@ void main() {
     expect(obj.endpoint, isNull);
 
     String strURL = "http://tincanapi.com/test/TinCanDart";
-    obj = RemoteLRS(endpoint: ConversionUtils.toUri(strURL));
+    obj = RemoteLRS(endpoint: ValidatedUri.fromString(strURL));
     expect(obj.endpoint.toString(), '$strURL/');
   });
 
@@ -200,7 +202,7 @@ void main() {
   test("should fail on about", () async {
     final obj = RemoteLRS(
         version: Version.V100,
-        endpoint: ConversionUtils.toUri(
+        endpoint: ValidatedUri.fromString(
             'https://cloud.scorm.com/lrs/1Y32ZYODBD/sandbox/'));
     final response = await obj.about();
     final data = response.data;
@@ -211,7 +213,7 @@ void main() {
   test("about should fail", () async {
     final obj = RemoteLRS(
         version: Version.V100,
-        endpoint: ConversionUtils.toUri(
+        endpoint: ValidatedUri.fromString(
             'http://cloud.scorm.com/tc/3TQLAI9/sandbox/'));
     final response = await obj.about();
     final data = response.data;

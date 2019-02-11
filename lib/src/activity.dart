@@ -1,10 +1,10 @@
 import 'package:TinCanDart/src/activity_definition.dart';
-import 'package:TinCanDart/src/conversion_utils.dart';
 import 'package:TinCanDart/src/statement_target.dart';
+import 'package:TinCanDart/src/validated_uri.dart';
 import 'package:TinCanDart/src/versions.dart';
 
 class Activity extends StatementTarget {
-  final Uri id;
+  final ValidatedUri id;
   final ActivityDefinition definition;
 
   Activity({this.id, this.definition});
@@ -15,7 +15,7 @@ class Activity extends StatementTarget {
     }
 
     return Activity(
-      id: ConversionUtils.toUri(json['id']),
+      id: ValidatedUri.fromString(json['id']),
       definition: ActivityDefinition.fromJson(json['definition']),
     );
   }

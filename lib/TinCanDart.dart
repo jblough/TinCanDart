@@ -3,7 +3,6 @@
 /// More dartdocs go here.
 library TinCanDart;
 
-export 'src/TinCanDart_base.dart';
 export 'src/about.dart';
 export 'src/activity.dart';
 export 'src/activity_definition.dart';
@@ -15,7 +14,6 @@ export 'src/agent_profile_document.dart';
 export 'src/attachment.dart';
 export 'src/context.dart';
 export 'src/context_activities.dart';
-export 'src/conversion_utils.dart';
 export 'src/duration.dart';
 export 'src/extensions.dart';
 export 'src/group.dart';

@@ -2,12 +2,13 @@ import 'dart:convert';
 
 import 'package:TinCanDart/src/agent.dart';
 import 'package:TinCanDart/src/statement_target.dart';
+import 'package:TinCanDart/src/validated_uri.dart';
 import 'package:TinCanDart/src/versions.dart';
 
 enum QueryResultFormat { IDS, EXACT, CANONICAL }
 
 class StatementsQuery {
-  final Uri verbID;
+  final ValidatedUri verbID;
   final StatementTarget object;
   final String registration; // UUID
   final bool context;
@@ -21,7 +22,7 @@ class StatementsQuery {
   final bool ascending;
 
   final Agent agent;
-  final Uri activityID;
+  final ValidatedUri activityID;
   final bool relatedActivities;
   final bool relatedAgents;
   final QueryResultFormat format;

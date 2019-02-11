@@ -17,13 +17,14 @@ import 'package:TinCanDart/src/state_document.dart';
 import 'package:TinCanDart/src/statement.dart';
 import 'package:TinCanDart/src/statements_query.dart';
 import 'package:TinCanDart/src/statements_result.dart';
+import 'package:TinCanDart/src/validated_uri.dart';
 import 'package:TinCanDart/src/versions.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
 /// Class used to communicate with a TinCan API endpoint
 class RemoteLRS extends LRS {
-  final Uri endpoint;
+  final ValidatedUri endpoint;
   final Version _version;
 
   final String auth;
@@ -37,7 +38,6 @@ class RemoteLRS extends LRS {
     Version version,
     String username,
     String password,
-    //this.auth,
     this.extended,
     this.prettyJson = false,
     http.Client client,
@@ -274,8 +274,9 @@ class RemoteLRS extends LRS {
       return null;
     }
 
-    final port = (endpoint.port == -1) ? '' : ':${endpoint.port}';
-    final resource = '${endpoint.scheme}://${endpoint.host}$port$moreURL';
+    final port = (endpoint.asUri.port == -1) ? '' : ':${endpoint.asUri.port}';
+    final resource =
+        '${endpoint.asUri.scheme}://${endpoint.asUri.host}$port$moreURL';
     final response = await _makeRequest(resource, 'GET');
 
     if (response?.statusCode == 200) {

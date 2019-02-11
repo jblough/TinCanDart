@@ -4,7 +4,6 @@ import 'package:TinCanDart/src/agent.dart';
 import 'package:TinCanDart/src/attachment.dart';
 import 'package:TinCanDart/src/attachment_content.dart';
 import 'package:TinCanDart/src/context.dart';
-import 'package:TinCanDart/src/conversion_utils.dart';
 import 'package:TinCanDart/src/result.dart';
 import 'package:TinCanDart/src/statement_target.dart';
 import 'package:TinCanDart/src/verb.dart';
@@ -49,18 +48,18 @@ class Statement {
 
     return Statement(
       id: json['id'],
-      stored: ConversionUtils.toDate(json['stored']),
+      stored: _readDate(json['stored']),
       authority: Agent.fromJson(json['authority']),
       version: TinCanVersion.fromJsonString(json['version']),
       actor: Agent.fromJson(json['actor']),
       verb: Verb.fromJson(json['verb']),
 
       // This can be StatementRef or SubStatement final StatementTarget object;
-      object: ConversionUtils.toTarget(json['object']),
+      object: StatementTarget.toTarget(json['object']),
 
       result: Result.fromJson(json['result']),
       context: Context.fromJson(json['context']),
-      timestamp: ConversionUtils.toDate(json['timestamp']),
+      timestamp: _readDate(json['timestamp']),
       attachments: Attachment.listFromJson(json['attachments']),
       voided: json['voided'],
     );
@@ -86,6 +85,10 @@ class Statement {
     json.removeWhere((key, value) => value == null);
 
     return json;
+  }
+
+  static DateTime _readDate(String date) {
+    return (date == null) ? null : DateTime.tryParse(date);
   }
 
   Statement copyWith({

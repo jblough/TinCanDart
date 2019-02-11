@@ -2,14 +2,14 @@ import 'package:TinCanDart/src/extensions.dart';
 import 'package:TinCanDart/src/interaction_component.dart';
 import 'package:TinCanDart/src/interaction_type.dart';
 import 'package:TinCanDart/src/language_map.dart';
-import 'package:TinCanDart/src/conversion_utils.dart';
+import 'package:TinCanDart/src/validated_uri.dart';
 import 'package:TinCanDart/src/versions.dart';
 
 class ActivityDefinition {
   final LanguageMap name;
   final LanguageMap description;
-  final Uri type;
-  final Uri moreInfo;
+  final ValidatedUri type;
+  final ValidatedUri moreInfo;
   final Extensions extensions;
   final InteractionType interactionType;
   final List<String> correctResponsesPattern;
@@ -42,8 +42,8 @@ class ActivityDefinition {
     return ActivityDefinition(
       name: LanguageMap.fromJson(json['name']),
       description: LanguageMap.fromJson(json['description']),
-      type: ConversionUtils.toUri(json['type']),
-      moreInfo: ConversionUtils.toUri(json['moreInfo']),
+      type: ValidatedUri.fromString(json['type']),
+      moreInfo: ValidatedUri.fromString(json['moreInfo']),
       extensions: Extensions.fromJson(json['extensions']),
       interactionType: InteractionType.fromString(json['interactionType']),
       correctResponsesPattern: json['correctResponsesPattern'],
