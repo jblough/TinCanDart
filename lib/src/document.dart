@@ -1,11 +1,12 @@
-import 'dart:typed_data';
+import 'package:TinCanDart/src/attachment_content.dart';
 
-class Document {
+abstract class Document {
   final String id;
   final String etag;
   final DateTime timestamp;
   final String contentType;
-  final ByteBuffer content;
+
+  final AttachmentContent content;
 
   Document(
       {this.id, this.etag, this.timestamp, this.contentType, this.content});

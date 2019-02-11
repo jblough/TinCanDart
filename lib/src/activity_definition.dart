@@ -2,7 +2,7 @@ import 'package:TinCanDart/src/extensions.dart';
 import 'package:TinCanDart/src/interaction_component.dart';
 import 'package:TinCanDart/src/interaction_type.dart';
 import 'package:TinCanDart/src/language_map.dart';
-import 'package:TinCanDart/src/parsing_utils.dart';
+import 'package:TinCanDart/src/conversion_utils.dart';
 import 'package:TinCanDart/src/versions.dart';
 
 class ActivityDefinition {
@@ -42,8 +42,8 @@ class ActivityDefinition {
     return ActivityDefinition(
       name: LanguageMap.fromJson(json['name']),
       description: LanguageMap.fromJson(json['description']),
-      type: ParsingUtils.toUri(json['type']),
-      moreInfo: ParsingUtils.toUri(json['moreInfo']),
+      type: ConversionUtils.toUri(json['type']),
+      moreInfo: ConversionUtils.toUri(json['moreInfo']),
       extensions: Extensions.fromJson(json['extensions']),
       interactionType: InteractionType.fromString(json['interactionType']),
       correctResponsesPattern: json['correctResponsesPattern'],

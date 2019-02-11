@@ -7,6 +7,7 @@ import 'package:TinCanDart/src/activity_profile_document.dart';
 import 'package:TinCanDart/src/agent.dart';
 import 'package:TinCanDart/src/agent_profile_document.dart';
 import 'package:TinCanDart/src/attachment.dart';
+import 'package:TinCanDart/src/attachment_content.dart';
 import 'package:TinCanDart/src/document.dart';
 import 'package:TinCanDart/src/lrs.dart';
 import 'package:TinCanDart/src/lrs_response.dart';
@@ -25,7 +26,6 @@ class RemoteLRS extends LRS {
   final Uri endpoint;
   final Version _version;
 
-  //final String basicAuth;
   final String auth;
   final Map extended;
   final bool prettyJson;
@@ -44,30 +44,6 @@ class RemoteLRS extends LRS {
   })  : _client = client ?? http.Client(),
         auth = generateAuth(username, password),
         _version = version ?? TinCanVersion.latest();
-
-  /*
-  final String version;
-  final String url;
-  final String method;
-  final Map<String, dynamic> params;
-  final dynamic data;
-  final Map<String, dynamic> headers;
-  final Function callback;
-  final bool ignore404;
-  final bool expectMultipart;
-
-  RemoteLRS({
-    this.version,
-    this.url,
-    this.method,
-    this.params,
-    this.data,
-    this.headers,
-    this.callback,
-    this.ignore404,
-    this.expectMultipart,
-  });
-  */
 
   @override
   Future<LRSResponse> deleteAgentProfile(AgentProfileDocument profile) async {
@@ -112,26 +88,6 @@ class RemoteLRS extends LRS {
       agent: agent,
     );
     return await _getAgentProfileDocument('agents/profile', params, document);
-    /*
-        HashMap<String, String> queryParams = new HashMap<String, String>();
-        queryParams.put("profileId", id);
-        queryParams.put("agent", agent.toJSON(this.getVersion(), this.usePrettyJSON()));
-
-        AgentProfileDocument profileDocument = new AgentProfileDocument();
-        profileDocument.setId(id);
-        profileDocument.setAgent(agent);
-
-        LRSResponse lrsResp = getDocument("agents/profile", queryParams, profileDocument);
-
-        AgentProfileLRSResponse lrsResponse = new AgentProfileLRSResponse(lrsResp.getRequest(), lrsResp.getResponse());
-        lrsResponse.setSuccess(lrsResp.getSuccess());
-
-        if (lrsResponse.getResponse().getStatus() == 200) {
-            lrsResponse.setContent(profileDocument);
-        }
-
-        return lrsResponse;
-     */
   }
 
   @override
@@ -155,33 +111,6 @@ class RemoteLRS extends LRS {
     } else {
       return LRSResponse(success: false, errMsg: response?.body);
     }
-    /*
-      HTTPRequest request = new HTTPRequest();
-        request.setMethod(HttpMethod.GET.asString());
-        request.setResource("agents");
-        request.setQueryParams(new HashMap<String, String>());
-        request.getQueryParams().put("agent", agent.toJSON(this.getVersion(), this.usePrettyJSON()));
-
-        HTTPResponse response = makeSyncRequest(request);
-        int status = response.getStatus();
-
-        PersonLRSResponse lrsResponse = new PersonLRSResponse(request, response);
-
-        if (status == 200) {
-            lrsResponse.setSuccess(true);
-            try {
-                lrsResponse.setContent(new Person(new StringOfJSON(response.getContent())));
-            } catch (Exception ex) {
-                lrsResponse.setErrMsg("Exception: " + ex.toString());
-                lrsResponse.setSuccess(false);
-            }
-        }
-        else {
-            lrsResponse.setSuccess(false);
-        }
-
-        return lrsResponse;
-     */
   }
 
   @override
@@ -227,27 +156,6 @@ class RemoteLRS extends LRS {
 
     return await _getActivityProfileDocument(
         "activities/profile", params, profileDocument);
-
-    /*
-      HashMap<String, String> queryParams = new HashMap<String, String>();
-        queryParams.put("profileId", id);
-        queryParams.put("activityId", activity.getId().toString());
-
-        ActivityProfileDocument profileDocument = new ActivityProfileDocument();
-        profileDocument.setId(id);
-        profileDocument.setActivity(activity);
-
-        LRSResponse lrsResp = getDocument("activities/profile", queryParams, profileDocument);
-
-        ActivityProfileLRSResponse lrsResponse = new ActivityProfileLRSResponse(lrsResp.getRequest(), lrsResp.getResponse());
-        lrsResponse.setSuccess(lrsResp.getSuccess());
-
-        if (lrsResponse.getResponse().getStatus() == 200) {
-            lrsResponse.setContent(profileDocument);
-        }
-
-        return lrsResponse;
-     */
   }
 
   @override
@@ -278,33 +186,6 @@ class RemoteLRS extends LRS {
         errMsg: response?.body,
       );
     }
-    /*
-       HTTPRequest request = new HTTPRequest();
-        request.setMethod(HttpMethod.GET.asString());
-        request.setResource("activities");
-        request.setQueryParams(new HashMap<String, String>());
-        request.getQueryParams().put("activityId", activity.getId().toString());
-
-        HTTPResponse response = makeSyncRequest(request);
-        int status = response.getStatus();
-
-        ActivityLRSResponse lrsResponse = new ActivityLRSResponse(request, response);
-
-        if (status == 200) {
-            lrsResponse.setSuccess(true);
-            try {
-                lrsResponse.setContent(new Activity(new StringOfJSON(response.getContent())));
-            } catch (Exception ex) {
-                lrsResponse.setErrMsg("Exception: " + ex.toString());
-                lrsResponse.setSuccess(false);
-            }
-        }
-        else {
-            lrsResponse.setSuccess(false);
-        }
-
-        return lrsResponse;
-     */
   }
 
   @override
@@ -318,17 +199,6 @@ class RemoteLRS extends LRS {
       params['registration'] = registration.toString();
     }
     return await _deleteDocument('activities/state', params);
-    /*
-          HashMap<String, String> queryParams = new HashMap<String, String>();
-
-        queryParams.put("activityId", activity.getId().toString());
-        queryParams.put("agent", agent.toJSON(this.getVersion(), this.usePrettyJSON()));
-        if (registration != null) {
-            queryParams.put("registration", registration.toString());
-        }
-        return deleteDocument("activities/state", queryParams);
-
-     */
   }
 
   @override
@@ -364,15 +234,6 @@ class RemoteLRS extends LRS {
     };
 
     return await _saveDocument('activities/state', params, state);
-    /*
-      HashMap<String,String> queryParams = new HashMap<String,String>();
-
-        queryParams.put("stateId", state.getId());
-        queryParams.put("activityId", state.getActivity().getId().toString());
-        queryParams.put("agent", state.getAgent().toJSON(this.getVersion(), this.usePrettyJSON()));
-
-        return saveDocument("activities/state", queryParams, state);
-       */
   }
 
   @override
@@ -391,28 +252,6 @@ class RemoteLRS extends LRS {
     );
 
     return await _getStateDocument('activities/state', params, document);
-    /*
-      HashMap<String, String> queryParams = new HashMap<String, String>();
-        queryParams.put("stateId", id);
-        queryParams.put("activityId", activity.getId().toString());
-        queryParams.put("agent", agent.toJSON(this.getVersion(), this.usePrettyJSON()));
-
-        StateDocument stateDocument = new StateDocument();
-        stateDocument.setId(id);
-        stateDocument.setActivity(activity);
-        stateDocument.setAgent(agent);
-
-        LRSResponse lrsResp = getDocument("activities/state", queryParams, stateDocument);
-
-        StateLRSResponse lrsResponse = new StateLRSResponse(lrsResp.getRequest(), lrsResp.getResponse());
-        lrsResponse.setSuccess(lrsResp.getSuccess());
-
-        if (lrsResponse.getResponse().getStatus() == 200) {
-            lrsResponse.setContent(stateDocument);
-        }
-
-        return lrsResponse;
-     */
   }
 
   @override
@@ -454,10 +293,6 @@ class RemoteLRS extends LRS {
     final response = await _makeRequest('statements', 'GET',
         queryParams: query.toParameterMap(_version));
 
-    //print(response?.statusCode);
-    //print(response?.runtimeType);
-    //print(response?.body);
-
     dynamic responseBody;
     if (response.runtimeType.toString() == 'StreamedResponse') {
       http.StreamedResponse streamedResponse = response;
@@ -496,26 +331,6 @@ class RemoteLRS extends LRS {
       return LRSResponse<StatementsResult>(
           success: false, errMsg: response?.body);
     }
-
-    /*
-        StatementsResultLRSResponse lrsResponse = new StatementsResultLRSResponse();
-
-        lrsResponse.setRequest(new HTTPRequest());
-        lrsResponse.getRequest().setMethod(HttpMethod.GET.asString());
-        lrsResponse.getRequest().setResource("statements");
-
-        try {
-            lrsResponse.getRequest().setQueryParams(query.toParameterMap());
-        } catch (IOException ex) {
-            lrsResponse.setErrMsg("Exception: " + ex.toString());
-            return lrsResponse;
-        }
-
-        HTTPResponse response = makeSyncRequest(lrsResponse.getRequest());
-
-        lrsResponse.setResponse(response);
-     */
-    return null;
   }
 
   @override
@@ -587,62 +402,6 @@ class RemoteLRS extends LRS {
     } else {
       return LRSResponse<StatementsResult>(success: false);
     }
-    /*
-    StatementsResultLRSResponse lrsResponse = new StatementsResultLRSResponse();
-        if (statements.size() == 0) {
-            lrsResponse.setSuccess(true);
-            return lrsResponse;
-        }
-
-        ArrayNode rootNode = Mapper.getInstance().createArrayNode();
-        for (Statement statement : statements) {
-            rootNode.add(statement.toJSONNode(version));
-        }
-
-        lrsResponse.setRequest(new HTTPRequest());
-        lrsResponse.getRequest().setResource("statements");
-        lrsResponse.getRequest().setMethod(HttpMethod.POST.asString());
-        lrsResponse.getRequest().setContentType("application/json");
-        try {
-            lrsResponse.getRequest().setContent(Mapper.getWriter(this.usePrettyJSON()).writeValueAsBytes(rootNode));
-        } catch (JsonProcessingException ex) {
-            lrsResponse.setErrMsg("Exception: " + ex.toString());
-            return lrsResponse;
-        }
-
-        lrsResponse.getRequest().setPartList(new ArrayList<HTTPPart>());
-        for (Statement statement: statements) {
-            if (statement.hasAttachmentsWithContent()) {
-                lrsResponse.getRequest().getPartList().addAll(statement.getPartList());
-            }
-        }
-
-        HTTPResponse response = makeSyncRequest(lrsResponse.getRequest());
-        int status = response.getStatus();
-
-        lrsResponse.setResponse(response);
-
-        if (status == 200) {
-            lrsResponse.setSuccess(true);
-            lrsResponse.setContent(new StatementsResult());
-            try {
-                Iterator it = Mapper.getInstance().readValue(response.getContent(), ArrayNode.class).elements();
-                for (int i = 0; it.hasNext(); ++i) {
-                    lrsResponse.getContent().getStatements().add(statements.get(i));
-                    lrsResponse.getContent().getStatements().get(i).setId(UUID.fromString(((JsonNode) it.next()).textValue()));
-                }
-            } catch (Exception ex) {
-                lrsResponse.setErrMsg("Exception: " + ex.toString());
-                lrsResponse.setSuccess(false);
-            }
-        }
-        else {
-            lrsResponse.setSuccess(false);
-        }
-
-        return lrsResponse;
-     */
-    return null;
   }
 
   @override
@@ -709,7 +468,6 @@ class RemoteLRS extends LRS {
     }
   }
 
-// Make request (probably async)
   Future _makeRequest(
     String resource,
     String verb, {
@@ -746,7 +504,7 @@ class RemoteLRS extends LRS {
       headers['Authorization'] = this.auth;
     }
 
-    print(url);
+    //print(url);
 
     if (attachments?.isNotEmpty == true) {
       final request =
@@ -793,36 +551,6 @@ class RemoteLRS extends LRS {
     } else {
       return LRSResponse<List<String>>(success: false, errMsg: response?.body);
     }
-    /*
-          HTTPRequest request = new HTTPRequest();
-        request.setMethod(HttpMethod.GET.asString());
-        request.setResource(resource);
-        request.setQueryParams(queryParams);
-
-        HTTPResponse response = makeSyncRequest(request);
-
-        ProfileKeysLRSResponse lrsResponse = new ProfileKeysLRSResponse(request, response);
-
-        if (response.getStatus() == 200) {
-            lrsResponse.setSuccess(true);
-            try {
-                Iterator it = Mapper.getInstance().readValue(response.getContent(), ArrayNode.class).elements();
-
-                lrsResponse.setContent(new ArrayList<String>());
-                while (it.hasNext()) {
-                    lrsResponse.getContent().add(it.next().toString());
-                }
-            } catch (Exception ex) {
-                lrsResponse.setErrMsg("Exception: " + ex.toString());
-                lrsResponse.setSuccess(false);
-            }
-        }
-        else {
-            lrsResponse.setSuccess(false);
-        }
-
-        return lrsResponse;
-     */
   }
 
   Future<LRSResponse> _deleteDocument(
@@ -830,26 +558,6 @@ class RemoteLRS extends LRS {
     final response =
         await _makeRequest(resource, 'DELETE', queryParams: params);
     return LRSResponse(success: (response?.statusCode == 204));
-    /*
-      HTTPRequest request = new HTTPRequest();
-
-        request.setMethod(HttpMethod.DELETE.asString());
-        request.setResource(resource);
-        request.setQueryParams(queryParams);
-
-        HTTPResponse response = makeSyncRequest(request);
-
-        LRSResponse lrsResponse = new LRSResponse(request, response);
-
-        if (response.getStatus() == 204) {
-            lrsResponse.setSuccess(true);
-        }
-        else {
-            lrsResponse.setSuccess(false);
-        }
-
-        return lrsResponse;
-     */
   }
 
   Future<LRSResponse> _saveDocument(
@@ -863,36 +571,10 @@ class RemoteLRS extends LRS {
     final response = await _makeRequest(resource, 'PUT',
         queryParams: params,
         additionalHeaders: headers,
-        body: document.content?.asInt8List());
+        body: document.content?.asList);
 
-    print("Response : ${response?.body}");
+    //print("Response : ${response?.body}");
     return LRSResponse(success: response?.statusCode == 204);
-    /*
-         HTTPRequest request = new HTTPRequest();
-        request.setMethod(HttpMethod.PUT.asString());
-        request.setResource(resource);
-        request.setQueryParams(queryParams);
-        request.setContentType(document.getContentType());
-        request.setContent(document.getContent());
-        if (document.getEtag() != null) {
-            request.setHeaders(new HashMap<String, String>());
-            request.getHeaders().put("If-Match", document.getEtag());
-        }
-
-        HTTPResponse response = makeSyncRequest(request);
-
-        LRSResponse lrsResponse = new LRSResponse(request, response);
-
-        if (response.getStatus() == 204) {
-            lrsResponse.setSuccess(true);
-        }
-        else {
-            lrsResponse.setSuccess(false);
-        }
-
-        return lrsResponse;
-
-     */
   }
 
   Future<LRSResponse<StateDocument>> _getStateDocument(String resource,
@@ -904,7 +586,7 @@ class RemoteLRS extends LRS {
         agent: document.agent,
         activity: document.activity,
         contentType: response.headers[HttpHeaders.contentTypeHeader],
-        content: response.bodyBytes.buffer,
+        content: AttachmentContent.fromUint8List(response.bodyBytes),
         registration: document.registration,
         etag: response.headers[HttpHeaders.etagHeader],
         timestamp:
@@ -928,7 +610,7 @@ class RemoteLRS extends LRS {
         id: document.id,
         agent: document.agent,
         contentType: response.headers[HttpHeaders.contentTypeHeader],
-        content: response.bodyBytes.buffer,
+        content: AttachmentContent.fromUint8List(response.bodyBytes),
         etag: response.headers[HttpHeaders.etagHeader],
         timestamp:
             DateTime.tryParse(response.headers[HttpHeaders.lastModifiedHeader]),
@@ -949,7 +631,7 @@ class RemoteLRS extends LRS {
         id: document.id,
         activity: document.activity,
         contentType: response.headers[HttpHeaders.contentTypeHeader],
-        content: response.bodyBytes.buffer,
+        content: AttachmentContent.fromUint8List(response.bodyBytes),
         etag: response.headers[HttpHeaders.etagHeader],
         timestamp:
             DateTime.tryParse(response.headers[HttpHeaders.lastModifiedHeader]),
@@ -978,37 +660,12 @@ class RemoteLRS extends LRS {
     final response = await _makeRequest(resource, 'POST',
         queryParams: params,
         additionalHeaders: headers,
-        body: document.content?.asInt8List());
+        body: document.content?.asList);
     if (response?.statusCode == 204) {
       return LRSResponse(success: true);
     } else {
       return LRSResponse(success: false, errMsg: response?.body);
     }
-    /*
-      HTTPRequest request = new HTTPRequest();
-        request.setMethod(HttpMethod.POST.asString());
-        request.setResource(resource);
-        request.setQueryParams(queryParams);
-        request.setContentType(document.getContentType());
-        request.setContent(document.getContent());
-        if (document.getEtag() != null) {
-            request.setHeaders(new HashMap<String, String>());
-            request.getHeaders().put("If-Match", document.getEtag());
-        }
-
-        HTTPResponse response = makeSyncRequest(request);
-
-        LRSResponse lrsResponse = new LRSResponse(request, response);
-
-        if (response.getStatus() == 204) {
-            lrsResponse.setSuccess(true);
-        }
-        else {
-            lrsResponse.setSuccess(false);
-        }
-
-        return lrsResponse;
-     */
   }
 
   Future<LRSResponse<Statement>> _getStatement(
@@ -1041,226 +698,5 @@ class RemoteLRS extends LRS {
     } else {
       return LRSResponse<Statement>(success: false, errMsg: response?.body);
     }
-
-    /*
-        HTTPRequest request = new HTTPRequest();
-        request.setMethod(HttpMethod.GET.asString());
-        request.setResource("statements");
-        request.setQueryParams(params);
-
-        HTTPResponse response = makeSyncRequest(request);
-        int status = response.getStatus();
-
-        StatementLRSResponse lrsResponse = new StatementLRSResponse(request, response);
-
-        if (status == 200) {
-            lrsResponse.setSuccess(true);
-            try {
-                JsonNode contentNode = (new StringOfJSON(response.getContent())).toJSONNode();
-                if (! (contentNode.findPath("statements").isMissingNode())) {
-                    contentNode = contentNode.findPath("statements").get(0);
-                }
-
-                Statement stmt = new Statement (contentNode);
-                for (Map.Entry<String, byte[]> entry : response.getAttachments().entrySet()) {
-                    for (Attachment a : stmt.getAttachments()) {
-                        if (entry.getKey().equals(a.getSha2())) {
-                            a.setContent(entry.getValue());
-                        }
-                    }
-                }
-
-                lrsResponse.setContent(stmt);
-            } catch (Exception ex) {
-                lrsResponse.setErrMsg("Exception: " + ex.toString());
-                lrsResponse.setSuccess(false);
-            }
-        }
-        else {
-            lrsResponse.setSuccess(false);
-        }
-
-        return lrsResponse;
-     */
   }
-
-/*
-      HTTPRequest request = new HTTPRequest();
-        request.setMethod(HttpMethod.GET.asString());
-        request.setResource(resource);
-        request.setQueryParams(queryParams);
-
-        HTTPResponse response = makeSyncRequest(request);
-
-        LRSResponse lrsResponse = new LRSResponse(request, response);
-
-        if (response.getStatus() == 200) {
-            document.setContent(response.getContentBytes());
-            document.setContentType(response.getContentType());
-            document.setTimestamp(response.getLastModified());
-            document.setEtag(response.getEtag());
-            lrsResponse.setSuccess(true);
-        }
-        else if (response.getStatus() == 404) {
-            lrsResponse.setSuccess(true);
-        }
-        else {
-            lrsResponse.setSuccess(false);
-        }
-
-        return lrsResponse;    
- */
 }
-
-/*
-
-    private HTTPResponse makeSyncRequest(HTTPRequest req) {
-        String url;
-
-        if (req.getResource().toLowerCase().startsWith("http")) {
-            url = req.getResource();
-        }
-        else {
-            url = this.endpoint.toString();
-            if (! url.endsWith("/") && ! req.getResource().startsWith("/")) {
-                url += "/";
-            }
-            url += req.getResource();
-        }
-
-        if (req.getQueryParams() != null) {
-            String qs = "";
-            Iterator it = req.getQueryParams().entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry entry = (Map.Entry) it.next();
-                if (qs != "") {
-                    qs += "&";
-                }
-                try {
-                    qs += URLEncoder.encode(entry.getKey().toString(), "UTF-8") + "=" + URLEncoder.encode(entry.getValue().toString(), "UTF-8");
-                } catch (UnsupportedEncodingException ex) {}
-            }
-            if (qs != "") {
-                url += "?" + qs;
-            }
-        }
-
-
-        final HTTPResponse response = new HTTPResponse();
-
-        try {
-            final Request webReq = httpClient().
-                newRequest(url).
-                method(HttpMethod.fromString(req.getMethod())).
-                header("X-Experience-API-Version", this.version.toString());
-
-            if (this.auth != null) {
-                webReq.header("Authorization", this.auth);
-            }
-            if (req.getHeaders() != null) {
-                Iterator it = req.getHeaders().entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry entry = (Map.Entry) it.next();
-                    webReq.header(entry.getKey().toString(), entry.getValue().toString());
-                }
-            }
-
-            OutputStreamContentProvider content = new OutputStreamContentProvider();
-            FutureResponseListener listener = new FutureResponseListener(webReq);
-
-            try (OutputStream output = content.getOutputStream()) {
-                if (req.getPartList() == null || req.getPartList().size() <= 0) {
-                    if (req.getContentType() != null) {
-                        webReq.header("Content-Type", req.getContentType());
-                    }
-                    else if (req.getMethod() != "GET") {
-                        webReq.header("Content-Type", "application/octet-stream");
-                    }
-
-                    webReq.content(content).send(listener);
-
-                    if (req.getContent() != null) {
-                        output.write(req.getContent());
-                    }
-
-                    output.close();
-                }
-                else {
-                    MultiPartOutputStream multiout = new MultiPartOutputStream(output);
-
-                    webReq.header("Content-Type", "multipart/mixed; boundary=" + multiout.getBoundary());
-                    webReq.content(content).send(listener);
-
-                    if (req.getContentType() != null) {
-                        multiout.startPart(req.getContentType());
-                    }
-                    else {
-                        multiout.startPart("application/octet-stream");
-                    }
-
-                    if (req.getContent() != null) {
-                        multiout.write(req.getContent());
-                    }
-
-                    for (HTTPPart part : req.getPartList()) {
-                        multiout.startPart(part.getContentType(), new String[]{
-                            "Content-Transfer-Encoding: binary",
-                            "X-Experience-API-Hash: " + part.getSha2()
-                        });
-                        multiout.write(part.getContent());
-                    }
-                    multiout.close();
-                }
-            }
-
-            ContentResponse httpResponse = listener.get();
-
-            response.setStatus(httpResponse.getStatus());
-            response.setStatusMsg(httpResponse.getReason());
-            for (HttpField header : httpResponse.getHeaders()) {
-                response.setHeader(header.getName(), header.getValue());
-            }
-
-            if (response.getContentType() != null && response.getContentType().contains("multipart/mixed")) {
-                String boundary = response.getContentType().split("boundary=")[1];
-
-                MultipartParser responseHandler = new MultipartParser(listener.getContent(), boundary);
-                ArrayList<Statement> statements = new ArrayList<Statement>();
-
-                for (int i = 1; i < responseHandler.getSections().size(); i++) {
-                    responseHandler.parsePart(i);
-
-                    if (i == 1) {
-                        if (responseHandler.getHeaders().get("Content-Type").contains("application/json")) {
-                            JsonNode statementsNode = (new StringOfJSON(new String(responseHandler.getContent())).toJSONNode());
-                            if (statementsNode.findPath("statements").isMissingNode()) {
-                                statements.add(new Statement(statementsNode));
-                            } else {
-                                statementsNode = statementsNode.findPath("statements");
-                                for (JsonNode obj : statementsNode) {
-                                    statements.add(new Statement(obj));
-                                }
-                            }
-                        } else {
-                            throw new Exception("The first part of this response had a Content-Type other than \"application/json\"");
-                        }
-                    }
-                    else {
-                        response.setAttachment(responseHandler.getHeaders().get("X-Experience-API-Hash"), responseHandler.getContent());
-                    }
-                }
-                StatementsResult responseStatements = new StatementsResult();
-                responseStatements.setStatements(statements);
-                response.setContentBytes(responseStatements.toJSONNode(TCAPIVersion.V101).toString().getBytes());
-            }
-            else {
-                response.setContentBytes(listener.getContent());
-            }
-        } catch (Exception ex) {
-            response.setStatus(400);
-            response.setStatusMsg("Exception in RemoteLRS.makeSyncRequest(): " + ex);
-        }
-
-        return response;
-    }
-   */

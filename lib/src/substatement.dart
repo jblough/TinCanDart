@@ -1,7 +1,7 @@
 import 'package:TinCanDart/src/agent.dart';
 import 'package:TinCanDart/src/attachment.dart';
 import 'package:TinCanDart/src/context.dart';
-import 'package:TinCanDart/src/parsing_utils.dart';
+import 'package:TinCanDart/src/conversion_utils.dart';
 import 'package:TinCanDart/src/result.dart';
 import 'package:TinCanDart/src/statement_target.dart';
 import 'package:TinCanDart/src/verb.dart';
@@ -38,10 +38,10 @@ class SubStatement extends StatementTarget {
     return SubStatement(
       actor: Agent.fromJson(json['actor']),
       verb: Verb.fromJson(json['verb']),
-      object: ParsingUtils.parseTarget(json['object']),
+      object: ConversionUtils.toTarget(json['object']),
       result: Result.fromJson(json['result']),
       context: Context.fromJson(json['context']),
-      timestamp: ParsingUtils.parseDate(json['timestamp']),
+      timestamp: ConversionUtils.toDate(json['timestamp']),
       attachments: Attachment.listFromJson(json['attachments']),
       voided: json['voided'],
     );

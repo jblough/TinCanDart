@@ -1,5 +1,5 @@
+import 'package:TinCanDart/src/conversion_utils.dart';
 import 'package:TinCanDart/src/language_map.dart';
-import 'package:TinCanDart/src/parsing_utils.dart';
 
 class Verb {
   final Uri id;
@@ -13,7 +13,7 @@ class Verb {
     }
 
     return Verb(
-      id: ParsingUtils.toUri(json['id']),
+      id: ConversionUtils.toUri(json['id']),
       display: LanguageMap.fromJson(json['display']),
     );
   }

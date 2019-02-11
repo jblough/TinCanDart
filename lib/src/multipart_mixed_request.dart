@@ -112,7 +112,7 @@ class MultipartMixedRequest extends BaseRequest {
     Future.forEach(_attachments, (Attachment attachment) {
       writeAscii(controller, '--$boundary\r\n');
       writeAscii(controller, _headerForAttachment(attachment));
-      controller.add(attachment.content.asInt8List());
+      controller.add(attachment.content.asList);
       writeLine(controller);
     });
     writeAscii(controller, '--$boundary--\r\n');

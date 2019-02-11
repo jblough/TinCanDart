@@ -1,5 +1,4 @@
-import 'dart:typed_data';
-
+import 'package:TinCanDart/src/attachment_content.dart';
 import 'package:TinCanDart/src/language_map.dart';
 import 'package:TinCanDart/src/versions.dart';
 import 'package:crypto/crypto.dart' show sha256;
@@ -12,7 +11,8 @@ class Attachment {
   final int length;
   final String sha2;
   final Uri fileUrl;
-  ByteBuffer content;
+
+  AttachmentContent content;
 
   Attachment({
     this.usageType,
@@ -23,14 +23,16 @@ class Attachment {
     String sha2,
     this.fileUrl,
     this.content,
-  })  : this.length = length ?? content?.lengthInBytes,
-        this.sha2 = sha2 ?? ((content != null) ? sha2sum(content) : null);
+  })  : this.length = length ?? content?.length,
+        this.sha2 =
+            sha2 ?? ((content != null) ? sha2sum(content.asList) : null);
 
-  static String sha2sum(ByteBuffer data) {
-    return sha256.convert(data.asInt8List()).toString();
+  static String sha2sum(List<int> data) {
+    return sha256.convert(data).toString();
   }
 
-  factory Attachment.fromJson(Map<String, dynamic> json, ByteBuffer content) {
+  factory Attachment.fromJson(
+      Map<String, dynamic> json, AttachmentContent content) {
     if (json == null) {
       return null;
     }

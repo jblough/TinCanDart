@@ -2,8 +2,9 @@ import 'dart:convert';
 
 import 'package:TinCanDart/src/agent.dart';
 import 'package:TinCanDart/src/attachment.dart';
+import 'package:TinCanDart/src/attachment_content.dart';
 import 'package:TinCanDart/src/context.dart';
-import 'package:TinCanDart/src/parsing_utils.dart';
+import 'package:TinCanDart/src/conversion_utils.dart';
 import 'package:TinCanDart/src/result.dart';
 import 'package:TinCanDart/src/statement_target.dart';
 import 'package:TinCanDart/src/verb.dart';
@@ -48,18 +49,18 @@ class Statement {
 
     return Statement(
       id: json['id'],
-      stored: ParsingUtils.parseDate(json['stored']),
+      stored: ConversionUtils.toDate(json['stored']),
       authority: Agent.fromJson(json['authority']),
       version: TinCanVersion.fromJsonString(json['version']),
       actor: Agent.fromJson(json['actor']),
       verb: Verb.fromJson(json['verb']),
 
       // This can be StatementRef or SubStatement final StatementTarget object;
-      object: ParsingUtils.parseTarget(json['object']),
+      object: ConversionUtils.toTarget(json['object']),
 
       result: Result.fromJson(json['result']),
       context: Context.fromJson(json['context']),
-      timestamp: ParsingUtils.parseDate(json['timestamp']),
+      timestamp: ConversionUtils.toDate(json['timestamp']),
       attachments: Attachment.listFromJson(json['attachments']),
       voided: json['voided'],
     );
@@ -87,20 +88,33 @@ class Statement {
     return json;
   }
 
-  Statement copyWith({String id}) {
+  Statement copyWith({
+    String id, // Uuid
+    DateTime stored,
+    Agent authority,
+    Version version,
+    Agent actor,
+    Verb verb,
+    StatementTarget object,
+    Result result,
+    Context context,
+    DateTime timestamp,
+    List<Attachment> attachments,
+    bool voided,
+  }) {
     return Statement(
-      id: id,
-      stored: stored,
-      authority: authority,
-      version: version,
-      actor: actor,
-      verb: verb,
-      object: object,
-      result: result,
-      context: context,
-      timestamp: timestamp,
-      attachments: attachments,
-      voided: voided,
+      id: id ?? this.id,
+      stored: stored ?? this.stored,
+      authority: authority ?? this.authority,
+      version: version ?? this.version,
+      actor: actor ?? this.actor,
+      verb: verb ?? this.verb,
+      object: object ?? this.object,
+      result: result ?? this.result,
+      context: context ?? this.context,
+      timestamp: timestamp ?? this.timestamp,
+      attachments: attachments ?? this.attachments,
+      voided: voided ?? this.voided,
     );
   }
 
@@ -171,7 +185,8 @@ class Statement {
         statements?.forEach((statement) {
           statement.attachments?.forEach((attachment) {
             if (attachment.sha2 == hash && attachment.content == null) {
-              attachment.content = ParsingUtils.listToBuffer(bytes);
+              //attachment.content = ConversionUtils.listToBuffer(bytes);
+              attachment.content = AttachmentContent.fromList(bytes);
             }
           });
         });
@@ -207,11 +222,12 @@ hello world 2
 
 class _MixedReader {
   final List<int> bytes;
+  final int length;
   int _currentPosition = 0;
 
-  _MixedReader(this.bytes);
+  _MixedReader(this.bytes) : this.length = bytes.length;
 
-  bool done() => _currentPosition >= bytes.length;
+  bool done() => _currentPosition >= this.length;
 
   String readNextLine() {
     // Read up to next '\r\n';

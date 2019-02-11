@@ -1,13 +1,11 @@
-import 'dart:typed_data';
-
 import 'package:TinCanDart/src/activity.dart';
 import 'package:TinCanDart/src/agent.dart';
 import 'package:TinCanDart/src/statement_ref.dart';
 import 'package:TinCanDart/src/statement_target.dart';
 import 'package:TinCanDart/src/substatement.dart';
 
-class ParsingUtils {
-  static DateTime parseDate(String date) {
+class ConversionUtils {
+  static DateTime toDate(String date) {
     if (date == null) {
       return null;
     }
@@ -15,7 +13,7 @@ class ParsingUtils {
     return DateTime.tryParse(date);
   }
 
-  static StatementTarget parseTarget(Map<String, dynamic> json) {
+  static StatementTarget toTarget(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }
@@ -52,13 +50,5 @@ class ParsingUtils {
     }
 
     return uri;
-  }
-
-  static ByteBuffer toBuffer(String value) {
-    return Uint8List.fromList(value.codeUnits).buffer;
-  }
-
-  static ByteBuffer listToBuffer(List<int> bytes) {
-    return Uint8List.fromList(bytes).buffer;
   }
 }

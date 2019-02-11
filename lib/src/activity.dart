@@ -1,5 +1,5 @@
 import 'package:TinCanDart/src/activity_definition.dart';
-import 'package:TinCanDart/src/parsing_utils.dart';
+import 'package:TinCanDart/src/conversion_utils.dart';
 import 'package:TinCanDart/src/statement_target.dart';
 import 'package:TinCanDart/src/versions.dart';
 
@@ -15,7 +15,7 @@ class Activity extends StatementTarget {
     }
 
     return Activity(
-      id: ParsingUtils.toUri(json['id']),
+      id: ConversionUtils.toUri(json['id']),
       definition: ActivityDefinition.fromJson(json['definition']),
     );
   }

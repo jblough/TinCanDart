@@ -1,6 +1,5 @@
-import 'dart:typed_data';
-
 import 'package:TinCanDart/src/agent.dart';
+import 'package:TinCanDart/src/attachment_content.dart';
 import 'package:TinCanDart/src/document.dart';
 
 class AgentProfileDocument extends Document {
@@ -12,7 +11,7 @@ class AgentProfileDocument extends Document {
     String etag,
     DateTime timestamp,
     String contentType,
-    ByteBuffer content,
+    AttachmentContent content,
   }) : super(
             id: id,
             etag: etag,
@@ -26,7 +25,7 @@ class AgentProfileDocument extends Document {
     String etag,
     DateTime timestamp,
     String contentType,
-    ByteBuffer content,
+    AttachmentContent content,
   }) {
     return AgentProfileDocument(
       agent: agent ?? this.agent,
