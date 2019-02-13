@@ -26,7 +26,7 @@ class Attachment {
     this.content,
   })  : this.length = length ?? content?.length,
         this.sha2 =
-            sha2 ?? ((content != null) ? sha2sum(content.asList) : null);
+            sha2 ?? ((content != null) ? sha2sum(content.asList()) : null);
 
   static String sha2sum(List<int> data) {
     return sha256.convert(data).toString();

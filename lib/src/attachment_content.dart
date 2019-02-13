@@ -11,11 +11,11 @@ class AttachmentContent {
 
   AttachmentContent.fromUint8List(Uint8List content) : _content = content;
 
-  ByteBuffer get asByteBuffer => Uint8List.fromList(_content).buffer;
+  ByteBuffer asByteBuffer() => Uint8List.fromList(_content).buffer;
 
-  String get asString => utf8.decode(_content);
+  String asString() => utf8.decode(_content);
 
-  List<int> get asList => _content;
+  List<int> asList() => _content;
 
   int get length => _content.length;
 }

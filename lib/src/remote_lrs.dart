@@ -572,7 +572,7 @@ class RemoteLRS extends LRS {
     final response = await _makeRequest(resource, 'PUT',
         queryParams: params,
         additionalHeaders: headers,
-        body: document.content?.asList);
+        body: document.content?.asList());
 
     //print("Response : ${response?.body}");
     return LRSResponse(success: response?.statusCode == 204);
@@ -661,7 +661,7 @@ class RemoteLRS extends LRS {
     final response = await _makeRequest(resource, 'POST',
         queryParams: params,
         additionalHeaders: headers,
-        body: document.content?.asList);
+        body: document.content?.asList());
     if (response?.statusCode == 204) {
       return LRSResponse(success: true);
     } else {

@@ -496,7 +496,7 @@ void main() {
     expect(retrieveBeforeUpdate.success, isTrue);
 
     final beforeDoc = retrieveBeforeUpdate.data;
-    final c = json.decode(String.fromCharCodes(beforeDoc.content.asList));
+    final c = json.decode(String.fromCharCodes(beforeDoc.content.asList()));
     c.forEach((key, value) {
       currentSet[key] = value;
     });
@@ -528,7 +528,7 @@ void main() {
     expect(retrieveAfterUpdate.success, isTrue);
 
     final afterDoc = retrieveAfterUpdate.data;
-    final ac = json.decode(String.fromCharCodes(afterDoc.content.asList));
+    final ac = json.decode(String.fromCharCodes(afterDoc.content.asList()));
     ac.forEach((key, value) {
       currentSet[key] = value;
     });
@@ -735,7 +735,7 @@ void main() {
     final retrieveBeforeUpdate = await lrs.retrieveAgentProfile('test', agent);
     expect(retrieveBeforeUpdate.success, isTrue);
     final beforeDoc = retrieveBeforeUpdate.data;
-    final c = json.decode(String.fromCharCodes(beforeDoc.content.asList));
+    final c = json.decode(String.fromCharCodes(beforeDoc.content.asList()));
     c.forEach((key, value) {
       currentSet[key] = value;
     });
@@ -766,7 +766,7 @@ void main() {
     expect(retrieveAfterUpdate.success, isTrue);
 
     final afterDoc = retrieveAfterUpdate.data;
-    final ac = json.decode(String.fromCharCodes(afterDoc.content.asList));
+    final ac = json.decode(String.fromCharCodes(afterDoc.content.asList()));
     ac.forEach((key, value) {
       currentSet[key] = value;
     });
@@ -869,8 +869,8 @@ void main() {
     final retrieved = await lrs.retrieveStatement(saved.data.id, true);
     expect(retrieved.success, isTrue);
     final calculated =
-        sha256.convert(retrieved.data.attachments[0].content.asList);
-    final expected = sha256.convert(attachment1.content.asList);
+        sha256.convert(retrieved.data.attachments[0].content.asList());
+    final expected = sha256.convert(attachment1.content.asList());
     expect(calculated, expected);
   });
 
@@ -889,8 +889,8 @@ void main() {
     expect(retrieved.success, isTrue);
 
     final calculated =
-        sha256.convert(retrieved.data.attachments[0].content.asList);
-    final expected = sha256.convert(attachment3.content.asList);
+        sha256.convert(retrieved.data.attachments[0].content.asList());
+    final expected = sha256.convert(attachment3.content.asList());
     expect(calculated, expected);
   });
 
@@ -914,9 +914,9 @@ void main() {
     final queryResult = await lrs.queryStatements(query);
     expect(queryResult.success, isTrue);
 
-    final calculated = sha256
-        .convert(queryResult.data.statements[0].attachments[0].content.asList);
-    final expected = sha256.convert(attachment1.content.asList);
+    final calculated = sha256.convert(
+        queryResult.data.statements[0].attachments[0].content.asList());
+    final expected = sha256.convert(attachment1.content.asList());
     expect(calculated, expected);
   });
 
@@ -957,7 +957,7 @@ void main() {
     expect(retrieveBeforeUpdate.success, isTrue);
 
     final beforeDoc = retrieveBeforeUpdate.data;
-    final c = json.decode(String.fromCharCodes(beforeDoc.content.asList));
+    final c = json.decode(String.fromCharCodes(beforeDoc.content.asList()));
     c.forEach((key, value) {
       currentSet[key] = value;
     });
@@ -989,7 +989,7 @@ void main() {
     expect(retrieveAfterUpdate.success, isTrue);
 
     final afterDoc = retrieveAfterUpdate.data;
-    final ac = json.decode(String.fromCharCodes(afterDoc.content.asList));
+    final ac = json.decode(String.fromCharCodes(afterDoc.content.asList()));
     ac.forEach((key, value) {
       currentSet[key] = value;
     });
