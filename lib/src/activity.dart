@@ -7,7 +7,10 @@ class Activity extends StatementTarget {
   final ValidatedUri id;
   final ActivityDefinition definition;
 
-  Activity({this.id, this.definition});
+  Activity({
+    dynamic id,
+    this.definition,
+  }) : this.id = ValidatedUri.fromString(id?.toString());
 
   factory Activity.fromJson(Map<String, dynamic> json) {
     if (json == null) {
@@ -15,7 +18,7 @@ class Activity extends StatementTarget {
     }
 
     return Activity(
-      id: ValidatedUri.fromString(json['id']),
+      id: json['id'],
       definition: ActivityDefinition.fromJson(json['definition']),
     );
   }

@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:TinCanDart/TinCanDart.dart';
 import 'package:TinCanDart/src/attachment_content.dart';
-import 'package:TinCanDart/src/validated_uri.dart';
 import 'package:crypto/crypto.dart';
 import 'package:test/test.dart';
 import 'package:uuid/uuid.dart';
@@ -28,7 +27,7 @@ void main() {
   var username;
   var password;
 
-  RemoteLRS lrs;
+  LRS lrs;
   Agent agent;
   Verb verb;
   Activity activity;
@@ -69,16 +68,14 @@ void main() {
     );
 
     verb = Verb(
-      id: ValidatedUri.fromString('http://adlnet.gov/expapi/verbs/experienced'),
+      id: 'http://adlnet.gov/expapi/verbs/experienced',
       display: LanguageMap({'en-US': 'experienced'}),
     );
 
     activity = Activity(
-      id: ValidatedUri.fromString(
-          'http://tincanapi.com/TinCanDart/Test/Unit/0'),
+      id: 'http://tincanapi.com/TinCanDart/Test/Unit/0',
       definition: ActivityDefinition(
-        type: ValidatedUri.fromString(
-            'http://id.tincanapi.com/activitytype/unit-test'),
+        type: 'http://id.tincanapi.com/activitytype/unit-test',
         name: LanguageMap({'en-US': 'TinCanDart Tests: Unit 0'}),
         description: LanguageMap({
           'en-US': 'Unit test 0 in the test suite for the Tin Can Dart library.'
@@ -87,12 +84,10 @@ void main() {
     );
 
     parent = Activity(
-      id: ValidatedUri.fromString('http://tincanapi.com/TinCanDart/Test'),
+      id: 'http://tincanapi.com/TinCanDart/Test',
       definition: ActivityDefinition(
-          type: ValidatedUri.fromString(
-              'http://id.tincanapi.com/activitytype/unit-test-suite'),
-          moreInfo: ValidatedUri.fromString(
-              'http://rusticisoftware.github.io/TinCanDart/'),
+          type: 'http://id.tincanapi.com/activitytype/unit-test-suite',
+          moreInfo: 'http://rusticisoftware.github.io/TinCanDart/',
           name: LanguageMap({'en-US': 'TinCanDart Tests'}),
           description: LanguageMap(
               {'en-US': 'Unit test suite for the Tin Can Dart library.'})),
@@ -138,16 +133,14 @@ void main() {
         contentType: "application/octet-stream",
         description: LanguageMap({'en-US': 'Test Description'}),
         display: LanguageMap({'en-US': 'Test Display'}),
-        usageType: ValidatedUri.fromString(
-            'http://id.tincanapi.com/attachment/supporting_media'));
+        usageType: 'http://id.tincanapi.com/attachment/supporting_media');
 
     attachment2 = Attachment(
       content: AttachmentContent.fromString('hello world 2'),
       contentType: "text/plain",
       description: LanguageMap({'en-US': 'Test Description 2'}),
       display: LanguageMap({'en-US': 'Test Display 2'}),
-      usageType: ValidatedUri.fromString(
-          'http://id.tincanapi.com/attachment/supporting_media'),
+      usageType: 'http://id.tincanapi.com/attachment/supporting_media',
     );
 
     attachment3 = Attachment(
@@ -156,15 +149,14 @@ void main() {
       contentType: "image/jpeg",
       description: LanguageMap({'en-US': 'Test Description 3'}),
       display: LanguageMap({'en-US': 'Test Display 3'}),
-      usageType: ValidatedUri.fromString(
-          'http://id.tincanapi.com/attachment/supporting_media'),
+      usageType: 'http://id.tincanapi.com/attachment/supporting_media',
     );
   });
 
   setUp(() {
     lrs = RemoteLRS(
       version: Version.V103,
-      endpoint: ValidatedUri.fromString(endpoint),
+      endpoint: endpoint,
       username: username,
       password: password,
     );
@@ -180,7 +172,7 @@ void main() {
     expect(obj.endpoint, isNull);
 
     String strURL = "http://tincanapi.com/test/TinCanDart";
-    obj = RemoteLRS(endpoint: ValidatedUri.fromString(strURL));
+    obj = RemoteLRS(endpoint: strURL);
     expect(obj.endpoint.toString(), '$strURL/');
   });
 
@@ -202,8 +194,7 @@ void main() {
   test("should fail on about", () async {
     final obj = RemoteLRS(
         version: Version.V100,
-        endpoint: ValidatedUri.fromString(
-            'https://cloud.scorm.com/lrs/1Y32ZYODBD/sandbox/'));
+        endpoint: 'https://cloud.scorm.com/lrs/1Y32ZYODBD/sandbox/');
     final response = await obj.about();
     final data = response.data;
     expect(response.success, isTrue);
@@ -213,8 +204,7 @@ void main() {
   test("about should fail", () async {
     final obj = RemoteLRS(
         version: Version.V100,
-        endpoint: ValidatedUri.fromString(
-            'http://cloud.scorm.com/tc/3TQLAI9/sandbox/'));
+        endpoint: 'http://cloud.scorm.com/tc/3TQLAI9/sandbox/');
     final response = await obj.about();
     final data = response.data;
     final error = response.errMsg;

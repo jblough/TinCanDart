@@ -23,7 +23,8 @@ abstract class LRS {
 
   //Future<LRSResponse<Statement>> retrieveVoidedStatement(String id);
 
-  Future<LRSResponse<Statement>> retrieveStatement(String id, bool attachments);
+  Future<LRSResponse<Statement>> retrieveStatement(String id,
+      [bool attachments = false]);
 
   Future<LRSResponse<Statement>> retrieveVoidedStatement(
       String id, bool attachments);

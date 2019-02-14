@@ -22,8 +22,8 @@ class ActivityDefinition {
   ActivityDefinition({
     this.name,
     this.description,
-    this.type,
-    this.moreInfo,
+    dynamic type,
+    dynamic moreInfo,
     this.extensions,
     this.interactionType,
     this.correctResponsesPattern,
@@ -32,7 +32,8 @@ class ActivityDefinition {
     this.source,
     this.target,
     this.steps,
-  });
+  })  : this.type = ValidatedUri.fromString(type?.toString()),
+        this.moreInfo = ValidatedUri.fromString(moreInfo?.toString());
 
   factory ActivityDefinition.fromJson(Map<String, dynamic> json) {
     if (json == null) {
@@ -42,8 +43,8 @@ class ActivityDefinition {
     return ActivityDefinition(
       name: LanguageMap.fromJson(json['name']),
       description: LanguageMap.fromJson(json['description']),
-      type: ValidatedUri.fromString(json['type']),
-      moreInfo: ValidatedUri.fromString(json['moreInfo']),
+      type: json['type'],
+      moreInfo: json['moreInfo'],
       extensions: Extensions.fromJson(json['extensions']),
       interactionType: InteractionType.fromString(json['interactionType']),
       correctResponsesPattern: json['correctResponsesPattern'],

@@ -5,7 +5,10 @@ class Verb {
   final ValidatedUri id;
   final LanguageMap display;
 
-  Verb({this.id, this.display});
+  Verb({
+    dynamic id,
+    this.display,
+  }) : this.id = ValidatedUri.fromString(id?.toString());
 
   factory Verb.fromJson(Map<String, dynamic> json) {
     if (json == null) {
@@ -13,7 +16,7 @@ class Verb {
     }
 
     return Verb(
-      id: ValidatedUri.fromString(json['id']),
+      id: json['id'],
       display: LanguageMap.fromJson(json['display']),
     );
   }

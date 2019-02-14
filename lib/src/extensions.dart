@@ -1,9 +1,9 @@
 class Extensions {
   final Map<Uri, dynamic> json;
 
-  Extensions(this.json);
+  Extensions(Map<dynamic, dynamic> json) : this.json = _convertMap(json);
 
-  factory Extensions.fromJson(Map<String, dynamic> json) {
+  static Map<Uri, dynamic> _convertMap(Map<dynamic, dynamic> json) {
     if (json == null) {
       return null;
     }
@@ -11,12 +11,16 @@ class Extensions {
     Map<Uri, dynamic> data = {};
     json.forEach((key, value) {
       try {
-        data[Uri.parse(key)] = value;
+        data[Uri.parse(key.toString())] = value;
       } catch (e) {
         print(e);
       }
     });
-    return Extensions(data);
+    return data;
+  }
+
+  factory Extensions.fromJson(Map<String, dynamic> json) {
+    return Extensions(json);
   }
 
   Map<String, dynamic> toJson() {
@@ -24,8 +28,8 @@ class Extensions {
       return null;
     }
 
-    final map = {};
-    json?.forEach((key, value) => map[key.toString()] = value);
+    final map = <String, dynamic>{};
+    json.forEach((key, value) => map[key.toString()] = value);
     return map;
   }
 }

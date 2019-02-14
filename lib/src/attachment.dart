@@ -16,15 +16,17 @@ class Attachment {
   AttachmentContent content;
 
   Attachment({
-    this.usageType,
+    dynamic usageType,
     this.display,
     this.description,
     this.contentType,
     int length,
     String sha2,
-    this.fileUrl,
+    dynamic fileUrl,
     this.content,
-  })  : this.length = length ?? content?.length,
+  })  : this.usageType = ValidatedUri.fromString(usageType?.toString()),
+        this.fileUrl = ValidatedUri.fromString(fileUrl?.toString()),
+        this.length = length ?? content?.length,
         this.sha2 =
             sha2 ?? ((content != null) ? sha2sum(content.asList()) : null);
 
@@ -39,13 +41,13 @@ class Attachment {
     }
 
     return Attachment(
-      usageType: ValidatedUri.fromString(json['usageType']),
+      usageType: json['usageType'],
       display: LanguageMap.fromJson(json['display']),
       description: LanguageMap.fromJson(json['description']),
       contentType: json['contentType'],
       length: json['length'],
       sha2: json['sha2'],
-      fileUrl: ValidatedUri.fromString(json['fileUrl']),
+      fileUrl: json['fileUrl'],
       content: content,
     );
   }
