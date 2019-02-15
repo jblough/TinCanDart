@@ -1,5 +1,5 @@
-import 'package:TinCanDart/src/extensions.dart';
-import 'package:TinCanDart/src/versions.dart';
+import './extensions.dart';
+import './versions.dart';
 
 class About {
   /**

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:TinCanDart/src/about.dart';
 import 'package:test/test.dart';
+import 'package:tin_can/tin_can.dart' show About;
 import 'package:uuid/uuid.dart';
 
 void main() {

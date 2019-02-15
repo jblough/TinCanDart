@@ -1,4 +1,4 @@
-import 'package:TinCanDart/src/agent.dart';
+import './agent.dart';
 
 class Group {
   final List<Agent> members;

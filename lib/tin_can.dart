@@ -1,17 +1,17 @@
 /// Support for doing something awesome.
 ///
 /// More dartdocs go here.
-library TinCanDart;
+library tin_can;
 
 export 'src/about.dart';
 export 'src/activity.dart';
 export 'src/activity_definition.dart';
-export 'src/activity_profile.dart';
 export 'src/activity_profile_document.dart';
 export 'src/agent.dart';
 export 'src/agent_account.dart';
 export 'src/agent_profile_document.dart';
 export 'src/attachment.dart';
+export 'src/attachment_content.dart';
 export 'src/context.dart';
 export 'src/context_activities.dart';
 export 'src/duration.dart';

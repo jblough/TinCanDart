@@ -1,5 +1,5 @@
-import 'package:TinCanDart/src/duration.dart';
 import 'package:test/test.dart';
+import 'package:tin_can/tin_can.dart' show TinCanDuration;
 
 void main() {
   test("should import date time string", () {

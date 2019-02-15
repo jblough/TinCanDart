@@ -1,8 +1,9 @@
-import 'package:TinCanDart/src/attachment_content.dart';
-import 'package:TinCanDart/src/language_map.dart';
-import 'package:TinCanDart/src/validated_uri.dart';
-import 'package:TinCanDart/src/versions.dart';
 import 'package:crypto/crypto.dart' show sha256;
+
+import './attachment_content.dart';
+import './language_map.dart';
+import './validated_uri.dart';
+import './versions.dart';
 
 class Attachment {
   final ValidatedUri usageType;

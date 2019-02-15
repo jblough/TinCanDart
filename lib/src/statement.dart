@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:TinCanDart/src/agent.dart';
-import 'package:TinCanDart/src/attachment.dart';
-import 'package:TinCanDart/src/attachment_content.dart';
-import 'package:TinCanDart/src/context.dart';
-import 'package:TinCanDart/src/result.dart';
-import 'package:TinCanDart/src/statement_target.dart';
-import 'package:TinCanDart/src/verb.dart';
-import 'package:TinCanDart/src/versions.dart';
+import './agent.dart';
+import './attachment.dart';
+import './attachment_content.dart';
+import './context.dart';
+import './result.dart';
+import './statement_target.dart';
+import './verb.dart';
+import './versions.dart';
 
 class Statement {
   final String id; // Uuid

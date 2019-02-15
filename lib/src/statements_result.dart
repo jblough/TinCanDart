@@ -1,4 +1,4 @@
-import 'package:TinCanDart/src/statement.dart';
+import './statement.dart';
 
 class StatementsResult {
   final List<Statement> statements;

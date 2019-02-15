@@ -1,4 +1,4 @@
-import 'package:TinCanDart/src/agent_account.dart';
+import './agent_account.dart';
 
 class Person {
   final List<String> name;

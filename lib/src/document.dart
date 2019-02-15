@@ -1,4 +1,4 @@
-import 'package:TinCanDart/src/attachment_content.dart';
+import './attachment_content.dart';
 
 abstract class Document {
   final String id;

@@ -1,15 +1,12 @@
-// Copyright (c) 2013, the Dart project authors.  Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:TinCanDart/src/attachment.dart';
 import 'package:http/http.dart' show BaseRequest, ByteStream;
 import 'package:http_parser/http_parser.dart';
+
+import './attachment.dart';
 
 /// A `multipart/mixed` request. Such a request has both json content,
 /// which function as the request body, and (potentially streamed) binary

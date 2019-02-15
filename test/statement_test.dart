@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:TinCanDart/src/statement.dart';
 import 'package:test/test.dart';
+import 'package:tin_can/tin_can.dart' show Statement;
 
 void main() {
   test("should import statement result", () {

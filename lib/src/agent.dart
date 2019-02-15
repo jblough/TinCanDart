@@ -1,6 +1,6 @@
-import 'package:TinCanDart/src/agent_account.dart';
-import 'package:TinCanDart/src/statement_target.dart';
-import 'package:TinCanDart/src/versions.dart';
+import './agent_account.dart';
+import './statement_target.dart';
+import './versions.dart';
 
 class Agent extends StatementTarget {
   final String name;

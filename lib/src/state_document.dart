@@ -1,8 +1,8 @@
-import 'package:TinCanDart/src/activity.dart';
-import 'package:TinCanDart/src/agent.dart';
-import 'package:TinCanDart/src/attachment_content.dart';
-import 'package:TinCanDart/src/document.dart';
-import 'package:TinCanDart/src/versions.dart';
+import './activity.dart';
+import './agent.dart';
+import './attachment_content.dart';
+import './document.dart';
+import './versions.dart';
 
 class StateDocument extends Document {
   final Activity activity;

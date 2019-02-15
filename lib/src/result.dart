@@ -1,7 +1,7 @@
-import 'package:TinCanDart/src/duration.dart';
-import 'package:TinCanDart/src/extensions.dart';
-import 'package:TinCanDart/src/score.dart';
-import 'package:TinCanDart/src/versions.dart';
+import './duration.dart';
+import './extensions.dart';
+import './score.dart';
+import './versions.dart';
 
 class Result {
   final Score score;

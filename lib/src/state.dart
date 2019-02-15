@@ -1,7 +1,8 @@
 import 'dart:typed_data';
 
-import 'package:TinCanDart/src/agent.dart';
 import 'package:uuid/uuid.dart';
+
+import './agent.dart';
 
 class State {
   final String id;

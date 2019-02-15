@@ -1,5 +1,8 @@
-import 'package:TinCanDart/TinCanDart.dart';
-import 'package:TinCanDart/src/versions.dart';
+import './activity.dart';
+import './agent.dart';
+import './statement_ref.dart';
+import './substatement.dart';
+import './versions.dart';
 
 abstract class StatementTarget {
   Map<String, dynamic> toJson(Version version);

@@ -1,7 +1,7 @@
-import 'package:TinCanDart/src/activity_definition.dart';
-import 'package:TinCanDart/src/statement_target.dart';
-import 'package:TinCanDart/src/validated_uri.dart';
-import 'package:TinCanDart/src/versions.dart';
+import './activity_definition.dart';
+import './statement_target.dart';
+import './validated_uri.dart';
+import './versions.dart';
 
 class Activity extends StatementTarget {
   final ValidatedUri id;

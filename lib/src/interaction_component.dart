@@ -1,4 +1,4 @@
-import 'package:TinCanDart/src/language_map.dart';
+import './language_map.dart';
 
 class InteractionComponent {
   final String id;

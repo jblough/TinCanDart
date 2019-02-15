@@ -1,5 +1,5 @@
-import 'package:TinCanDart/src/statement_target.dart';
-import 'package:TinCanDart/src/versions.dart';
+import './statement_target.dart';
+import './versions.dart';
 
 class StatementRef extends StatementTarget {
   final String id; // UUID

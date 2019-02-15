@@ -1,9 +1,9 @@
-import 'package:TinCanDart/src/extensions.dart';
-import 'package:TinCanDart/src/interaction_component.dart';
-import 'package:TinCanDart/src/interaction_type.dart';
-import 'package:TinCanDart/src/language_map.dart';
-import 'package:TinCanDart/src/validated_uri.dart';
-import 'package:TinCanDart/src/versions.dart';
+import './extensions.dart';
+import './interaction_component.dart';
+import './interaction_type.dart';
+import './language_map.dart';
+import './validated_uri.dart';
+import './versions.dart';
 
 class ActivityDefinition {
   final LanguageMap name;

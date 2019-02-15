@@ -1,6 +1,6 @@
-import 'package:TinCanDart/src/agent.dart';
-import 'package:TinCanDart/src/attachment_content.dart';
-import 'package:TinCanDart/src/document.dart';
+import './agent.dart';
+import './attachment_content.dart';
+import './document.dart';
 
 class AgentProfileDocument extends Document {
   final Agent agent;

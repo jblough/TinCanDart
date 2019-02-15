@@ -1,8 +1,8 @@
-import 'package:TinCanDart/src/agent.dart';
-import 'package:TinCanDart/src/context_activities.dart';
-import 'package:TinCanDart/src/extensions.dart';
-import 'package:TinCanDart/src/statement_ref.dart';
-import 'package:TinCanDart/src/versions.dart';
+import './agent.dart';
+import './context_activities.dart';
+import './extensions.dart';
+import './statement_ref.dart';
+import './versions.dart';
 
 class Context {
   final String registration; // UUID

@@ -10,7 +10,7 @@ http://tincanapi.com/
 In your pubspec.yaml
 ```
 dependencies:
-  tincandart: any
+  tin_can: any
 ```
 
 

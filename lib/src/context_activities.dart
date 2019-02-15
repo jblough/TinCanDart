@@ -1,5 +1,5 @@
-import 'package:TinCanDart/src/activity.dart';
-import 'package:TinCanDart/src/versions.dart';
+import './activity.dart';
+import './versions.dart';
 
 class ContextActivities {
   final List<Activity> parent;

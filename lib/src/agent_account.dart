@@ -1,4 +1,4 @@
-import 'package:TinCanDart/src/versions.dart';
+import './versions.dart';
 
 class AgentAccount {
   final String homePage;

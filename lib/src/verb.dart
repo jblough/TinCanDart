@@ -1,5 +1,5 @@
-import 'package:TinCanDart/src/language_map.dart';
-import 'package:TinCanDart/src/validated_uri.dart';
+import './language_map.dart';
+import './validated_uri.dart';
 
 class Verb {
   final ValidatedUri id;

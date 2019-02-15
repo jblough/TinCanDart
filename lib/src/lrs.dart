@@ -1,15 +1,16 @@
-import 'package:TinCanDart/src/about.dart';
-import 'package:TinCanDart/src/activity.dart';
-import 'package:TinCanDart/src/activity_profile_document.dart';
-import 'package:TinCanDart/src/agent.dart';
-import 'package:TinCanDart/src/agent_profile_document.dart';
-import 'package:TinCanDart/src/lrs_response.dart';
-import 'package:TinCanDart/src/person.dart';
-import 'package:TinCanDart/src/state_document.dart';
-import 'package:TinCanDart/src/statement.dart';
-import 'package:TinCanDart/src/statements_query.dart';
-import 'package:TinCanDart/src/statements_result.dart';
 import 'package:uuid/uuid.dart';
+
+import './about.dart';
+import './activity.dart';
+import './activity_profile_document.dart';
+import './agent.dart';
+import './agent_profile_document.dart';
+import './lrs_response.dart';
+import './person.dart';
+import './state_document.dart';
+import './statement.dart';
+import './statements_query.dart';
+import './statements_result.dart';
 
 abstract class LRS {
   Future<LRSResponse<About>> about();

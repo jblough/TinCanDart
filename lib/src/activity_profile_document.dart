@@ -1,6 +1,6 @@
-import 'package:TinCanDart/src/activity.dart';
-import 'package:TinCanDart/src/attachment_content.dart';
-import 'package:TinCanDart/src/document.dart';
+import './activity.dart';
+import './attachment_content.dart';
+import './document.dart';
 
 class ActivityProfileDocument extends Document {
   final Activity activity;

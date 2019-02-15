@@ -1,26 +1,27 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:TinCanDart/src/about.dart';
-import 'package:TinCanDart/src/activity.dart';
-import 'package:TinCanDart/src/activity_profile_document.dart';
-import 'package:TinCanDart/src/agent.dart';
-import 'package:TinCanDart/src/agent_profile_document.dart';
-import 'package:TinCanDart/src/attachment.dart';
-import 'package:TinCanDart/src/attachment_content.dart';
-import 'package:TinCanDart/src/document.dart';
-import 'package:TinCanDart/src/lrs.dart';
-import 'package:TinCanDart/src/lrs_response.dart';
-import 'package:TinCanDart/src/multipart_mixed_request.dart';
-import 'package:TinCanDart/src/person.dart';
-import 'package:TinCanDart/src/state_document.dart';
-import 'package:TinCanDart/src/statement.dart';
-import 'package:TinCanDart/src/statements_query.dart';
-import 'package:TinCanDart/src/statements_result.dart';
-import 'package:TinCanDart/src/validated_uri.dart';
-import 'package:TinCanDart/src/versions.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
+
+import './about.dart';
+import './activity.dart';
+import './activity_profile_document.dart';
+import './agent.dart';
+import './agent_profile_document.dart';
+import './attachment.dart';
+import './attachment_content.dart';
+import './document.dart';
+import './lrs.dart';
+import './lrs_response.dart';
+import './multipart_mixed_request.dart';
+import './person.dart';
+import './state_document.dart';
+import './statement.dart';
+import './statements_query.dart';
+import './statements_result.dart';
+import './validated_uri.dart';
+import './versions.dart';
 
 /// Class used to communicate with a TinCan API endpoint
 class RemoteLRS extends LRS {

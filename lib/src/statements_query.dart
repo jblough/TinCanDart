@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:TinCanDart/src/agent.dart';
-import 'package:TinCanDart/src/statement_target.dart';
-import 'package:TinCanDart/src/validated_uri.dart';
-import 'package:TinCanDart/src/versions.dart';
+import './agent.dart';
+import './statement_target.dart';
+import './validated_uri.dart';
+import './versions.dart';
 
 enum QueryResultFormat { IDS, EXACT, CANONICAL }
 

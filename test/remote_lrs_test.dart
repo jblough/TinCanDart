@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:TinCanDart/TinCanDart.dart';
-import 'package:TinCanDart/src/attachment_content.dart';
 import 'package:crypto/crypto.dart';
 import 'package:test/test.dart';
+import 'package:tin_can/tin_can.dart';
 import 'package:uuid/uuid.dart';
 
 void compareStatements(Statement statement1, Statement statement2) {
