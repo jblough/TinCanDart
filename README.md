@@ -18,7 +18,7 @@ dependencies:
 
 In your code:
 ```dart
-import 'package:TinCanDart/TinCanDart.dart';
+import 'package:tin_can/tin_can.dart';
 
 final lrs = RemoteLRS(
       version: Version.V103,
