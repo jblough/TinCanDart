@@ -143,8 +143,7 @@ void main() {
     );
 
     attachment3 = Attachment(
-      content: AttachmentContent.fromList(
-          File('./test/image.jpg').readAsBytesSync()),
+      content: AttachmentContent.fromFile(File('./test/image.jpg')),
       contentType: "image/jpeg",
       description: LanguageMap({'en-US': 'Test Description 3'}),
       display: LanguageMap({'en-US': 'Test Display 3'}),
