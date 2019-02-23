@@ -3,13 +3,14 @@ class ValidatedUri {
 
   ValidatedUri(this.uri);
 
-  factory ValidatedUri.fromString(String value) {
+  factory ValidatedUri.fromString(String value,
+      {bool appendTrailingSlash = false}) {
     if (value == null) {
       return null;
     }
 
     Uri url;
-    if (value.endsWith('/')) {
+    if (!appendTrailingSlash || value.endsWith('/')) {
       url = Uri.parse(value);
     } else {
       url = Uri.parse('$value/');

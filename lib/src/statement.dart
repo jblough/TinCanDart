@@ -68,9 +68,9 @@ class Statement {
   Map<String, dynamic> toJson(Version version) {
     final json = {
       'id': id,
-      'stored': stored,
+      'stored': stored?.toUtc()?.toIso8601String(),
       'authority': authority?.toJson(version),
-      //'version': TinCanVersion.toJsonString(version),
+      'version': TinCanVersion.toJsonString(version),
       'actor': actor?.toJson(version),
       'verb': verb?.toJson(),
       'object': object?.toJson(version),

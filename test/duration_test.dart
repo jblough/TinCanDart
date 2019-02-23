@@ -98,6 +98,15 @@ void main() {
     expect(duration.toString(), 'PT36H');
   });
 
+  test("should import parts string - 2", () {
+    // PT1H0M0S
+    final duration = TinCanDuration.fromString('PT1H0M0S');
+    expect(duration.hours, '1');
+    expect(duration.minutes, '0');
+    expect(duration.seconds, '0');
+    expect(duration.toString(), 'PT1H0M0S');
+  });
+
   test("should import duration", () {
     // 1, 2, 16, 43
     final source = Duration(

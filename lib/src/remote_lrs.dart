@@ -42,7 +42,8 @@ class RemoteLRS extends LRS {
     this.extended,
     this.prettyJson = false,
     http.Client client,
-  })  : this.endpoint = ValidatedUri.fromString(endpoint?.toString()),
+  })  : this.endpoint = ValidatedUri.fromString(endpoint?.toString(),
+            appendTrailingSlash: true),
         _client = client ?? http.Client(),
         auth = generateAuth(username, password),
         _version = version ?? TinCanVersion.latest();

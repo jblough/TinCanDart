@@ -1,4 +1,7 @@
+import 'package:crypto/crypto.dart' show sha1;
+
 import './agent_account.dart';
+import './group.dart';
 import './statement_target.dart';
 import './versions.dart';
 
@@ -17,18 +20,27 @@ class Agent extends StatementTarget {
     this.account,
   });
 
+  static String sha1sum(String value) {
+    return sha1.convert(value.codeUnits).toString();
+  }
+
   factory Agent.fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }
 
-    return Agent(
-      name: json['name'],
-      mbox: json['mbox'],
-      mboxSHA1Sum: json['mboxSHA1Sum'],
-      openID: json['openid'],
-      account: AgentAccount.fromJson(json['account']),
-    );
+    final type = json['objectType'];
+    if (type == 'Group') {
+      return Group.fromJson(json);
+    } else {
+      return Agent(
+        name: json['name'],
+        mbox: json['mbox'],
+        mboxSHA1Sum: json['mbox_sha1sum'],
+        openID: json['openid'],
+        account: AgentAccount.fromJson(json['account']),
+      );
+    }
   }
 
   @override

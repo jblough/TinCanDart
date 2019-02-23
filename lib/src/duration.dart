@@ -98,7 +98,10 @@ class TinCanDuration {
 
     // Else use fromParts
     String years = RegExp(r'([0-9,.]+)Y').firstMatch(duration)?.group(1);
-    String months = RegExp(r'[^T]([0-9,.]+)M').firstMatch(duration)?.group(1);
+    // Since months and minutes both use 'M', split on the 'T' if present
+    String months = (duration.contains('T'))
+        ? RegExp(r'([0-9,.]+)M').firstMatch(duration.split('T')[0])?.group(1)
+        : RegExp(r'[^T]([0-9,.]+)M').firstMatch(duration)?.group(1);
     String days = RegExp(r'([0-9,.]+)D').firstMatch(duration)?.group(1);
     String hours = RegExp(r'([0-9,.]+)H').firstMatch(duration)?.group(1);
     String minutes = RegExp(r'T.*?([0-9,.]+)M').firstMatch(duration)?.group(1);

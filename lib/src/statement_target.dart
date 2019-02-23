@@ -1,5 +1,6 @@
 import './activity.dart';
 import './agent.dart';
+import './group.dart';
 import './statement_ref.dart';
 import './substatement.dart';
 import './versions.dart';
@@ -15,6 +16,7 @@ abstract class StatementTarget {
     final type = json['objectType'];
     switch (type) {
       case 'Group':
+        return Group.fromJson(json);
       case 'Agent':
         return Agent.fromJson(json);
       case 'StatementRef':

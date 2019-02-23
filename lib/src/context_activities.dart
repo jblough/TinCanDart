@@ -28,11 +28,16 @@ class ContextActivities {
   }
 
   Map<String, dynamic> toJson(Version version) {
-    return {
+    final json = {
       'parent': parent?.map((a) => a.toJson(version))?.toList(),
       'grouping': grouping?.map((a) => a.toJson(version))?.toList(),
       'other': other?.map((a) => a.toJson(version))?.toList(),
       'category': category?.map((a) => a.toJson(version))?.toList(),
     };
+
+    // Remove all keys where the value is null
+    json.removeWhere((key, value) => value == null);
+
+    return json;
   }
 }

@@ -38,10 +38,15 @@ class Activity extends StatementTarget {
 
   @override
   Map<String, dynamic> toJson(Version version) {
-    return {
+    final json = {
       'objectType': 'Activity',
       'id': id?.toString(),
       'definition': definition?.toJson(version: version),
     };
+
+    // Remove all keys where the value is null
+    json.removeWhere((key, value) => value == null);
+
+    return json;
   }
 }

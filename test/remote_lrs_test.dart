@@ -1000,4 +1000,24 @@ void main() {
     expect(response.success, isTrue);
     compareStatements(response.data, statement);
   });
+
+  test("should save agent with sha1sum", () async {
+    final sumAgent = Agent(
+      mboxSHA1Sum: Agent.sha1sum('mailto:tincandart@tincanapi.com'),
+      name: 'Test SHA1 Agent',
+    );
+
+    final response = await lrs.deleteAgentProfile(AgentProfileDocument(
+      id: 'test2s',
+      agent: sumAgent,
+    ));
+    expect(response.success, isTrue);
+
+    final save = await lrs.saveAgentProfile(AgentProfileDocument(
+      id: 'test2s',
+      agent: sumAgent,
+      content: AttachmentContent.fromString('Test value'),
+    ));
+    expect(save.success, isTrue);
+  });
 }
