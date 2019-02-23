@@ -12,8 +12,8 @@ class AgentAccount {
     }
 
     return AgentAccount(
-      homePage: json['homePage'],
       name: json['name'],
+      homePage: json['homePage'],
     );
   }
 
@@ -32,8 +32,8 @@ class AgentAccount {
 
   Map<String, dynamic> toJson(Version version) {
     return {
-      'homePage': homePage,
       'name': name,
+      'homePage': homePage,
     };
   }
 }

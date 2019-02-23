@@ -107,7 +107,7 @@ class RemoteLRS extends LRS {
     };
     final response = await _makeRequest('agents', 'GET', queryParams: params);
     if (response?.statusCode == 200) {
-      print(response.body);
+      //print(response.body);
       return LRSResponse<Person>(
           success: true, data: Person.fromJson(json.decode(response.body)));
     } else {
@@ -312,7 +312,7 @@ class RemoteLRS extends LRS {
           true) {
         // Parse mixed data
         final contentType = response.headers['content-type'];
-        print(contentType);
+        //print(contentType);
         //print(response.body);
         final boundary = contentType.split('boundary=')[1];
         final statement =

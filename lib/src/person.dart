@@ -1,17 +1,18 @@
 import './agent_account.dart';
+import './versions.dart';
 
 class Person {
   final List<String> name;
   final List<String> mbox;
-  final List<String> mbox_sha1sum;
-  final List<String> openid;
+  final List<String> mboxSHA1Sum;
+  final List<String> openID;
   final List<AgentAccount> account;
 
   Person({
     this.name,
     this.mbox,
-    this.mbox_sha1sum,
-    this.openid,
+    this.mboxSHA1Sum,
+    this.openID,
     this.account,
   });
 
@@ -23,9 +24,25 @@ class Person {
     return Person(
       name: json['name']?.cast<String>(),
       mbox: json['mbox']?.cast<String>(),
-      mbox_sha1sum: json['mbox_sha1sum']?.cast<String>(),
-      openid: json['openid']?.cast<String>(),
+      mboxSHA1Sum: json['mbox_sha1sum']?.cast<String>(),
+      openID: json['openid']?.cast<String>(),
       account: AgentAccount.listFromJson(json['account']),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = {
+      'objectType': 'Person',
+      'name': name,
+      'mbox': mbox,
+      'mbox_sha1sum': mboxSHA1Sum,
+      'openid': openID,
+      'account': account?.toList(),
+    };
+
+    // Remove all keys where the value is null
+    json.removeWhere((key, value) => value == null);
+
+    return json;
   }
 }

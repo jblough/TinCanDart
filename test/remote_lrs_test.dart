@@ -984,4 +984,20 @@ void main() {
 
     expect(currentSet, correctSet);
   });
+
+  test("should save statement with group", () async {
+    final statement = Statement(
+      actor: Group(
+        name: 'test agents',
+        members: [agent],
+      ),
+      verb: verb,
+      object: activity,
+    );
+
+    expect(statement.id, isNull);
+    final response = await lrs.saveStatement(statement);
+    expect(response.success, isTrue);
+    compareStatements(response.data, statement);
+  });
 }

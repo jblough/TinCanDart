@@ -26,7 +26,7 @@ class Agent extends StatementTarget {
       name: json['name'],
       mbox: json['mbox'],
       mboxSHA1Sum: json['mboxSHA1Sum'],
-      openID: json['openID'],
+      openID: json['openid'],
       account: AgentAccount.fromJson(json['account']),
     );
   }
@@ -37,8 +37,8 @@ class Agent extends StatementTarget {
       'objectType': 'Agent',
       'name': name,
       'mbox': mbox,
-      'mboxSHA1Sum': mboxSHA1Sum,
-      'openID': openID,
+      'mbox_sha1sum': mboxSHA1Sum,
+      'openid': openID,
       'account': account?.toJson(version),
     };
 
