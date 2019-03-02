@@ -122,4 +122,13 @@ void main() {
     expect(duration.seconds, '16.043');
     expect(duration.toString(), 'PT1H2M16.043S');
   });
+
+  test("should import diff", () {
+    final start = DateTime.now().subtract(Duration(seconds: 12));
+    final end = start.add(Duration(seconds: 12));
+
+    final duration = TinCanDuration.fromDiff(start, end);
+    expect(duration.seconds, '12');
+    expect(duration.toString(), 'PT12S');
+  });
 }

@@ -1020,4 +1020,23 @@ void main() {
     ));
     expect(save.success, isTrue);
   });
+
+  test("should save statement with time diff result duration", () async {
+    final statement = Statement(
+      actor: agent,
+      verb: verb,
+      object: activity,
+      result: result.copyWith(
+        duration: TinCanDuration.fromDiff(
+          DateTime.now().subtract(Duration(hours: 1, seconds: 9)),
+          DateTime.now(),
+        ),
+      ),
+    );
+
+    expect(statement.id, isNull);
+    final response = await lrs.saveStatement(statement);
+    expect(response.success, isTrue);
+    compareStatements(response.data, statement);
+  });
 }

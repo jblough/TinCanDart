@@ -117,6 +117,14 @@ class TinCanDuration {
     );
   }
 
+  factory TinCanDuration.fromDiff(DateTime start, DateTime end) {
+    if (start == null || end == null) {
+      return null;
+    }
+
+    return TinCanDuration.fromDuration(end.difference(start));
+  }
+
   factory TinCanDuration.fromDuration(Duration duration) {
     if (duration == null) {
       return null;
@@ -129,14 +137,25 @@ class TinCanDuration {
     int days = (inDays > 0) ? inDays : null;
     int hours =
         (inDays > 0) ? (duration.inHours % 24) : int.tryParse(match.group(1));
+    if (hours == 0) {
+      hours = null;
+    }
     int minutes = int.tryParse(match.group(2));
+    if (minutes == 0) {
+      minutes = null;
+    }
     double seconds = double.tryParse(match.group(3));
+    final secondsString = (seconds == null)
+        ? null
+        : ((seconds.toInt() == seconds)
+            ? seconds.toInt().toString()
+            : seconds.toString());
 
     return TinCanDuration.fromParts(
       days: days?.toString(),
       hours: hours?.toString(),
       minutes: minutes?.toString(),
-      seconds: seconds?.toString(),
+      seconds: secondsString,
     );
   }
 

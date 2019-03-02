@@ -20,6 +20,24 @@ class Result {
     this.extensions,
   });
 
+  Result copyWith({
+    Score score,
+    bool success,
+    bool completion,
+    TinCanDuration duration,
+    String response,
+    Extensions extensions,
+  }) {
+    return Result(
+      score: score ?? this.score,
+      success: success ?? this.success,
+      completion: completion ?? this.completion,
+      duration: duration ?? this.duration,
+      response: response ?? this.response,
+      extensions: extensions ?? this.extensions,
+    );
+  }
+
   factory Result.fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
