@@ -62,8 +62,8 @@ class ActivityDefinition {
     }
 
     final json = {
-      'name': name.toJson(),
-      'description': description.toJson(),
+      'name': name?.toJson(),
+      'description': description?.toJson(),
       'type': type?.toString(),
       'moreInfo': moreInfo?.toString(),
       'extensions': extensions?.toJson(),

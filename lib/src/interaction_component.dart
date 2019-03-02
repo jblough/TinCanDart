@@ -34,7 +34,7 @@ class InteractionComponent {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'description': description.toJson(),
+      'description': description?.toJson(),
     };
   }
 }

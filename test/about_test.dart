@@ -2,12 +2,9 @@ import 'dart:convert';
 
 import 'package:test/test.dart';
 import 'package:tin_can/tin_can.dart' show About;
-import 'package:uuid/uuid.dart';
 
 void main() {
   test("should import about", () {
-    print(Uuid().v4());
-    print(Uuid().v4().toString());
     final about = About.fromJson(json.decode(_json));
     expect(about.version.length, 3);
     expect(about.extensions.json.length, 1);

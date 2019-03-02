@@ -1,7 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:test/test.dart';
-import 'package:tin_can/tin_can.dart' show Statement;
+import 'package:tin_can/tin_can.dart' show Activity, Statement;
 
 void main() {
   test("should import statement result", () {
@@ -18,8 +19,6 @@ void main() {
     final result =
         Statement.fromMixedMultipart(boundary, body2.replaceAll('\n', '\r\n'));
     expect(result, isNotNull);
-    //expect(result.length, 1);
-    print(String.fromCharCodes(result[0].attachments[0].content.asList()));
     expect(result[0].id, '7b47a074-1277-45c5-97be-a3c9c14e706d');
     expect(result[0].attachments[0].content.length, 'hello world'.length);
   });
@@ -27,13 +26,23 @@ void main() {
   test("should import binary image result", () {
     final boundary = '92d88485da5d4d32bf29127824b3c836';
     final payload = File('test/payload.data').readAsBytesSync();
-    print(payload.length);
     final result = Statement.fromMixedMultipart(boundary, payload);
     expect(result, isNotNull);
-    //expect(result.length, 1);
-    //print(String.fromCharCodes(result[0].attachments[0].content.asInt8List()));
     expect(result[0].id, 'db6adf7c-09a9-4854-a2b9-bbf087f1371b');
     expect(result[0].attachments[0].content.length, 50836);
+  });
+
+  test("should read content with badge", () {
+    final statement = Statement.fromJson(json.decode(_bodyWithBadge));
+
+    expect(statement, isNotNull);
+    expect(statement.actor, isNotNull);
+    expect(statement.result, isNotNull);
+    expect(statement.object, isNotNull);
+    expect(statement.verb, isNotNull);
+    expect(statement.context, isNotNull);
+    expect((statement.object as Activity).definition, isNotNull);
+    expect((statement.object as Activity).definition.extensions, isNotNull);
   });
 }
 
@@ -74,4 +83,67 @@ Content-Type:application/octet-stream
 
 hello world
 --1416c651f2f54d0e9d178eb165492a0c--
+''';
+
+final _bodyWithBadge = '''
+{
+  "actor": {
+    "name": "Example Earner",
+    "mbox": "mailto:earner@example.com"
+  },
+  "verb": {
+    "id": "http://specification.openbadges.org/xapi/verbs/earned",
+    "display": {
+      "en-US": "earned"
+    }
+  },
+  "result": {
+    "extensions": {
+      "http://specification.openbadges.org/xapi/extensions/badgeassertion": {
+        "@id": "http://www.example.com/assertion/1"
+      }
+    }
+  },
+  "context": {
+    "contextActivities": {
+      "category": [{
+        "id": "http://specification.openbadges.org/xapi/recipe/base/0_0_2",
+        "definition": {
+          "type": "http://id.tincanapi.com/activitytype/recipe"
+        },
+        "objectType": "Activity"
+      }]
+    }
+  },
+  "attachments": [{
+    "usageType": "http://specification.openbadges.org/xapi/attachment/badge",
+    "display": {
+      "en-US": "Name of the badge"
+    },
+    "contentType": "image/png",
+    "length": 48826,
+    "sha2": "42a33cb2af34603730577c2e5ddd78858feb34860c4e5bf0f473fa7456d3994a"
+  }],
+  "object": {
+    "id": "http://www.example.com/badgeclass/1",
+    "definition": {
+      "extensions": {
+        "http://specification.openbadges.org/xapi/extensions/badgeclass": {
+          "@id": "http://www.example.com/badgeclass/1",
+          "image": "http://www.example.com/badgeimage/1.png",
+          "criteria": "http://www.example.com/criteria/1",
+          "issuer": "http://www.example.com/issuer/1"
+        }
+      },
+      "name": {
+        "en-US": "Name of the badge"
+      },
+      "description": {
+        "en-US": "Description of the badge."
+      },
+      "type": "http://activitystrea.ms/schema/1.0/badge"
+    },
+    "objectType": "Activity"
+  }
+}
 ''';

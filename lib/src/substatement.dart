@@ -50,9 +50,9 @@ class SubStatement extends StatementTarget {
   Map<String, dynamic> toJson(Version version) {
     return {
       'objectType': 'SubStatement',
-      'actor': actor.toJson(version),
-      'verb': verb,
-      'object': object.toJson(version),
+      'actor': actor?.toJson(version),
+      'verb': verb?.toJson(),
+      'object': object?.toJson(version),
       // 'result': result.toJson(version),
       // 'context': result.to
     };

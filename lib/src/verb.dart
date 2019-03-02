@@ -24,7 +24,7 @@ class Verb {
   Map<String, dynamic> toJson() {
     return {
       'id': id?.toString(),
-      'display': display.toJson(),
+      'display': display?.toJson(),
     };
   }
 }

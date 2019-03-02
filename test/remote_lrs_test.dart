@@ -41,7 +41,6 @@ void main() {
   Attachment attachment3;
 
   setUpAll(() {
-    print(Directory.current);
     final config = File('./test/lrs.properties');
     final lines = config.readAsLinesSync();
     lines.forEach((line) {

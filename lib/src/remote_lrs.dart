@@ -380,7 +380,7 @@ class RemoteLRS extends LRS {
         additionalHeaders: {'content-type': 'application/json'},
         body: body,
         attachments: (attachments.isEmpty) ? null : attachments);
-    print('Response status : ${response?.statusCode}');
+    //print('Response status : ${response?.statusCode}');
 
     dynamic responseBody;
     if (response.runtimeType.toString() == 'StreamedResponse') {
@@ -390,7 +390,7 @@ class RemoteLRS extends LRS {
     } else {
       responseBody = response?.body;
     }
-    print('Response : $responseBody');
+    //print('Response : $responseBody');
 
     if (response?.statusCode == 200) {
       final List ids = json.decode(responseBody);
@@ -418,7 +418,7 @@ class RemoteLRS extends LRS {
 
     final response = await _makeRequest('statements', verb,
         queryParams: params, body: body, attachments: statement.attachments);
-    print(response?.statusCode);
+    //print(response?.statusCode);
     dynamic responseBody;
     if (response.runtimeType.toString() == 'StreamedResponse') {
       http.StreamedResponse streamedResponse = response;
@@ -448,8 +448,8 @@ class RemoteLRS extends LRS {
   @override
   Future<LRSResponse<About>> about() async {
     final response = await _makeRequest('about', 'GET');
-    print(response?.statusCode);
-    print(response?.body);
+    //print(response?.statusCode);
+    //print(response?.body);
 
     if (response?.statusCode == 200) {
       return LRSResponse<About>(
