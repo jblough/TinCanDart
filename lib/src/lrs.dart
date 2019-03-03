@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:uuid/uuid.dart';
 
 import './about.dart';
@@ -12,6 +14,8 @@ import './statement.dart';
 import './statements_query.dart';
 import './statements_result.dart';
 
+// TODO - Add documentation for each method
+
 abstract class LRS {
   Future<LRSResponse<About>> about();
 
@@ -20,15 +24,11 @@ abstract class LRS {
   Future<LRSResponse<StatementsResult>> saveStatements(
       List<Statement> statements);
 
-  //Future<LRSResponse<Statement>> retrieveStatement(String id);
-
-  //Future<LRSResponse<Statement>> retrieveVoidedStatement(String id);
-
   Future<LRSResponse<Statement>> retrieveStatement(String id,
       [bool attachments = false]);
 
-  Future<LRSResponse<Statement>> retrieveVoidedStatement(
-      String id, bool attachments);
+  Future<LRSResponse<Statement>> retrieveVoidedStatement(String id,
+      [bool attachments = false]);
 
   Future<LRSResponse<StatementsResult>> queryStatements(StatementsQuery query);
 

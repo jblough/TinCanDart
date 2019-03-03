@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -338,8 +339,8 @@ class RemoteLRS extends LRS {
   }
 
   @override
-  Future<LRSResponse<Statement>> retrieveVoidedStatement(
-      String id, bool attachments) {
+  Future<LRSResponse<Statement>> retrieveVoidedStatement(String id,
+      [bool attachments = false]) {
     final paramName =
         (_version == Version.V095) ? "statementId" : "voidedStatementId";
     final params = {

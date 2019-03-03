@@ -65,7 +65,11 @@ class Statement {
     );
   }
 
-  Map<String, dynamic> toJson(Version version) {
+  Map<String, dynamic> toJson([Version version]) {
+    if (version == null) {
+      version = TinCanVersion.latest();
+    }
+
     final json = {
       'id': id,
       'stored': stored?.toUtc()?.toIso8601String(),
@@ -133,7 +137,6 @@ class Statement {
         ? _MixedReader(body.codeUnits)
         : _MixedReader(body);
 
-    // TODO - See about making sure this is robust enough
     var line = reader.readNextLine(); // Boundary (or blank line)
     if (line.isEmpty || line == '\r\n') {
       line = reader.readNextLine(); // Boundary
