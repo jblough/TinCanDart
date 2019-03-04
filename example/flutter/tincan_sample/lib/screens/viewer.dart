@@ -57,10 +57,11 @@ class _StatementViewerState extends State<StatementViewer> {
             headerBuilder: (BuildContext context, bool isExpanded) {
               if (isExpanded) {
                 return Container(
+                  padding: const EdgeInsets.all(8.0),
                   child: Text(_statementShortSummary(statement)),
                 );
               } else {
-                return Padding(
+                return Container(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(_statementSummary(statement)),
                 );
@@ -74,7 +75,7 @@ class _StatementViewerState extends State<StatementViewer> {
                 style: BorderStyle.solid,
               )),
               margin: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
-              padding: EdgeInsets.all(0.0),
+              padding: EdgeInsets.all(8.0),
               child: Text(
                 encoder.convert(statement.toJson()),
               ),
@@ -98,7 +99,7 @@ class _StatementViewerState extends State<StatementViewer> {
 
     String verb = statement.verb.display?.map?.values?.first;
 
-    String when = statement.timestamp.toIso8601String();
+    String when = statement.timestamp?.toIso8601String() ?? '';
 
     String what = '';
     if (statement.object is tincan.Activity) {
@@ -129,7 +130,7 @@ class _StatementViewerState extends State<StatementViewer> {
       who = statement.actor.name;
     }
 
-    String when = statement.timestamp.toIso8601String();
+    String when = statement.timestamp?.toIso8601String() ?? '';
 
     return '$when $who';
   }
