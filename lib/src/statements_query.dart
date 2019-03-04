@@ -8,24 +8,57 @@ import './versions.dart';
 enum QueryResultFormat { IDS, EXACT, CANONICAL }
 
 class StatementsQuery {
+  ///  ID to query on
   final ValidatedUri verbID;
+
+  /// (Removed in 1.0.0, use 'activityID' or 'agent' instead) Activity, Agent, or Statement matches 'object'
   final StatementTarget object;
+
+  /// Registration UUID
   final String registration; // UUID
+  /// (Removed in 1.0.0, use [activityID] instead) When filtering on target, include statements with matching context
   final bool context;
+
+  /// (Removed in 1.0.0, use 'agent' instead) Agent matches 'actor'
   final Agent actor;
+
+  /// Match statements stored since specified timestamp
   final DateTime since;
+
+  /// Match statements stored at or before specified timestamp
   final DateTime until;
+
+  /// Number of results to retrieve
   final int limit;
+
+  /// (Removed in 1.0.0) Get authoritative results
   final bool authoritative;
+
+  /// (Removed in 1.0.0, use 'format' instead) Get sparse results
   final bool sparse;
+
+  /// (Removed in 1.0.0, use 'agent' + 'related_agents' instead) Agent matches 'context:instructor'
   final Agent instructor;
+
+  /// Return results in ascending order of stored time
   final bool ascending;
 
+  /// Agent matches 'actor' or 'object'
   final Agent agent;
+
+  /// Activity ID to query on
   final ValidatedUri activityID;
+
+  /// Match related activities
   final bool relatedActivities;
+
+  /// Match related agents
   final bool relatedAgents;
+
+  /// One of "IDS", "EXACT", "CANONICAL" (default: "EXACT")
   final QueryResultFormat format;
+
+  /// Include attachments in multipart response (default: false)
   final bool attachments;
 
   StatementsQuery({
