@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:tin_can/tin_can.dart' as tincan;
 import 'package:tincan_sample/blocs/lrs_bloc.dart';
@@ -11,14 +13,25 @@ class CounterScreen extends StatefulWidget {
 
 class _CounterScreenState extends State<CounterScreen> {
   int _counter = 0;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  String _feedback;
+  StreamSubscription<String> _subscription;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _subscription = lrsBloc.feedback.listen(_listenForFeedback);
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
 
   void _incrementCounter() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
       _counter++;
     });
 
@@ -27,13 +40,13 @@ class _CounterScreenState extends State<CounterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    if (_feedback != null) {
+      _showFeedback(_feedback);
+      _feedback = null;
+    }
+
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Counter'),
       ),
@@ -45,6 +58,9 @@ class _CounterScreenState extends State<CounterScreen> {
             children: <Widget>[
               Text(
                 'You have pushed the button this many times:',
+                style:
+                    Theme.of(context).textTheme.body1.copyWith(fontSize: 24.0),
+                textAlign: TextAlign.center,
               ),
               Text(
                 '$_counter',
@@ -70,5 +86,18 @@ class _CounterScreenState extends State<CounterScreen> {
       object: tincan.Activity(
           id: 'http://tincanapi.com/TinCanDart/example/counter'),
     ));
+  }
+
+  void _showFeedback(String feedback) async {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(feedback),
+      duration: Duration(milliseconds: 500),
+    ));
+  }
+
+  void _listenForFeedback(String feedback) {
+    setState(() {
+      _feedback = feedback;
+    });
   }
 }

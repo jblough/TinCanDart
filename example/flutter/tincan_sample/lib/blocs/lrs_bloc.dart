@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tin_can/tin_can.dart';
 
@@ -21,11 +21,16 @@ export 'package:tin_can/tin_can.dart'
         Score;
 
 class LrsBloc {
-  final BehaviorSubject<List<Statement>> _statementStream =
-      BehaviorSubject<List<Statement>>();
+  final _statementStream = BehaviorSubject<List<Statement>>();
+  final _feedback = StreamController<String>();
+  Stream<String> _feedbackBroadcast;
 
   /// Stream of statements retrieved from the LRS
-  Stream<List<Statement>> get statements => _statementStream;
+  Stream<List<Statement>> get statements => _statementStream.stream;
+
+  /// Stream of responses from LRS operations
+  Stream<String> get feedback => _feedbackBroadcast;
+
   final _reportStatementController = StreamController<Statement>();
 
   /// Record a Statement on the LRS
@@ -38,6 +43,7 @@ class LrsBloc {
       name: 'Sample User');
 
   LrsBloc() {
+    _feedbackBroadcast = _feedback.stream.asBroadcastStream();
     rootBundle.loadString('assets/lrs.properties').then((value) {
       String endpoint = '';
       String username = '';
@@ -69,8 +75,10 @@ class LrsBloc {
           await _lrs.saveStatement(statement.copyWith(actor: _agent));
       if (response.success) {
         print('Recorded statement successfully');
+        _feedback.add('Recorded statement successfully');
       } else {
         print('Error recording statement - ${response.errMsg}');
+        _feedback.add(response.errMsg);
       }
     });
   }
@@ -85,6 +93,7 @@ class LrsBloc {
       _statementStream.add(response.data.statements);
     } else {
       print('Error : ${response.errMsg}');
+      _feedback.add(response.errMsg);
     }
   }
 }

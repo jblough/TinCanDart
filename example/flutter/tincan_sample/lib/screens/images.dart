@@ -1,13 +1,45 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:tincan_sample/blocs/lrs_bloc.dart';
 
-class ImageSelectionScreen extends StatelessWidget {
+class ImageSelectionScreen extends StatefulWidget {
+  @override
+  _ImageSelectionScreenState createState() => _ImageSelectionScreenState();
+}
+
+class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
   final _nameRegex = RegExp('assets/images/(.*).png');
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  String _feedback;
+
+  StreamSubscription<String> _subscription;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _subscription = lrsBloc.feedback.listen(_listenForFeedback);
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_feedback != null) {
+      _showFeedback(_feedback);
+      _feedback = null;
+    }
+
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
@@ -60,5 +92,18 @@ class ImageSelectionScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _showFeedback(String feedback) async {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(feedback),
+      duration: Duration(milliseconds: 500),
+    ));
+  }
+
+  void _listenForFeedback(String feedback) {
+    setState(() {
+      _feedback = feedback;
+    });
   }
 }

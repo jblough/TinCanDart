@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -173,23 +174,24 @@ class _StatementViewerState extends State<StatementViewer> {
   Future<void> _displayAttachment(
       BuildContext context, Attachment attachment) async {
     showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(attachment.display?.map?.values?.first ?? ''),
-            content: Container(
-              child: Image.memory(attachment.content.asList()),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Close'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
-          );
-        },
-        barrierDismissible: true);
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(attachment.display?.map?.values?.first ?? ''),
+          content: Container(
+            child: Image.memory(attachment.content.asList()),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+      barrierDismissible: true,
+    );
   }
 }

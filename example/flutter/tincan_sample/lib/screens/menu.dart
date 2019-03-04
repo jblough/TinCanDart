@@ -7,7 +7,12 @@ import 'package:tincan_sample/screens/viewer.dart';
 
 typedef MenuSelectionCallback = void Function(BuildContext);
 
-class MenuScreen extends StatelessWidget {
+class MenuScreen extends StatefulWidget {
+  @override
+  _MenuScreenState createState() => _MenuScreenState();
+}
+
+class _MenuScreenState extends State<MenuScreen> {
   final items = [
     'Counter',
     'Take a quiz',
@@ -15,6 +20,7 @@ class MenuScreen extends StatelessWidget {
     'Select an image',
     'View Statements',
   ];
+
   final onTaps = <MenuSelectionCallback>[
     (context) {
       Navigator.push(
