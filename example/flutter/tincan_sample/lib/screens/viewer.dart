@@ -53,21 +53,8 @@ class _StatementViewerState extends State<StatementViewer> {
           });
         },
         children: statements.map((statement) {
-          return ExpansionPanel(
-            headerBuilder: (BuildContext context, bool isExpanded) {
-              if (isExpanded) {
-                return Container(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(_statementShortSummary(statement)),
-                );
-              } else {
-                return Container(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(_statementSummary(statement)),
-                );
-              }
-            },
-            body: Container(
+          final statementWidgets = <Widget>[
+            Container(
               foregroundDecoration: BoxDecoration(
                   border: Border.all(
                 color: Colors.grey,
@@ -76,9 +63,57 @@ class _StatementViewerState extends State<StatementViewer> {
               )),
               margin: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
               padding: EdgeInsets.all(8.0),
-              child: Text(
-                encoder.convert(statement.toJson()),
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    _currentlyExpanded = null;
+                  });
+                },
+                child: Text(
+                  encoder.convert(statement.toJson()),
+                ),
               ),
+            )
+          ];
+          statement.attachments?.forEach((tincan.Attachment attachment) {
+            statementWidgets.add(ListTile(
+              onTap: () => _displayAttachment(context, attachment),
+              leading: Icon(Icons.attachment, size: 48.0),
+              title: Text(attachment.display?.map?.values?.first ?? 'Unknown'),
+              subtitle:
+                  Text(attachment.description?.map?.values?.first ?? 'Unknown'),
+            ));
+          });
+
+          return ExpansionPanel(
+            headerBuilder: (BuildContext context, bool isExpanded) {
+              if (isExpanded) {
+                return Container(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          _currentlyExpanded = null;
+                        });
+                      },
+                      child: Text(_statementShortSummary(statement))),
+                );
+              } else {
+                return Container(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        _currentlyExpanded = statement.id;
+                      });
+                    },
+                    child: Text(_statementSummary(statement)),
+                  ),
+                );
+              }
+            },
+            body: Column(
+              children: statementWidgets,
             ),
             isExpanded: _currentlyExpanded == statement.id,
           );
@@ -133,5 +168,28 @@ class _StatementViewerState extends State<StatementViewer> {
     String when = statement.timestamp?.toIso8601String() ?? '';
 
     return '$when $who';
+  }
+
+  Future<void> _displayAttachment(
+      BuildContext context, Attachment attachment) async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(attachment.display?.map?.values?.first ?? ''),
+            content: Container(
+              child: Image.memory(attachment.content.asList()),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Close'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        },
+        barrierDismissible: true);
   }
 }

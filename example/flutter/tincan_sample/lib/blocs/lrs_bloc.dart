@@ -5,6 +5,21 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:rxdart/rxdart.dart';
 import 'package:tin_can/tin_can.dart';
 
+export 'package:tin_can/tin_can.dart'
+    show
+        Statement,
+        Agent,
+        Group,
+        Attachment,
+        AttachmentContent,
+        Activity,
+        LanguageMap,
+        Verb,
+        Extensions,
+        TinCanDuration,
+        Result,
+        Score;
+
 class LrsBloc {
   final BehaviorSubject<List<Statement>> _statementStream =
       BehaviorSubject<List<Statement>>();
@@ -49,21 +64,28 @@ class LrsBloc {
       );
     });
 
-    _reportStatementController.stream.listen((statement) {
-      _lrs.saveStatement(statement.copyWith(actor: _agent));
+    _reportStatementController.stream.listen((statement) async {
+      final response =
+          await _lrs.saveStatement(statement.copyWith(actor: _agent));
+      if (response.success) {
+        print('Recorded statement successfully');
+      } else {
+        print('Error recording statement - ${response.errMsg}');
+      }
     });
   }
 
-  void refreshStatements() {
-    _lrs
-        .queryStatements(StatementsQuery(
+  void refreshStatements() async {
+    final response = await _lrs.queryStatements(StatementsQuery(
       agent: _agent,
-    ))
-        .then((response) {
-      if (response.success) {
-        _statementStream.add(response.data.statements);
-      }
-    });
+      attachments: true,
+    ));
+
+    if (response.success) {
+      _statementStream.add(response.data.statements);
+    } else {
+      print('Error : ${response.errMsg}');
+    }
   }
 }
 

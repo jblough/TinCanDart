@@ -12,6 +12,9 @@ class AttachmentContent {
 
   AttachmentContent.fromUint8List(Uint8List content) : _content = content;
 
+  AttachmentContent.fromByteData(ByteData content)
+      : _content = content.buffer.asUint8List();
+
   AttachmentContent.fromFile(File content)
       : _content = content.readAsBytesSync();
 

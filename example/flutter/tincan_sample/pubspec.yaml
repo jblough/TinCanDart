@@ -46,6 +46,16 @@ flutter:
 
   assets:
     - assets/lrs.properties
+    - assets/images/bird.png
+    - assets/images/books.png
+    - assets/images/checkmark.png
+    - assets/images/fire.png
+    - assets/images/fish.png
+    - assets/images/night-city.png
+    - assets/images/pencil.png
+    - assets/images/soccer-ball.png
+    - assets/images/tux.png
+    - assets/images/yin-yang.png
 
     # To add assets to your application, add an assets section, like this:
     # assets:

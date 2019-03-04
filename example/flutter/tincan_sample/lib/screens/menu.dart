@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tincan_sample/screens/counter.dart';
+import 'package:tincan_sample/screens/images.dart';
 import 'package:tincan_sample/screens/quiz.dart';
 import 'package:tincan_sample/screens/stepper.dart';
 import 'package:tincan_sample/screens/viewer.dart';
@@ -7,7 +8,13 @@ import 'package:tincan_sample/screens/viewer.dart';
 typedef MenuSelectionCallback = void Function(BuildContext);
 
 class MenuScreen extends StatelessWidget {
-  final items = ['Counter', 'Take a quiz', 'Stepper', 'View Statements'];
+  final items = [
+    'Counter',
+    'Take a quiz',
+    'Stepper',
+    'Select an image',
+    'View Statements',
+  ];
   final onTaps = <MenuSelectionCallback>[
     (context) {
       Navigator.push(
@@ -25,6 +32,12 @@ class MenuScreen extends StatelessWidget {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => StepperScreen()),
+      );
+    },
+    (context) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ImageSelectionScreen()),
       );
     },
     (context) {
