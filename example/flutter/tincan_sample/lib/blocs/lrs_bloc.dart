@@ -20,16 +20,23 @@ export 'package:tin_can/tin_can.dart'
         Result,
         Score;
 
+class LrsFeedback {
+  final bool isError;
+  final String feedback;
+
+  LrsFeedback({this.isError = false, this.feedback});
+}
+
 class LrsBloc {
   final _statementStream = BehaviorSubject<List<Statement>>();
-  final _feedback = StreamController<String>();
-  Stream<String> _feedbackBroadcast;
+  final _feedback = StreamController<LrsFeedback>();
+  Stream<LrsFeedback> _feedbackBroadcast;
 
   /// Stream of statements retrieved from the LRS
   Stream<List<Statement>> get statements => _statementStream.stream;
 
   /// Stream of responses from LRS operations
-  Stream<String> get feedback => _feedbackBroadcast;
+  Stream<LrsFeedback> get feedback => _feedbackBroadcast;
 
   final _reportStatementController = StreamController<Statement>();
 
@@ -75,10 +82,10 @@ class LrsBloc {
           await _lrs.saveStatement(statement.copyWith(actor: _agent));
       if (response.success) {
         print('Recorded statement successfully');
-        _feedback.add('Recorded statement successfully');
+        _feedback.add(LrsFeedback(feedback: 'Recorded statement successfully'));
       } else {
         print('Error recording statement - ${response.errMsg}');
-        _feedback.add(response.errMsg);
+        _feedback.add(LrsFeedback(isError: true, feedback: response.errMsg));
       }
     });
   }
@@ -93,7 +100,7 @@ class LrsBloc {
       _statementStream.add(response.data.statements);
     } else {
       print('Error : ${response.errMsg}');
-      _feedback.add(response.errMsg);
+      _feedback.add(LrsFeedback(feedback: response.errMsg));
     }
   }
 }

@@ -13,10 +13,8 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
   final _nameRegex = RegExp('assets/images/(.*).png');
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  String _feedback;
-
-  StreamSubscription<String> _subscription;
+  LrsFeedback _feedback;
+  StreamSubscription<LrsFeedback> _subscription;
 
   @override
   void initState() {
@@ -94,14 +92,29 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
     );
   }
 
-  void _showFeedback(String feedback) async {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Text(feedback),
-      duration: Duration(milliseconds: 500),
-    ));
+  void _showFeedback(LrsFeedback feedback) async {
+    if (feedback.isError) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Row(children: <Widget>[
+          Icon(Icons.error),
+          Container(width: 5, height: 1),
+          Text(feedback.feedback),
+        ]),
+        backgroundColor: Colors.red,
+      ));
+    } else {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Row(children: <Widget>[
+          Icon(Icons.done),
+          Container(width: 5, height: 1),
+          Text(feedback.feedback),
+        ]),
+        duration: Duration(milliseconds: 500),
+      ));
+    }
   }
 
-  void _listenForFeedback(String feedback) {
+  void _listenForFeedback(LrsFeedback feedback) {
     setState(() {
       _feedback = feedback;
     });
