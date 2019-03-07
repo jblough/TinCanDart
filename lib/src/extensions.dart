@@ -1,6 +1,7 @@
 class Extensions {
   final Map<Uri, dynamic> json;
 
+  /// Examples: https://registry.tincanapi.com/#home/extensions
   Extensions(Map<dynamic, dynamic> json) : this.json = _convertMap(json);
 
   static Map<Uri, dynamic> _convertMap(Map<dynamic, dynamic> json) {

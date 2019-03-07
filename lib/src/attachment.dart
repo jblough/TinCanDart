@@ -16,6 +16,7 @@ class Attachment {
 
   AttachmentContent content;
 
+  /// Examples: https://registry.tincanapi.com/#home/attachmentUsages
   Attachment({
     dynamic usageType,
     this.display,

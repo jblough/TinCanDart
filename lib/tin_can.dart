@@ -25,7 +25,6 @@ export 'src/person.dart';
 export 'src/remote_lrs.dart';
 export 'src/result.dart';
 export 'src/score.dart';
-export 'src/state.dart';
 export 'src/state_document.dart';
 export 'src/statement.dart';
 export 'src/statement_ref.dart';

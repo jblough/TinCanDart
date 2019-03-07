@@ -145,6 +145,10 @@ class TinCanDuration {
       minutes = null;
     }
     double seconds = double.tryParse(match.group(3));
+    // Truncate (round) to only 0.01 second precision
+    if (seconds != null) {
+      seconds = double.parse(seconds.toStringAsFixed(2));
+    }
     final secondsString = (seconds == null)
         ? null
         : ((seconds.toInt() == seconds)

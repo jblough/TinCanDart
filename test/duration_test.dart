@@ -119,8 +119,8 @@ void main() {
     final duration = TinCanDuration.fromDuration(source);
     expect(duration.hours, '1');
     expect(duration.minutes, '2');
-    expect(duration.seconds, '16.043');
-    expect(duration.toString(), 'PT1H2M16.043S');
+    expect(duration.seconds, '16.04');
+    expect(duration.toString(), 'PT1H2M16.04S');
   });
 
   test("should import diff", () {

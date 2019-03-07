@@ -7,6 +7,7 @@ class Activity extends StatementTarget {
   final ValidatedUri id;
   final ActivityDefinition definition;
 
+  /// Examples: https://registry.tincanapi.com/#home/activityTypes
   Activity({
     dynamic id,
     this.definition,
