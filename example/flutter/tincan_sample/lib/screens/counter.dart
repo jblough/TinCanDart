@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:tin_can/tin_can.dart' as tincan;
 import 'package:tincan_sample/blocs/lrs_bloc.dart';
 
 class CounterScreen extends StatefulWidget {
@@ -13,6 +12,7 @@ class CounterScreen extends StatefulWidget {
 
 class _CounterScreenState extends State<CounterScreen> {
   int _counter = 0;
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   LrsFeedback _feedback;
   StreamSubscription<LrsFeedback> _subscription;
@@ -27,6 +27,7 @@ class _CounterScreenState extends State<CounterScreen> {
   @override
   void dispose() {
     _subscription?.cancel();
+
     super.dispose();
   }
 
@@ -79,12 +80,15 @@ class _CounterScreenState extends State<CounterScreen> {
   }
 
   void _sendIncrementCounterStatement() {
-    lrsBloc.recordStatement(tincan.Statement(
-      verb: tincan.Verb(
+    lrsBloc.recordStatement(Statement(
+      verb: Verb(
           id: 'http://adlnet.gov/expapi/verbs/incremented',
-          display: tincan.LanguageMap({'en-US': 'incremented'})),
-      object: tincan.Activity(
-          id: 'http://tincanapi.com/TinCanDart/example/counter'),
+          display: {'en-US': 'incremented'}),
+      object: Activity(
+          id: 'http://tincanapi.com/TinCanDart/example/counter',
+          definition: ActivityDefinition(
+            name: {'en-US': 'incrementing counter'},
+          )),
     ));
   }
 

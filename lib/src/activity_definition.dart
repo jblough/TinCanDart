@@ -1,13 +1,12 @@
 import './extensions.dart';
 import './interaction_component.dart';
 import './interaction_type.dart';
-import './language_map.dart';
 import './validated_uri.dart';
 import './versions.dart';
 
 class ActivityDefinition {
-  final LanguageMap name;
-  final LanguageMap description;
+  final Map<String, dynamic> name;
+  final Map<String, dynamic> description;
   final ValidatedUri type;
   final ValidatedUri moreInfo;
   final Extensions extensions;
@@ -19,6 +18,7 @@ class ActivityDefinition {
   final List<InteractionComponent> target;
   final List<InteractionComponent> steps;
 
+  /// Examples: https://registry.tincanapi.com/#home/activityTypes
   ActivityDefinition({
     this.name,
     this.description,
@@ -41,8 +41,8 @@ class ActivityDefinition {
     }
 
     return ActivityDefinition(
-      name: LanguageMap.fromJson(json['name']),
-      description: LanguageMap.fromJson(json['description']),
+      name: json['name'],
+      description: json['description'],
       type: json['type'],
       moreInfo: json['moreInfo'],
       extensions: Extensions.fromJson(json['extensions']),
@@ -62,8 +62,8 @@ class ActivityDefinition {
     }
 
     final json = {
-      'name': name?.toJson(),
-      'description': description?.toJson(),
+      'name': name,
+      'description': description,
       'type': type?.toString(),
       'moreInfo': moreInfo?.toString(),
       'extensions': extensions?.toJson(),

@@ -19,7 +19,6 @@ export 'src/extensions.dart';
 export 'src/group.dart';
 export 'src/interaction_component.dart';
 export 'src/interaction_type.dart';
-export 'src/language_map.dart';
 export 'src/lrs.dart';
 export 'src/person.dart';
 export 'src/remote_lrs.dart';

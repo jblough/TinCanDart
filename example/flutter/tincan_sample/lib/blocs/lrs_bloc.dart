@@ -5,20 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tin_can/tin_can.dart';
 
-export 'package:tin_can/tin_can.dart'
-    show
-        Statement,
-        Agent,
-        Group,
-        Attachment,
-        AttachmentContent,
-        Activity,
-        LanguageMap,
-        Verb,
-        Extensions,
-        TinCanDuration,
-        Result,
-        Score;
+export 'package:tin_can/tin_can.dart';
 
 class LrsFeedback {
   final bool isError;

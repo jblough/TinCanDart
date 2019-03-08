@@ -1,8 +1,6 @@
-import './language_map.dart';
-
 class InteractionComponent {
   final String id;
-  final LanguageMap description;
+  final Map<String, dynamic> description;
 
   InteractionComponent({this.id, this.description});
 
@@ -13,7 +11,7 @@ class InteractionComponent {
 
     return InteractionComponent(
       id: json['id'],
-      description: LanguageMap.fromJson(json['description']),
+      description: json['description'],
     );
   }
 
@@ -34,7 +32,7 @@ class InteractionComponent {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'description': description?.toJson(),
+      'description': description,
     };
   }
 }

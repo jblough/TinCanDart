@@ -1,14 +1,13 @@
 import 'package:crypto/crypto.dart' show sha256;
 
 import './attachment_content.dart';
-import './language_map.dart';
 import './validated_uri.dart';
 import './versions.dart';
 
 class Attachment {
   final ValidatedUri usageType;
-  final LanguageMap display;
-  final LanguageMap description;
+  final Map<String, dynamic> display;
+  final Map<String, dynamic> description;
   final String contentType;
   final int length;
   final String sha2;
@@ -44,8 +43,8 @@ class Attachment {
 
     return Attachment(
       usageType: json['usageType'],
-      display: LanguageMap.fromJson(json['display']),
-      description: LanguageMap.fromJson(json['description']),
+      display: json['display'],
+      description: json['description'],
       contentType: json['contentType'],
       length: json['length'],
       sha2: json['sha2'],
@@ -70,8 +69,8 @@ class Attachment {
   Map<String, dynamic> toJson(Version version) {
     final json = {
       'usageType': usageType?.toString(),
-      'display': display?.toJson(),
-      'description': description?.toJson(),
+      'display': display,
+      'description': description,
       'contentType': contentType,
       'length': length,
       'sha2': sha2,

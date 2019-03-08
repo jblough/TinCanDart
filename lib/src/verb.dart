@@ -1,11 +1,9 @@
-import './language_map.dart';
 import './validated_uri.dart';
 
 class Verb {
   final ValidatedUri id;
-  final LanguageMap display;
+  final Map<String, dynamic> display;
 
-  /// Examples: https://registry.tincanapi.com/#home/verbs
   Verb({
     dynamic id,
     this.display,
@@ -18,14 +16,14 @@ class Verb {
 
     return Verb(
       id: json['id'],
-      display: LanguageMap.fromJson(json['display']),
+      display: json['display'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id?.toString(),
-      'display': display?.toJson(),
+      'display': display,
     };
   }
 }

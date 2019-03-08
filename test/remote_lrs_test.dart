@@ -67,17 +67,17 @@ void main() {
 
     verb = Verb(
       id: 'http://adlnet.gov/expapi/verbs/experienced',
-      display: LanguageMap({'en-US': 'experienced'}),
+      display: {'en-US': 'experienced'},
     );
 
     activity = Activity(
       id: 'http://tincanapi.com/TinCanDart/Test/Unit/0',
       definition: ActivityDefinition(
         type: 'http://id.tincanapi.com/activitytype/unit-test',
-        name: LanguageMap({'en-US': 'TinCanDart Tests: Unit 0'}),
-        description: LanguageMap({
+        name: {'en-US': 'TinCanDart Tests: Unit 0'},
+        description: {
           'en-US': 'Unit test 0 in the test suite for the Tin Can Dart library.'
-        }),
+        },
       ),
     );
 
@@ -86,9 +86,12 @@ void main() {
       definition: ActivityDefinition(
           type: 'http://id.tincanapi.com/activitytype/unit-test-suite',
           moreInfo: 'http://rusticisoftware.github.io/TinCanDart/',
-          name: LanguageMap({'en-US': 'TinCanDart Tests'}),
-          description: LanguageMap(
-              {'en-US': 'Unit test suite for the Tin Can Dart library.'})),
+          name: {
+            'en-US': 'TinCanDart Tests'
+          },
+          description: {
+            'en-US': 'Unit test suite for the Tin Can Dart library.'
+          }),
     );
 
     statementRef = StatementRef(id: Uuid().v4().toString());
@@ -129,23 +132,23 @@ void main() {
     attachment1 = Attachment(
         content: AttachmentContent.fromString('hello world'),
         contentType: "application/octet-stream",
-        description: LanguageMap({'en-US': 'Test Description'}),
-        display: LanguageMap({'en-US': 'Test Display'}),
+        description: {'en-US': 'Test Description'},
+        display: {'en-US': 'Test Display'},
         usageType: 'http://id.tincanapi.com/attachment/supporting_media');
 
     attachment2 = Attachment(
       content: AttachmentContent.fromString('hello world 2'),
       contentType: "text/plain",
-      description: LanguageMap({'en-US': 'Test Description 2'}),
-      display: LanguageMap({'en-US': 'Test Display 2'}),
+      description: {'en-US': 'Test Description 2'},
+      display: {'en-US': 'Test Display 2'},
       usageType: 'http://id.tincanapi.com/attachment/supporting_media',
     );
 
     attachment3 = Attachment(
       content: AttachmentContent.fromFile(File('./test/image.jpg')),
       contentType: "image/jpeg",
-      description: LanguageMap({'en-US': 'Test Description 3'}),
-      display: LanguageMap({'en-US': 'Test Display 3'}),
+      description: {'en-US': 'Test Description 3'},
+      display: {'en-US': 'Test Display 3'},
       usageType: 'http://id.tincanapi.com/attachment/supporting_media',
     );
   });

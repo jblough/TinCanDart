@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:tin_can/tin_can.dart' as tincan;
 import 'package:tincan_sample/blocs/lrs_bloc.dart';
 
 class StatementViewer extends StatefulWidget {
@@ -29,7 +28,7 @@ class _StatementViewerState extends State<StatementViewer> {
       body: SingleChildScrollView(
           child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: StreamBuilder<List<tincan.Statement>>(
+        child: StreamBuilder<List<Statement>>(
             stream: lrsBloc.statements,
             builder: (context, snapshot) {
               return _generateBody(context, snapshot);
@@ -39,7 +38,7 @@ class _StatementViewerState extends State<StatementViewer> {
   }
 
   Widget _generateBody(
-      BuildContext context, AsyncSnapshot<List<tincan.Statement>> snapshot) {
+      BuildContext context, AsyncSnapshot<List<Statement>> snapshot) {
     if (snapshot.hasData) {
       final statements = snapshot.data ?? [];
       final encoder = JsonEncoder.withIndent('  ');
@@ -76,13 +75,13 @@ class _StatementViewerState extends State<StatementViewer> {
               ),
             )
           ];
-          statement.attachments?.forEach((tincan.Attachment attachment) {
+          statement.attachments?.forEach((Attachment attachment) {
             statementWidgets.add(ListTile(
               onTap: () => _displayAttachment(context, attachment),
               leading: Icon(Icons.attachment, size: 48.0),
-              title: Text(attachment.display?.map?.values?.first ?? 'Unknown'),
+              title: Text(attachment.display?.values?.first ?? 'Unknown'),
               subtitle:
-                  Text(attachment.description?.map?.values?.first ?? 'Unknown'),
+                  Text(attachment.description?.values?.first ?? 'Unknown'),
             ));
           });
 
@@ -125,43 +124,38 @@ class _StatementViewerState extends State<StatementViewer> {
     }
   }
 
-  String _statementSummary(tincan.Statement statement) {
+  String _statementSummary(Statement statement) {
     String who = '';
-    if (statement.actor is tincan.Group) {
-      who = 'Group: ${(statement.actor as tincan.Group).name}';
+    if (statement.actor is Group) {
+      who = 'Group: ${(statement.actor as Group).name}';
     } else {
       who = statement.actor.name;
     }
 
-    String verb = statement.verb.display?.map?.values?.first;
+    String verb = statement.verb.display?.values?.first;
 
     String when = statement.timestamp?.toIso8601String() ?? '';
 
     String what = '';
-    if (statement.object is tincan.Activity) {
-      what = (statement.object as tincan.Activity)
-          .definition
-          ?.name
-          ?.map
-          ?.values
-          ?.first;
-    } else if (statement.object is tincan.StatementRef) {
-      what = (statement.object as tincan.StatementRef).id;
+    if (statement.object is Activity) {
+      what = (statement.object as Activity).definition?.name?.values?.first;
+    } else if (statement.object is StatementRef) {
+      what = (statement.object as StatementRef).id;
     }
 
     String result = '';
 
     if (statement.result != null) {
-      result = '${statement.result.score.raw}%';
+      result = '${statement.result.score?.raw ?? 0}%';
     }
 
     return '$when $who $verb $what $result';
   }
 
-  String _statementShortSummary(tincan.Statement statement) {
+  String _statementShortSummary(Statement statement) {
     String who = '';
-    if (statement.actor is tincan.Group) {
-      who = 'Group: ${(statement.actor as tincan.Group).name}';
+    if (statement.actor is Group) {
+      who = 'Group: ${(statement.actor as Group).name}';
     } else {
       who = statement.actor.name;
     }
@@ -177,7 +171,7 @@ class _StatementViewerState extends State<StatementViewer> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(attachment.display?.map?.values?.first ?? ''),
+          title: Text(attachment.display?.values?.first ?? ''),
           content: Container(
             child: Image.memory(attachment.content.asList()),
           ),
