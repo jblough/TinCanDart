@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tincan_sample/screens/counter.dart';
 import 'package:tincan_sample/screens/images.dart';
-import 'package:tincan_sample/screens/quiz.dart';
 import 'package:tincan_sample/screens/stepper.dart';
 import 'package:tincan_sample/screens/viewer.dart';
 
@@ -15,7 +14,6 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   final items = [
     'Counter',
-    'Take a quiz',
     'Stepper',
     'Select an image',
     'View Statements',
@@ -26,12 +24,6 @@ class _MenuScreenState extends State<MenuScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => CounterScreen()),
-      );
-    },
-    (context) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => QuizScreen()),
       );
     },
     (context) {
