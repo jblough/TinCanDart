@@ -1,5 +1,6 @@
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
+import 'package:tin_can/tin_can.dart';
 
 @Component(
   selector: 'counter-component',
@@ -22,5 +23,25 @@ class CounterComponent {
     _sendStatement();
   }
 
-  void _sendStatement() {}
+  void _sendStatement() {
+    // TODO - centralize xAPI operations into a class
+    final lrs = RemoteLRS(
+      endpoint: '...',
+      username: '...',
+      password: '...',
+    );
+    lrs.saveStatement(
+      Statement(
+        verb: Verb(
+            id: 'http://adlnet.gov/expapi/verbs/incremented',
+            display: {'en-US': 'incremented'}),
+        object: Activity(
+          id: 'http://tincanapi.com/TinCanDart/example/counter',
+          definition: ActivityDefinition(
+            name: {'en-US': 'incrementing counter'},
+          ),
+        ),
+      ),
+    );
+  }
 }
