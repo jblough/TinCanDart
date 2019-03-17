@@ -23,14 +23,14 @@ class CounterComponent {
     _sendStatement();
   }
 
-  void _sendStatement() {
+  Future<void> _sendStatement() async {
     // TODO - centralize xAPI operations into a class
     final lrs = RemoteLRS(
       endpoint: '...',
       username: '...',
       password: '...',
     );
-    lrs.saveStatement(
+    await lrs.saveStatement(
       Statement(
         verb: Verb(
             id: 'http://adlnet.gov/expapi/verbs/incremented',
