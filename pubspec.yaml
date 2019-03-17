@@ -1,7 +1,7 @@
 name: tin_can
 description: A Dart library of the Tin Can API
 
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/jblough/TinCanDart
 author: Joe Blough <joe.blough@gmail.com>
 
@@ -16,3 +16,5 @@ dependencies:
 
 dev_dependencies:
   test: ^1.0.0
+  build_runner: ^1.0.0
+  build_web_compilers: ^0.4.0
