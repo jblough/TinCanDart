@@ -1,0 +1,29 @@
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+li {
+  line-height: 3em;
+}
+
+li:hover {
+  background-color: #EEEEEE;
+}
+
+li material-checkbox {
+  vertical-align: middle;
+}
+
+li material-fab {
+  float: right;
+  vertical-align: middle;
+}
+
+.done {
+  text-decoration: line-through;
+}
+
+div.viewer_container {
+  background-color: #ff0000;
+}

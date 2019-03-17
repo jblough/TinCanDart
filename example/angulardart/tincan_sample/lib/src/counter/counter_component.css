@@ -1,0 +1,18 @@
+material-fab {
+  float: right;
+  vertical-align: middle;
+}
+
+#add-button {
+  color: white;
+  background: #F44336;
+}
+
+#add-button.is-disabled {
+  background: #EF9A9A;
+}
+
+.current_value {
+    color: #333;
+    text-align: center;
+}
