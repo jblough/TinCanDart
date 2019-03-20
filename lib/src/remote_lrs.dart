@@ -365,7 +365,7 @@ class RemoteLRS extends LRS {
   @override
   Future<LRSResponse<StatementsResult>> saveStatements(
       List<Statement> statements) async {
-    if (statements.length == 0) {
+    if (statements.isEmpty) {
       return LRSResponse<StatementsResult>(success: true);
     }
 

@@ -71,7 +71,7 @@ class MultipartMixedRequest extends BaseRequest {
     return length;
   }
 
-  void set contentLength(int value) {
+  set contentLength(int value) {
     throw new UnsupportedError("Cannot set the contentLength property of "
         "multipart requests.");
   }

@@ -14,7 +14,7 @@ class TinCanVersion {
     if (version == null) {
       return null;
     }
-    
+
     switch (version) {
       case "1.0.3":
         return Version.V103;

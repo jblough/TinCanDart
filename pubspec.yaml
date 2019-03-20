@@ -1,7 +1,7 @@
 name: tincan
-description: A Dart library of the Tin Can API
+description: TincanDart in an implmentation of the Tin Can API for the Dart language
 
-version: 1.0.1
+version: 1.0.2
 homepage: https://github.com/jblough/TinCanDart
 author: Joe Blough <joe.blough@gmail.com>
 
