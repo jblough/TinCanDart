@@ -10,7 +10,7 @@ http://tincanapi.com/
 In your pubspec.yaml
 ```
 dependencies:
-  tin_can: any
+  tincan: any
 ```
 
 
@@ -18,7 +18,7 @@ dependencies:
 
 In your code:
 ```dart
-import 'package:tin_can/tin_can.dart';
+import 'package:tincan/tincan.dart';
 
 final lrs = RemoteLRS(
       version: Version.V103,

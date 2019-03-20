@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:test/test.dart';
-import 'package:tin_can/tin_can.dart' show Statement, Group, Version;
+import 'package:tincan/tincan.dart' show Statement, Group, Version;
 
 void main() {
   test("should import statement", () {

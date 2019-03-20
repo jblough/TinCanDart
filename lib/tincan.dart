@@ -1,7 +1,7 @@
 /// Support for doing something awesome.
 ///
 /// More dartdocs go here.
-library tin_can;
+library tincan;
 
 export 'src/about.dart';
 export 'src/activity.dart';

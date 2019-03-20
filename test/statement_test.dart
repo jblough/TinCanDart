@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:test/test.dart';
-import 'package:tin_can/tin_can.dart' show Activity, Statement;
+import 'package:tincan/tincan.dart' show Activity, Statement;
 
 void main() {
   test("should import statement result", () {

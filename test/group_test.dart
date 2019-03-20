@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:test/test.dart';
-import 'package:tin_can/tin_can.dart'
+import 'package:tincan/tincan.dart'
     show Group, Agent, AgentAccount, TinCanVersion;
 
 void main() {

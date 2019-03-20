@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:test/test.dart';
-import 'package:tin_can/tin_can.dart' show Person;
+import 'package:tincan/tincan.dart' show Person;
 
 void main() {
   test("should import person", () {

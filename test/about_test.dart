@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:test/test.dart';
-import 'package:tin_can/tin_can.dart' show About;
+import 'package:tincan/tincan.dart' show About;
 
 void main() {
   test("should import about", () {

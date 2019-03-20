@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:test/test.dart';
-import 'package:tin_can/tin_can.dart';
+import 'package:tincan/tincan.dart';
 import 'package:uuid/uuid.dart';
 
 void compareStatements(Statement statement1, Statement statement2) {

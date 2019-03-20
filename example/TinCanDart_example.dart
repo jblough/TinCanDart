@@ -1,4 +1,4 @@
-import 'package:tin_can/tin_can.dart';
+import 'package:tincan/tincan.dart';
 
 main() async {
   final lrs = RemoteLRS(

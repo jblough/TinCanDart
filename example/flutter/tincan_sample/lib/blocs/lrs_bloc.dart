@@ -3,9 +3,9 @@ import 'dart:math';
 
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:tin_can/tin_can.dart';
+import 'package:tincan/tincan.dart';
 
-export 'package:tin_can/tin_can.dart';
+export 'package:tincan/tincan.dart';
 
 class LrsFeedback {
   final bool isError;

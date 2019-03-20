@@ -1,6 +1,8 @@
+import 'dart:math';
+
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
-import 'package:tin_can/tin_can.dart';
+import 'package:tincan/tincan.dart';
 
 @Component(
   selector: 'counter-component',
@@ -32,6 +34,9 @@ class CounterComponent {
     );
     await lrs.saveStatement(
       Statement(
+        actor: Agent(
+            mbox: 'mailto:test-${Random.secure().nextInt(30000)}@example.com',
+            name: 'Sample User'),
         verb: Verb(
             id: 'http://adlnet.gov/expapi/verbs/incremented',
             display: {'en-US': 'incremented'}),
