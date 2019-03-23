@@ -27,3 +27,16 @@ li material-fab {
 div.viewer_container {
   background-color: #ff0000;
 }
+
+material-expansionpanel pre {
+  border: 1px solid #999;
+  padding: 0px 10px;
+}
+
+material-button material-icon {
+  padding-right: 10px;
+}
+
+modal p {
+  margin: auto;
+}

@@ -1,5 +1,6 @@
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
+import 'package:tincan_sample/src/blocs/lrs_bloc.dart';
 
 import 'src/counter/counter_component.dart';
 import 'src/image_selection/image_selection_component.dart';
@@ -24,9 +25,20 @@ import 'src/viewer/viewer_component.dart';
       MaterialTabComponent,
       MaterialTabPanelComponent,
     ],
-    providers: [
-      materialProviders,
-    ])
-class AppComponent {
-  // Nothing here yet. All logic is in TodoListComponent.
+    providers: [materialProviders, LrsBloc])
+class AppComponent implements OnInit {
+  final LrsBloc _lrsBloc;
+
+  AppComponent(this._lrsBloc);
+
+  @override
+  void ngOnInit() {
+    // Set up a tab change listener to refresh the statements when the
+    // ViewerComponent tab is selected
+  }
+
+  void tabChange() {
+    print('tab changed');
+    _lrsBloc.refreshStatements();
+  }
 }

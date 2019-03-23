@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:angular/angular.dart';
 import 'package:angular_components/angular_components.dart';
 import 'package:tincan/tincan.dart';
+import 'package:tincan_sample/src/blocs/lrs_bloc.dart';
 
 @Component(
   selector: 'counter-component',
@@ -15,9 +14,12 @@ import 'package:tincan/tincan.dart';
     NgFor,
     NgIf,
   ],
-  providers: [],
 )
 class CounterComponent {
+  final LrsBloc _lrsBloc;
+
+  CounterComponent(this._lrsBloc);
+
   int currentValue = 0;
 
   void increment() {
@@ -26,20 +28,15 @@ class CounterComponent {
   }
 
   Future<void> _sendStatement() async {
-    // TODO - centralize xAPI operations into a class
-    final lrs = RemoteLRS(
-      endpoint: '...',
-      username: '...',
-      password: '...',
-    );
-    await lrs.saveStatement(
+    _lrsBloc.recordStatement(
       Statement(
-        actor: Agent(
-            mbox: 'mailto:test-${Random.secure().nextInt(30000)}@example.com',
-            name: 'Sample User'),
         verb: Verb(
-            id: 'http://adlnet.gov/expapi/verbs/incremented',
-            display: {'en-US': 'incremented'}),
+          id: 'http://adlnet.gov/expapi/verbs/incremented',
+          display: {'en-US': 'incremented'},
+        ),
+        result: Result(
+          response: currentValue.toString(),
+        ),
         object: Activity(
           id: 'http://tincanapi.com/TinCanDart/example/counter',
           definition: ActivityDefinition(
