@@ -138,15 +138,20 @@ class _StatementViewerState extends State<StatementViewer> {
 
     String what = '';
     if (statement.object is Activity) {
-      what = (statement.object as Activity).definition?.name?.values?.first;
+      what = (statement.object as Activity).definition?.name?.values?.first ??
+          'Unknown';
     } else if (statement.object is StatementRef) {
-      what = (statement.object as StatementRef).id;
+      what = (statement.object as StatementRef).id ?? 'Unknown';
     }
 
     String result = '';
 
     if (statement.result != null) {
-      result = '${statement.result.score?.raw ?? 0}%';
+      if (statement.result.score != null) {
+        result = '${statement.result.score?.raw ?? 0}%';
+      } else {
+        result = statement.result.response ?? 'Unknown';
+      }
     }
 
     return '$when $who $verb $what $result';

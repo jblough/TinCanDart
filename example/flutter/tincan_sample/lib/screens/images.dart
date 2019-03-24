@@ -79,7 +79,11 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
         verb: Verb(
             id: 'http://adlnet.gov/expapi/verbs/selected',
             display: {'en-US': 'selected'}),
-        object: Activity(id: 'http://tincanapi.com/TinCanDart/example/images'),
+        object: Activity(
+            id: 'http://tincanapi.com/TinCanDart/example/images',
+            definition: ActivityDefinition(
+              name: {'en-US': name},
+            )),
         attachments: [
           Attachment(
               content: AttachmentContent.fromByteData(image),

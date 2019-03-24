@@ -80,16 +80,23 @@ class _CounterScreenState extends State<CounterScreen> {
   }
 
   void _sendIncrementCounterStatement() {
-    lrsBloc.recordStatement(Statement(
-      verb: Verb(
+    lrsBloc.recordStatement(
+      Statement(
+        verb: Verb(
           id: 'http://adlnet.gov/expapi/verbs/incremented',
-          display: {'en-US': 'incremented'}),
-      object: Activity(
+          display: {'en-US': 'incremented'},
+        ),
+        result: Result(
+          response: _counter.toString(),
+        ),
+        object: Activity(
           id: 'http://tincanapi.com/TinCanDart/example/counter',
           definition: ActivityDefinition(
             name: {'en-US': 'incrementing counter'},
-          )),
-    ));
+          ),
+        ),
+      ),
+    );
   }
 
   void _showFeedback(LrsFeedback feedback) async {
