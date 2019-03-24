@@ -23,3 +23,7 @@ li material-fab {
 .done {
   text-decoration: line-through;
 }
+
+material-input {
+  width: 100%;
+}

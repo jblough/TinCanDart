@@ -128,8 +128,6 @@ class ViewerComponent implements OnInit {
   }
 
   displayAttachment(attachment) {
-    print(
-        'Displaying attachment of size ${attachment.content.asList().length}');
     selectedAttachment = attachment;
     showAttachmentDialog = true;
   }

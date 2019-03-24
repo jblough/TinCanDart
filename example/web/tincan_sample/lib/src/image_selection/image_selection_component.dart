@@ -49,9 +49,7 @@ class ImageSelectionComponent {
             usageType: 'http://id.tincanapi.com/attachment/supporting_media'),
       ],
     );
-    print('recording statement...');
     await _lrsBloc.recordStatement(statement);
-    print('statement recorded...');
   }
 
   Future<Uint8List> _downloadImage(String image) async {

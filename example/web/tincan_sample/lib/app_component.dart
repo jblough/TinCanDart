@@ -26,19 +26,12 @@ import 'src/viewer/viewer_component.dart';
       MaterialTabPanelComponent,
     ],
     providers: [materialProviders, LrsBloc])
-class AppComponent implements OnInit {
+class AppComponent {
   final LrsBloc _lrsBloc;
 
   AppComponent(this._lrsBloc);
 
-  @override
-  void ngOnInit() {
-    // Set up a tab change listener to refresh the statements when the
-    // ViewerComponent tab is selected
-  }
-
   void tabChange() {
-    print('tab changed');
     _lrsBloc.refreshStatements();
   }
 }
