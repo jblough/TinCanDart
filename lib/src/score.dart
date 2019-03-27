@@ -1,8 +1,8 @@
 class Score {
-  final double scaled;
-  final double raw;
-  final double min;
-  final double max;
+  final num scaled;
+  final num raw;
+  final num min;
+  final num max;
 
   Score({
     this.scaled,

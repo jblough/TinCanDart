@@ -34,16 +34,16 @@ final statement = Statement(
   ),
   verb: Verb(
     id: 'http://adlnet.gov/expapi/verbs/experienced',
-    display: LanguageMap({'en-US': 'experienced'}),
+    display: {'en-US': 'experienced'},
   ),
   object: Activity(
     id: 'http://tincanapi.com/TinCanDart/Test/Unit/0',
     definition: ActivityDefinition(
       type: 'http://id.tincanapi.com/activitytype/unit-test',
-      name: LanguageMap({'en-US': 'TinCanDart Tests: Unit 0'}),
-      description: LanguageMap({
+      name: {'en-US': 'TinCanDart Tests: Unit 0'},
+      description: {
         'en-US': 'Unit test 0 in the test suite for the Tin Can Dart library.'
-      }),
+      },
     ),
   ),
 );
