@@ -17,7 +17,7 @@ class StatementRef extends StatementTarget {
   }
 
   @override
-  Map<String, dynamic> toJson(Version version) {
+  Map<String, dynamic> toJson([Version version]) {
     return {
       'objectType': 'StatementRef',
       'id': id,

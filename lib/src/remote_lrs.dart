@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:uuid/uuid.dart';
 
 import './about.dart';
 import './activity.dart';
@@ -56,7 +55,7 @@ class RemoteLRS extends LRS {
       'agent': _agentToString(profile.agent),
     };
 
-    return await _deleteDocument("agents/profile", params);
+    return await _deleteDocument('agents/profile', params);
   }
 
   @override
@@ -66,7 +65,7 @@ class RemoteLRS extends LRS {
       'agent': _agentToString(profile.agent),
     };
 
-    return await _updateDocument("agents/profile", params, profile);
+    return await _updateDocument('agents/profile', params, profile);
   }
 
   @override
@@ -76,7 +75,7 @@ class RemoteLRS extends LRS {
       'agent': _agentToString(profile.agent),
     };
 
-    return await _saveDocument("agents/profile", params, profile);
+    return await _saveDocument('agents/profile', params, profile);
   }
 
   @override
@@ -95,11 +94,15 @@ class RemoteLRS extends LRS {
   }
 
   @override
-  Future<LRSResponse<List<String>>> retrieveAgentProfileIds(Agent agent) async {
+  Future<LRSResponse<List<String>>> retrieveAgentProfileIds(Agent agent,
+      {DateTime since}) async {
     final params = {
       'agent': _agentToString(agent),
     };
-    return _getProfileKeys("agents/profile", params);
+    if (since != null) {
+      params['since'] = since.toIso8601String();
+    }
+    return _getProfileKeys('agents/profile', params);
   }
 
   @override
@@ -123,7 +126,7 @@ class RemoteLRS extends LRS {
       'profileId': profile.id,
       'activityId': profile.activity.id.toString(),
     };
-    return _deleteDocument("activities/profile", params);
+    return _deleteDocument('activities/profile', params);
   }
 
   @override
@@ -133,7 +136,7 @@ class RemoteLRS extends LRS {
       'activityId': profile.activity.id.toString(),
     };
 
-    return _updateDocument("activities/profile", params, profile);
+    return _updateDocument('activities/profile', params, profile);
   }
 
   @override
@@ -142,7 +145,7 @@ class RemoteLRS extends LRS {
       'profileId': profile.id,
       'activityId': profile.activity.id.toString(),
     };
-    return _saveDocument("activities/profile", params, profile);
+    return _saveDocument('activities/profile', params, profile);
   }
 
   @override
@@ -159,7 +162,7 @@ class RemoteLRS extends LRS {
     );
 
     return await _getActivityProfileDocument(
-        "activities/profile", params, profileDocument);
+        'activities/profile', params, profileDocument);
   }
 
   @override
@@ -168,7 +171,7 @@ class RemoteLRS extends LRS {
     final params = {
       'activityId': activity.id.toString(),
     };
-    return _getProfileKeys("activities/profile", params);
+    return _getProfileKeys('activities/profile', params);
   }
 
   @override
@@ -194,13 +197,13 @@ class RemoteLRS extends LRS {
 
   @override
   Future<LRSResponse> clearState(Activity activity, Agent agent,
-      [Uuid registration]) async {
+      {String registration}) async {
     final params = {
       'activityId': activity.id.toString(),
       'agent': _agentToString(agent),
     };
     if (registration != null) {
-      params['registration'] = registration.toString();
+      params['registration'] = registration;
     }
     return await _deleteDocument('activities/state', params);
   }
@@ -213,7 +216,7 @@ class RemoteLRS extends LRS {
       'agent': _agentToString(state.agent),
     };
     if (state.registration != null) {
-      params['registration'] = state.registration.toString();
+      params['registration'] = state.registration;
     }
     return await _deleteDocument('activities/state', params);
   }
@@ -225,8 +228,11 @@ class RemoteLRS extends LRS {
       'activityId': state.activity.id.toString(),
       'agent': _agentToString(state.agent),
     };
+    if (state.registration != null) {
+      params['registration'] = state.registration;
+    }
 
-    return _updateDocument("activities/state", params, state);
+    return _updateDocument('activities/state', params, state);
   }
 
   @override
@@ -236,23 +242,31 @@ class RemoteLRS extends LRS {
       'activityId': state.activity.id.toString(),
       'agent': _agentToString(state.agent),
     };
+    if (state.registration != null) {
+      params['registration'] = state.registration;
+    }
 
     return await _saveDocument('activities/state', params, state);
   }
 
   @override
   Future<LRSResponse<StateDocument>> retrieveState(
-      String id, Activity activity, Agent agent, Uuid registration) async {
+      String id, Activity activity, Agent agent,
+      {String registration}) async {
     final params = {
       'stateId': id,
       'activityId': activity.id.toString(),
       'agent': _agentToString(agent),
     };
+    if (registration != null) {
+      params['registration'] = registration;
+    }
 
     final document = StateDocument(
       id: id,
       activity: activity,
       agent: agent,
+      registration: registration,
     );
 
     return await _getStateDocument('activities/state', params, document);
@@ -261,14 +275,18 @@ class RemoteLRS extends LRS {
   @override
   Future<LRSResponse<List<String>>> retrieveStateIds(
       Activity activity, Agent agent,
-      [Uuid registration]) async {
+      {String registration, DateTime since}) async {
     final params = {
       'activityId': activity.id.toString(),
       'agent': _agentToString(agent),
     };
     if (registration != null) {
-      params['registration'] = registration.toString();
+      params['registration'] = registration;
     }
+    if (since != null) {
+      params['since'] = since.toIso8601String();
+    }
+
     return await _getProfileKeys('activities/state', params);
   }
 
@@ -309,14 +327,14 @@ class RemoteLRS extends LRS {
     //print('Response : $responseBody');
 
     if (response?.statusCode == 200) {
-      if (response.headers['content-type']
-              ?.startsWith('multipart/mixed; boundary=') ==
+      if (response.headers['content-type']?.startsWith('multipart/mixed;') ==
           true) {
         // Parse mixed data
         final contentType = response.headers['content-type'];
         //print(contentType);
         //print(response.body);
         final boundary = contentType.split('boundary=')[1];
+        //print('boundary - $boundary');
         final statement =
             Statement.fromMixedMultipart(boundary, response.bodyBytes);
         return LRSResponse<StatementsResult>(
@@ -342,7 +360,7 @@ class RemoteLRS extends LRS {
   Future<LRSResponse<Statement>> retrieveVoidedStatement(String id,
       [bool attachments = false]) {
     final paramName =
-        (_version == Version.V095) ? "statementId" : "voidedStatementId";
+        (_version == Version.V095) ? 'statementId' : 'voidedStatementId';
     final params = {
       paramName: id,
       'attachments': attachments.toString(),
@@ -382,6 +400,7 @@ class RemoteLRS extends LRS {
         body: body,
         attachments: (attachments.isEmpty) ? null : attachments);
     //print('Response status : ${response?.statusCode}');
+    //print('headers: ${response?.headers}');
 
     dynamic responseBody;
     if (response.runtimeType.toString() == 'StreamedResponse') {
@@ -493,6 +512,8 @@ class RemoteLRS extends LRS {
                   '${Uri.encodeQueryComponent(entry.key)}=${Uri.encodeQueryComponent(entry.value)}')
               .join('&');
     }
+    //print('verb - $verb');
+    //print('url - $url');
 
     Map<String, String> headers = {};
     if (additionalHeaders?.isNotEmpty == true) {
@@ -542,13 +563,16 @@ class RemoteLRS extends LRS {
   }
 
   String _agentToString(Agent agent) {
-    return json.encode(agent.toJson(_version));
+    final map = agent.toJson(_version);
+    map.remove('objectType');
+    return json.encode(map);
   }
 
   Future<LRSResponse<List<String>>> _getProfileKeys(
       String resource, Map<String, String> params) async {
     final response = await _makeRequest(resource, 'GET', queryParams: params);
     //print('Response : ${response?.body}');
+    //print('headers : ${response?.headers}');
     if (response?.statusCode == 200) {
       final List<dynamic> data = json.decode(response?.body);
       return LRSResponse<List<String>>(
@@ -562,7 +586,11 @@ class RemoteLRS extends LRS {
       String resource, Map<String, String> params) async {
     final response =
         await _makeRequest(resource, 'DELETE', queryParams: params);
-    return LRSResponse(success: (response?.statusCode == 204));
+    if (response?.statusCode == 204) {
+      return LRSResponse(success: true);
+    } else {
+      return LRSResponse(success: false, errMsg: response?.body);
+    }
   }
 
   Future<LRSResponse> _saveDocument(
@@ -572,14 +600,24 @@ class RemoteLRS extends LRS {
     };
     if (document.etag != null) {
       headers['If-Match'] = document.etag;
+    } else {
+      headers['If-None-Match'] = '*';
     }
+
     final response = await _makeRequest(resource, 'PUT',
         queryParams: params,
         additionalHeaders: headers,
         body: document.content?.asList());
 
-    //print("Response : ${response?.body}");
-    return LRSResponse(success: response?.statusCode == 204);
+    //print('Response : ${response?.statusCode}');
+    //print('Response : ${response?.body}');
+    //print('headers: ${response?.headers}');
+
+    if (response?.statusCode == 204) {
+      return LRSResponse(success: true);
+    } else {
+      return LRSResponse(success: false, errMsg: response?.body);
+    }
   }
 
   Future<LRSResponse<StateDocument>> _getStateDocument(String resource,
@@ -680,8 +718,7 @@ class RemoteLRS extends LRS {
         await _makeRequest('statements', 'GET', queryParams: params);
 
     if (response?.statusCode == 200) {
-      if (response.headers['content-type']
-              ?.startsWith('multipart/mixed; boundary=') ==
+      if (response.headers['content-type']?.startsWith('multipart/mixed;') ==
           true) {
         // Parse mixed data
         final contentType = response.headers['content-type'];

@@ -5,14 +5,14 @@ import './document.dart';
 class ActivityProfileDocument extends Document {
   final Activity activity;
 
-  ActivityProfileDocument(
-      {this.activity,
-      String id,
-      String etag,
-      DateTime timestamp,
-      String contentType,
-      AttachmentContent content})
-      : super(
+  ActivityProfileDocument({
+    this.activity,
+    String id,
+    String etag,
+    DateTime timestamp,
+    String contentType,
+    AttachmentContent content,
+  }) : super(
             id: id,
             etag: etag,
             timestamp: timestamp,

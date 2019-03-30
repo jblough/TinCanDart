@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:http/http.dart' show BaseRequest, ByteStream;
 import 'package:http_parser/http_parser.dart';
+import 'package:uuid/uuid.dart';
 
 import './attachment.dart';
 
@@ -16,11 +16,11 @@ import './attachment.dart';
 /// `multipart/mixed`. This value will override any value set by the user.
 ///
 ///     var uri = Uri.parse("http://pub.dartlang.org/packages/create");
-///     var request = new http.MultipartMixedRequest("POST", uri);
+///     var request = http.MultipartMixedRequest("POST", uri);
 ///     request.attachments.add(Attachment(
 ///         'package',
-///         new File('build/package.tar.gz'),
-///         contentType: new MediaType('application', 'x-tar'));
+///         File('build/package.tar.gz'),
+///         contentType: MediaType('application', 'x-tar'));
 ///     request.send().then((response) {
 ///       if (response.statusCode == 200) print("Uploaded!");
 ///     });
@@ -28,9 +28,7 @@ class MultipartMixedRequest extends BaseRequest {
   /// The total length of the multipart boundaries used when building the
   /// request body. According to http://tools.ietf.org/html/rfc1341.html, this
   /// can't be longer than 70.
-  static const int _BOUNDARY_LENGTH = 70;
-
-  static final Random _random = new Random();
+  static const int _BOUNDARY_LENGTH = 55;
 
   final String _body;
 
@@ -53,8 +51,7 @@ class MultipartMixedRequest extends BaseRequest {
 
     final newLineLength = "\r\n".length;
 
-    length += '--'.length;
-    length += _BOUNDARY_LENGTH + newLineLength;
+    length += "--".length + _BOUNDARY_LENGTH + newLineLength;
     length += 'Content-Type: application/json\r\n\r\n'.length;
     length += _body.length + newLineLength;
 
@@ -72,7 +69,7 @@ class MultipartMixedRequest extends BaseRequest {
   }
 
   set contentLength(int value) {
-    throw new UnsupportedError("Cannot set the contentLength property of "
+    throw UnsupportedError("Cannot set the contentLength property of "
         "multipart requests.");
   }
 
@@ -100,7 +97,7 @@ class MultipartMixedRequest extends BaseRequest {
     headers['Content-Type'] = 'multipart/mixed; boundary=$boundary';
     super.finalize();
 
-    var controller = new StreamController<List<int>>(sync: true);
+    var controller = StreamController<List<int>>(sync: true);
 
     controller.add(utf8.encode('--$boundary\r\n'));
     controller.sink.add(utf8.encode('Content-Type: application/json\r\n\r\n'));
@@ -115,7 +112,7 @@ class MultipartMixedRequest extends BaseRequest {
     writeAscii(controller, '--$boundary--\r\n');
     controller.close();
 
-    return new ByteStream(controller.stream);
+    return ByteStream(controller.stream);
   }
 
   /// Returns the header string for a file. The return value is guaranteed to
@@ -126,20 +123,14 @@ class MultipartMixedRequest extends BaseRequest {
 
     final hash = 'X-Experience-API-Hash: ${attachment.sha2}';
     var header =
-        'Content-Type: $contentType\r\nContent-Transfer-Encoding: binary;\r\n$hash';
+        'Content-Type: $contentType\r\nContent-Transfer-Encoding: binary\r\n$hash';
 
     return '$header\r\n\r\n';
   }
 
   /// Returns a randomly-generated multipart boundary string
   String _boundaryString() {
-    var prefix = "dart-http-boundary-";
-    var list = new List<int>.generate(
-        _BOUNDARY_LENGTH - prefix.length,
-        (index) =>
-            BOUNDARY_CHARACTERS[_random.nextInt(BOUNDARY_CHARACTERS.length)],
-        growable: false);
-    return "$prefix${new String.fromCharCodes(list)}";
+    return "dart-http-boundary-${Uuid().v4()}";
   }
 }
 /*
@@ -150,13 +141,13 @@ class ByteStream extends StreamView<List<int>> {
   /// Returns a single-subscription byte stream that will emit the given bytes
   /// in a single chunk.
   factory ByteStream.fromBytes(List<int> bytes) =>
-      new ByteStream(new Stream.fromIterable([bytes]));
+      ByteStream(Stream.fromIterable([bytes]));
 
   /// Collects the data of this stream in a [Uint8List].
   Future<Uint8List> toBytes() {
-    var completer = new Completer<Uint8List>();
-    var sink = new ByteConversionSink.withCallback(
-        (bytes) => completer.complete(new Uint8List.fromList(bytes)));
+    var completer = Completer<Uint8List>();
+    var sink = ByteConversionSink.withCallback(
+        (bytes) => completer.complete(Uint8List.fromList(bytes)));
     listen(sink.add,
         onError: completer.completeError,
         onDone: sink.close,
@@ -176,77 +167,8 @@ class ByteStream extends StreamView<List<int>> {
 
 /// A regular expression that matches strings that are composed entirely of
 /// ASCII-compatible characters.
-final RegExp _ASCII_ONLY = new RegExp(r"^[\x00-\x7F]+$");
+final RegExp _ASCII_ONLY = RegExp(r"^[\x00-\x7F]+$");
 
 /// Returns whether [string] is composed entirely of ASCII-compatible
 /// characters.
 bool isPlainAscii(String string) => _ASCII_ONLY.hasMatch(string);
-
-const List<int> BOUNDARY_CHARACTERS = const <int>[
-  43,
-  95,
-  45,
-  46,
-  48,
-  49,
-  50,
-  51,
-  52,
-  53,
-  54,
-  55,
-  56,
-  57,
-  65,
-  66,
-  67,
-  68,
-  69,
-  70,
-  71,
-  72,
-  73,
-  74,
-  75,
-  76,
-  77,
-  78,
-  79,
-  80,
-  81,
-  82,
-  83,
-  84,
-  85,
-  86,
-  87,
-  88,
-  89,
-  90,
-  97,
-  98,
-  99,
-  100,
-  101,
-  102,
-  103,
-  104,
-  105,
-  106,
-  107,
-  108,
-  109,
-  110,
-  111,
-  112,
-  113,
-  114,
-  115,
-  116,
-  117,
-  118,
-  119,
-  120,
-  121,
-  122
-];

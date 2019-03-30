@@ -47,7 +47,9 @@ class SubStatement extends StatementTarget {
   }
 
   @override
-  Map<String, dynamic> toJson(Version version) {
+  Map<String, dynamic> toJson([Version version]) {
+    version ??= TinCanVersion.latest();
+
     return {
       'objectType': 'SubStatement',
       'actor': actor?.toJson(version),

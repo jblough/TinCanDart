@@ -8,6 +8,11 @@ abstract class Document {
 
   final AttachmentContent content;
 
-  Document(
-      {this.id, this.etag, this.timestamp, this.contentType, this.content});
+  Document({
+    this.id,
+    this.etag,
+    this.timestamp,
+    this.contentType,
+    this.content,
+  });
 }

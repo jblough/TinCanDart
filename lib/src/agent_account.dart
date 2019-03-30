@@ -30,7 +30,7 @@ class AgentAccount {
     return accounts;
   }
 
-  Map<String, dynamic> toJson(Version version) {
+  Map<String, dynamic> toJson([Version version]) {
     return {
       'name': name,
       'homePage': homePage,

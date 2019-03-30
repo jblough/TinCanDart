@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:uuid/uuid.dart';
-
 import './about.dart';
 import './activity.dart';
 import './activity_profile_document.dart';
@@ -43,11 +41,13 @@ abstract class LRS {
 
   /// Retrieve the list of IDs for a state
   Future<LRSResponse<List<String>>> retrieveStateIds(
-      Activity activity, Agent agent, Uuid registration);
+      Activity activity, Agent agent,
+      {String registration, DateTime since});
 
   /// Retrieve a state value by [id] with [activity] in document identifier and [agent] in document identifier
   Future<LRSResponse<StateDocument>> retrieveState(
-      String id, Activity activity, Agent agent, Uuid registration);
+      String id, Activity activity, Agent agent,
+      {String registration});
 
   /// Save a state value
   Future<LRSResponse> saveState(StateDocument state);
@@ -59,8 +59,8 @@ abstract class LRS {
   Future<LRSResponse> deleteState(StateDocument state);
 
   /// Remove all state values
-  Future<LRSResponse> clearState(
-      Activity activity, Agent agent, Uuid registration);
+  Future<LRSResponse> clearState(Activity activity, Agent agent,
+      {String registration});
 
   /// Retrieve an activity
   Future<LRSResponse<Activity>> retrieveActivity(Activity activity);
@@ -86,7 +86,8 @@ abstract class LRS {
   Future<LRSResponse<Person>> retrievePerson(Agent agent);
 
   /// Retrieve the list of profileIds for an agent profile
-  Future<LRSResponse<List<String>>> retrieveAgentProfileIds(Agent agent);
+  Future<LRSResponse<List<String>>> retrieveAgentProfileIds(Agent agent,
+      {DateTime since});
 
   /// Retrieve an agent profile by [id] and [agent] in document identifier
   Future<LRSResponse<AgentProfileDocument>> retrieveAgentProfile(

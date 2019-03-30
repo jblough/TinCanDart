@@ -66,9 +66,7 @@ class Statement {
   }
 
   Map<String, dynamic> toJson([Version version]) {
-    if (version == null) {
-      version = TinCanVersion.latest();
-    }
+    version ??= TinCanVersion.latest();
 
     final json = {
       'id': id,
@@ -125,17 +123,20 @@ class Statement {
     );
   }
 
+  static final headerRegExp = RegExp(r'^(.*?): ?(.*?)$');
+
   static List<Statement> fromMixedMultipart(String boundary, dynamic body) {
     if (body == null) {
       return [];
     }
+    //print(body);
+    //File('test0327yet.bin').writeAsBytes(body);
 
     final statements = <Statement>[];
 
-    final headerRegExp = RegExp(r'^(.*?): ?(.*?)$');
     final reader = (body.runtimeType == String)
-        ? _MixedReader(body.codeUnits)
-        : _MixedReader(body);
+        ? _MixedReader(body.codeUnits, boundary: boundary)
+        : _MixedReader(body, boundary: boundary);
 
     var line = reader.readNextLine(); // Boundary (or blank line)
     if (line.isEmpty || line == '\r\n') {
@@ -153,8 +154,12 @@ class Statement {
     }
 
     // Read the Statements
-    int length = int.tryParse(headers['Content-Length']);
-    final jsonData = String.fromCharCodes(reader.readNextBinary(length));
+    int length = (headers['Content-Length'] == null)
+        ? null
+        : int.tryParse(headers['Content-Length']);
+    final jsonData = (length != null)
+        ? String.fromCharCodes(reader.readNextBinary(length))
+        : reader.readNextLine();
     final Map<String, dynamic> jsonBody = json.decode(jsonData);
     if (jsonBody.containsKey('statements')) {
       final List jsonStatements = jsonBody['statements'];
@@ -184,8 +189,11 @@ class Statement {
       }
 
       if (headers.isNotEmpty) {
-        int length = int.tryParse(headers['Content-Length']);
+        int length = (headers['Content-Length'] == null)
+            ? null
+            : int.tryParse(headers['Content-Length']);
         final bytes = reader.readNextBinary(length);
+        //line = reader.readNextLine(); // Boundary
 
         final hash = headers['X-Experience-API-Hash'];
         statements?.forEach((statement) {
@@ -228,10 +236,11 @@ hello world 2
 
 class _MixedReader {
   final List<int> bytes;
+  final String boundary;
   final int length;
   int _currentPosition = 0;
 
-  _MixedReader(this.bytes) : this.length = bytes.length;
+  _MixedReader(this.bytes, {this.boundary}) : this.length = bytes.length;
 
   bool done() => _currentPosition >= this.length;
 
@@ -248,9 +257,13 @@ class _MixedReader {
   }
 
   List<int> readNextBinary(int bytesToRead) {
+    // If value passed in was null, read until the remainder of the content
+    bytesToRead ??= length - _currentPosition - (boundary?.length ?? 0 + 2);
+
     // Read next 'bytes to read' number of bytes into buffer and return
-    final buffer =
-        bytes.sublist(_currentPosition, _currentPosition + bytesToRead);
+    final buffer = bytes
+        .sublist(_currentPosition, _currentPosition + bytesToRead)
+        .toList();
     // Add 2 characters for the \r\n after the binary part
     _currentPosition += bytesToRead + 2;
     return buffer;

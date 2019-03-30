@@ -62,7 +62,7 @@ class StatementsQuery {
   final bool attachments;
 
   StatementsQuery({
-    this.verbID,
+    dynamic verbID,
     this.object,
     this.registration,
     this.context,
@@ -75,12 +75,13 @@ class StatementsQuery {
     this.instructor,
     this.ascending,
     this.agent,
-    this.activityID,
+    dynamic activityID,
     this.relatedActivities,
     this.relatedAgents,
     this.format,
     this.attachments,
-  });
+  })  : this.verbID = ValidatedUri.fromString(verbID?.toString()),
+        this.activityID = ValidatedUri.fromString(activityID?.toString());
 
   Map<String, String> toParameterMap(Version version) {
     switch (version) {

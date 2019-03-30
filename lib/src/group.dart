@@ -44,7 +44,9 @@ class Group extends Agent {
   }
 
   @override
-  Map<String, dynamic> toJson(Version version) {
+  Map<String, dynamic> toJson([Version version]) {
+    version ??= TinCanVersion.latest();
+
     // Start with the base class members
     final json = super.toJson(version);
 

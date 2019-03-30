@@ -380,12 +380,12 @@ void main() {
   });
 
   test("should retrieve state ids", () async {
-    final response = await lrs.retrieveStateIds(activity, agent, null);
+    final response = await lrs.retrieveStateIds(activity, agent);
     expect(response.success, isTrue);
   });
 
   test("should retrieve state", () async {
-    final clear = await lrs.clearState(activity, agent, null);
+    final clear = await lrs.clearState(activity, agent);
     expect(clear.success, isTrue);
 
     final doc = StateDocument(
@@ -398,8 +398,8 @@ void main() {
     final save = await lrs.saveState(doc);
     expect(save.success, isTrue);
 
-    final stateResponse =
-        await lrs.retrieveState('test', activity, agent, null);
+    final stateResponse = await lrs.retrieveState('test', activity, agent);
+    print('state attachment - "${stateResponse.data.content.asString()}"');
     expect(stateResponse.success, isTrue);
     expect(
         stateResponse.data.etag, '"c140f82cb70e3884ad729b5055b7eaa81c795f1f"');
@@ -414,11 +414,12 @@ void main() {
     );
 
     final save = await lrs.saveState(doc);
+    print(save.errMsg);
     expect(save.success, isTrue);
   });
 
   test("should overwrite state", () async {
-    final clear = await lrs.clearState(activity, agent, null);
+    final clear = await lrs.clearState(activity, agent);
     expect(clear.success, isTrue);
 
     final doc = StateDocument(
@@ -431,7 +432,8 @@ void main() {
     final save = await lrs.saveState(doc);
     expect(save.success, isTrue);
 
-    final retrieve = await lrs.retrieveState('test', activity, agent, null);
+    final retrieve = await lrs.retrieveState('test', activity, agent);
+    print(retrieve.data.toJson());
     expect(retrieve.success, isTrue);
 
     final doc2 = StateDocument(
@@ -482,7 +484,7 @@ void main() {
     expect(save.success, isTrue);
 
     final retrieveBeforeUpdate =
-        await lrs.retrieveState('test', activity, agent, null);
+        await lrs.retrieveState('test', activity, agent);
     expect(retrieveBeforeUpdate.success, isTrue);
 
     final beforeDoc = retrieveBeforeUpdate.data;
@@ -514,7 +516,7 @@ void main() {
     expect(update.success, isTrue);
 
     final retrieveAfterUpdate =
-        await lrs.retrieveState('test', activity, agent, null);
+        await lrs.retrieveState('test', activity, agent);
     expect(retrieveAfterUpdate.success, isTrue);
 
     final afterDoc = retrieveAfterUpdate.data;
@@ -538,7 +540,7 @@ void main() {
   });
 
   test("should clear state", () async {
-    final response = await lrs.clearState(activity, agent, null);
+    final response = await lrs.clearState(activity, agent);
     expect(response.success, isTrue);
   });
 
@@ -571,6 +573,7 @@ void main() {
     );
 
     final save = await lrs.saveActivityProfile(doc2);
+    print(save.errMsg);
     expect(save.success, isTrue);
 
     final retrieveResponse =
@@ -636,11 +639,27 @@ void main() {
   });
 
   test("should retrieve person", () async {
+    final profile = AgentProfileDocument(
+      id: 'test',
+      agent: agent,
+    );
+
+    // Delete any pre-existing profiles for this agent
+    final deleteResponse = await lrs.deleteAgentProfile(profile);
+    print(deleteResponse.success);
+
+    // Create the agent
+    final saveResponse = await lrs.saveAgentProfile(profile);
+    print(saveResponse.errMsg);
+    expect(saveResponse.success, isTrue);
+
+    // Retrieve the agent
     final response = await lrs.retrievePerson(agent);
     expect(response.success, isTrue);
 
     final person = response.data;
-    expect(person.name[0], agent.name);
+    print(person.toJson());
+    //expect(person.name[0], agent.name);
     expect(person.mbox[0], agent.mbox);
   });
 
@@ -800,9 +819,14 @@ void main() {
 
   test("should save statement with attachment", () async {
     final statement = Statement(
-        actor: agent, verb: verb, object: activity, attachments: [attachment1]);
+      actor: agent,
+      verb: verb,
+      object: activity,
+      attachments: [attachment1],
+    );
 
     final response = await lrs.saveStatement(statement);
+    print(response.errMsg);
     expect(response.success, isTrue);
     expect(response.data.id, isNotNull);
     compareStatements(response.data, statement);
@@ -854,6 +878,7 @@ void main() {
     );
 
     final saved = await lrs.saveStatement(statement);
+    print(saved.errMsg);
     expect(saved.success, isTrue);
 
     final retrieved = await lrs.retrieveStatement(saved.data.id, true);
@@ -876,7 +901,12 @@ void main() {
     expect(saved.success, isTrue);
 
     final retrieved = await lrs.retrieveStatement(saved.data.id, true);
+    print(retrieved.errMsg);
     expect(retrieved.success, isTrue);
+
+    print(
+        'calculated - ${retrieved.data.attachments[0].content.asList().sublist(0, 20)}');
+    print('expected - ${attachment3.content.asList().sublist(0, 20)}');
 
     final calculated =
         sha256.convert(retrieved.data.attachments[0].content.asList());
@@ -929,7 +959,7 @@ void main() {
       correctSet[key] = value;
     });
 
-    final doc = new ActivityProfileDocument(id: 'test', activity: activity);
+    final doc = ActivityProfileDocument(id: 'test', activity: activity);
 
     final clear = await lrs.deleteActivityProfile(doc);
     expect(clear.success, isTrue);
@@ -940,6 +970,7 @@ void main() {
     );
 
     final save = await lrs.saveActivityProfile(doc2);
+    print(save.errMsg);
     expect(save.success, isTrue);
 
     final retrieveBeforeUpdate =
@@ -1020,6 +1051,7 @@ void main() {
       agent: sumAgent,
       content: AttachmentContent.fromString('Test value'),
     ));
+    print(save.errMsg);
     expect(save.success, isTrue);
   });
 
@@ -1038,6 +1070,7 @@ void main() {
 
     expect(statement.id, isNull);
     final response = await lrs.saveStatement(statement);
+    print(response.errMsg);
     expect(response.success, isTrue);
     compareStatements(response.data, statement);
   });

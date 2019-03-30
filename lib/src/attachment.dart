@@ -66,7 +66,7 @@ class Attachment {
     return attachments;
   }
 
-  Map<String, dynamic> toJson(Version version) {
+  Map<String, dynamic> toJson([Version version]) {
     final json = {
       'usageType': usageType?.toString(),
       'display': display,

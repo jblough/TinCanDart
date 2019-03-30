@@ -45,7 +45,9 @@ class Context {
     );
   }
 
-  Map<String, dynamic> toJson(Version version) {
+  Map<String, dynamic> toJson([Version version]) {
+    version ??= TinCanVersion.latest();
+
     final json = {
       'registration': registration,
       'instructor': instructor?.toJson(version),

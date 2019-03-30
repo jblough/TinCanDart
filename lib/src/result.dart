@@ -53,7 +53,9 @@ class Result {
     );
   }
 
-  Map<String, dynamic> toJson(Version version) {
+  Map<String, dynamic> toJson([Version version]) {
+    version ??= TinCanVersion.latest();
+
     final json = {
       'score': score?.toJson(),
       'success': success,

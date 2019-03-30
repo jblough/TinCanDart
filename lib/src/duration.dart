@@ -141,9 +141,6 @@ class TinCanDuration {
       hours = null;
     }
     int minutes = int.tryParse(match.group(2));
-    if (minutes == 0) {
-      minutes = null;
-    }
     double seconds = double.tryParse(match.group(3));
     // Truncate (round) to only 0.01 second precision
     if (seconds != null) {
@@ -154,6 +151,10 @@ class TinCanDuration {
         : ((seconds.toInt() == seconds)
             ? seconds.toInt().toString()
             : seconds.toString());
+
+    if (minutes == 0 && seconds == null) {
+      minutes = null;
+    }
 
     return TinCanDuration.fromParts(
       days: days?.toString(),

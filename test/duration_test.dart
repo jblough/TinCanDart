@@ -129,6 +129,6 @@ void main() {
 
     final duration = TinCanDuration.fromDiff(start, end);
     expect(duration.seconds, '12');
-    expect(duration.toString(), 'PT12S');
+    expect(duration.toString(), 'PT0M12S');
   });
 }

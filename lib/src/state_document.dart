@@ -25,13 +25,14 @@ class StateDocument extends Document {
             contentType: contentType,
             content: content);
 
-  Map<String, dynamic> toJson(Version version) {
+  Map<String, dynamic> toJson([Version version]) {
+    version ??= TinCanVersion.latest();
     return {
       'id': id,
       'etag': etag,
       'timestamp': timestamp?.toIso8601String(),
       'contentType': contentType,
-      'content': content,
+      'content': content?.asString(),
       'activity': activity?.toJson(version),
       'agent': agent?.toJson(version),
       'registration': registration, // UUID

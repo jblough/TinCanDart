@@ -44,7 +44,9 @@ class Agent extends StatementTarget {
   }
 
   @override
-  Map<String, dynamic> toJson(Version version) {
+  Map<String, dynamic> toJson([Version version]) {
+    version ??= TinCanVersion.latest();
+
     final json = {
       'objectType': 'Agent',
       'name': name,

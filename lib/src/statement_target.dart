@@ -6,7 +6,7 @@ import './substatement.dart';
 import './versions.dart';
 
 abstract class StatementTarget {
-  Map<String, dynamic> toJson(Version version);
+  Map<String, dynamic> toJson([Version version]);
 
   static StatementTarget toTarget(Map<String, dynamic> json) {
     if (json == null) {

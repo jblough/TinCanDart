@@ -27,7 +27,9 @@ class ContextActivities {
     );
   }
 
-  Map<String, dynamic> toJson(Version version) {
+  Map<String, dynamic> toJson([Version version]) {
+    version ??= TinCanVersion.latest();
+
     final json = {
       'parent': parent?.map((a) => a.toJson(version))?.toList(),
       'grouping': grouping?.map((a) => a.toJson(version))?.toList(),
