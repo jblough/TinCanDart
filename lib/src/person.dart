@@ -21,10 +21,10 @@ class Person {
     }
 
     return Person(
-      name: json['name']?.cast<String>(),
-      mbox: json['mbox']?.cast<String>(),
-      mboxSHA1Sum: json['mbox_sha1sum']?.cast<String>(),
-      openID: json['openid']?.cast<String>(),
+      name: _fromItem(json['name']),
+      mbox: _fromItem(json['mbox']),
+      mboxSHA1Sum: _fromItem(json['mbox_sha1sum']),
+      openID: _fromItem(json['openid']),
       account: AgentAccount.listFromJson(json['account']),
     );
   }
@@ -43,5 +43,18 @@ class Person {
     json.removeWhere((key, value) => value == null);
 
     return json;
+  }
+
+  static List<String> _fromItem(dynamic item) {
+    if (item == null) {
+      return null;
+    }
+
+    if (item is List) {
+      return item.cast<String>();
+    } else if (item is String) {
+      return [item];
+    }
+    throw Exception('Unexpected data type - ${item.runtimeType}');
   }
 }

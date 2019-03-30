@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 import 'package:tincan/tincan.dart';
 
 /// These tests were put together from the xAPI documentation on the
-/// Learing Locker website - http://docs.learninglocker.net/overview-xapi/
+/// Learning Locker website - http://docs.learninglocker.net/overview-xapi/
 void main() {
   var endpoint;
   var username;
@@ -51,23 +51,46 @@ void main() {
     // http://docs.learninglocker.net/http-xapi-statements/
     // PUT/POST/GET - statements
 
+    /*
+    "statement":
+    {
+      "id":"efb7218c-0fc9-4dfc-9524-d497097de028",
+      "version":"1.0.3",
+      "actor":{
+        "objectType":"Agent",
+        "mbox":"mailto:test@example.org"
+      },
+      "verb":{
+        "id":"http://www.example.org/verb",
+        "display":null
+      },
+      "object":{
+        "objectType":"Activity",
+        "id":"http://www.example.org/activity"
+      }
+    }
+     */
     // PUT
     /*
     {
-      "id": "dfb7218c-0fc9-4dfc-9524-d497097de027",
+      "id": "efb7218c-0fc9-4dfc-9524-d497097de027",
       "actor": { "mbox": "mailto:test@example.org" },
       "verb": { "id": "http://www.example.org/verb" },
       "object": { "id": "http://www.example.org/activity" },
     }
     */
     final putResponse = await lrs.saveStatement(Statement(
-      id: 'dfb7218c-0fc9-4dfc-9524-d497097de028',
+      id: 'efb7218c-0fc9-4dfc-9524-d497097de028',
       actor: Agent(mbox: 'mailto:test@example.org'),
-      verb: Verb(id: 'http://www.example.org/verb'),
+      verb: Verb(
+        id: 'http://www.example.org/verb',
+        display: {'en-US': 'verb'},
+      ),
       object: Activity(id: 'http://www.example.org/activity'),
     ));
+    print(putResponse.errMsg);
     expect(putResponse.success, isTrue);
-    expect(putResponse.data.id, 'dfb7218c-0fc9-4dfc-9524-d497097de028');
+    expect(putResponse.data.id, 'efb7218c-0fc9-4dfc-9524-d497097de028');
 
     // POST
     /*
@@ -84,29 +107,36 @@ void main() {
     */
     final postResponse = await lrs.saveStatements([
       Statement(
-        id: 'dfb7218c-0fc9-4dfc-9524-d497097de027',
+        id: 'efb7218c-0fc9-4dfc-9524-d497097de027',
         actor: Agent(mbox: 'mailto:test1@example.org'),
-        verb: Verb(id: 'http://www.example.org/verb'),
+        verb: Verb(
+          id: 'http://www.example.org/verb',
+          display: {'en-US': 'verb'},
+        ),
         object: Activity(id: 'http://www.example.org/activity'),
       ),
       Statement(
         actor: Agent(mbox: 'mailto:test2@example.org'),
-        verb: Verb(id: 'http://www.example.org/verb'),
+        verb: Verb(
+          id: 'http://www.example.org/verb',
+          display: {'en-US': 'verb'},
+        ),
         object: Activity(id: 'http://www.example.org/activity'),
       ),
     ]);
 
+    print(postResponse.errMsg);
     expect(postResponse.success, isTrue);
     expect(postResponse.data.statements.length, 2);
     expect(postResponse.data.statements[0].id,
-        'dfb7218c-0fc9-4dfc-9524-d497097de027');
+        'efb7218c-0fc9-4dfc-9524-d497097de027');
     expect(postResponse.data.statements[1].id, isNotNull);
 
     // Get single statement
     final getResponse =
-        await lrs.retrieveStatement('dfb7218c-0fc9-4dfc-9524-d497097de027');
+        await lrs.retrieveStatement('efb7218c-0fc9-4dfc-9524-d497097de027');
     expect(getResponse.success, isTrue);
-    expect(getResponse.data.id, 'dfb7218c-0fc9-4dfc-9524-d497097de027');
+    expect(getResponse.data.id, 'efb7218c-0fc9-4dfc-9524-d497097de027');
     expect(getResponse.data.actor.mbox, 'mailto:test1@example.org');
     expect(getResponse.data.verb.id.toString(), 'http://www.example.org/verb');
     expect((getResponse.data.object as Activity).id.toString(),
@@ -199,7 +229,10 @@ void main() {
       ),
       Statement(
         actor: Agent(mbox: 'mailto:test@example.org'),
-        verb: Verb(id: 'http://www.example.org/verb'),
+        verb: Verb(
+          id: 'http://www.example.org/verb',
+          display: {'en-US': 'verb'},
+        ),
         object: Activity(
           id: 'http://www.example.org/activity',
           definition: ActivityDefinition(
@@ -214,6 +247,7 @@ void main() {
         ),
       ),
     ]);
+    print(response.errMsg);
     expect(response.success, isTrue);
 
     final activityParam = Activity(id: 'http://www.example.org/activity');
@@ -271,6 +305,7 @@ void main() {
 
     // Put a profile
     final putResponse = await lrs.saveAgentProfile(agentProfile);
+    print(putResponse.errMsg);
     expect(putResponse.success, isTrue);
 
     // Get agent profile
@@ -310,6 +345,7 @@ void main() {
     );
 
     final response = await lrs.saveState(stateDocumentParam);
+    print(response.errMsg);
     expect(response.success, isTrue);
 
     final updateResponse = await lrs.updateState(stateDocumentParam);
