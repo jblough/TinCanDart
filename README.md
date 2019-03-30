@@ -22,7 +22,7 @@ import 'package:tincan/tincan.dart';
 
 final lrs = RemoteLRS(
       version: Version.V103,
-      endpoint: 'https://my.lrs.provider,
+      endpoint: 'https://my.lrs.provider',
       username: 'account key or user name',
       password: 'account secret or password',
     );

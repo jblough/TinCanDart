@@ -497,7 +497,7 @@ class RemoteLRS extends LRS {
     String verb, {
     Map<String, String> queryParams,
     Map<String, String> additionalHeaders,
-    body: dynamic,
+    dynamic body,
     List<Attachment> attachments,
   }) async {
     // resource, endpoint (from this), query parameters, headers
