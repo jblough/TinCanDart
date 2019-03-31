@@ -27,7 +27,7 @@ import 'package:tincan_sample/src/blocs/lrs_bloc.dart';
   ],
   providers: [overlayBindings],
 )
-class ViewerComponent implements OnInit {
+class ViewerComponent implements OnInit, OnDestroy {
   final LrsBloc _lrsBloc;
   List<Statement> statements;
   StreamSubscription _subscription;

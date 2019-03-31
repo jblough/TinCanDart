@@ -222,7 +222,7 @@ class _StepperScreenState extends State<StepperScreen> {
     );
 
     // Completed statement
-    var statement = Statement(
+    Statement statement = Statement(
       result: Result(duration: TinCanDuration.fromDiff(_start, _finish)),
       verb: Verb(
           id: 'http://adlnet.gov/expapi/verbs/completed',
@@ -236,7 +236,7 @@ class _StepperScreenState extends State<StepperScreen> {
       context: context,
     );
 
-    lrsBloc.recordStatement(statement);
+    await lrsBloc.recordStatement(statement);
 
     // Answered step 1 statement
     statement = Statement(
@@ -253,7 +253,7 @@ class _StepperScreenState extends State<StepperScreen> {
       context: context,
     );
 
-    lrsBloc.recordStatement(statement);
+    await lrsBloc.recordStatement(statement);
 
     // Answered step 2 statement
     statement = Statement(
@@ -270,7 +270,7 @@ class _StepperScreenState extends State<StepperScreen> {
       context: context,
     );
 
-    lrsBloc.recordStatement(statement);
+    await lrsBloc.recordStatement(statement);
 
     // Answered step 3 statement
     statement = Statement(

@@ -7,7 +7,6 @@
 {{statementBody(statement)}}
                 </pre>
                 <div *ngFor="let attachment of statement.attachments">
-                    <!--<material-icon icon="attachment"></material-icon> {{attachmentTitle(attachment)}} - {{attachmentSubtitle(attachment)}}-->
                     <material-button (trigger)="displayAttachment(attachment)">
                         <material-icon icon="attachment" light></material-icon>
                         {{attachmentTitle(attachment)}} - {{attachmentSubtitle(attachment)}}

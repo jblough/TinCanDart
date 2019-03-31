@@ -65,7 +65,7 @@ class StepperComponent {
     // TODO - Figure out how to get Browser/OS information for context data
 
     // Completed statement
-    var statement = Statement(
+    Statement statement = Statement(
       result: Result(duration: TinCanDuration.fromDiff(_start, finish)),
       verb: Verb(
           id: 'http://adlnet.gov/expapi/verbs/completed',
@@ -78,7 +78,7 @@ class StepperComponent {
       ),
     );
 
-    _lrsBloc.recordStatement(statement);
+    await _lrsBloc.recordStatement(statement);
 
     // Answered step 1 statement
     statement = Statement(
@@ -94,7 +94,7 @@ class StepperComponent {
       ),
     );
 
-    _lrsBloc.recordStatement(statement);
+    await _lrsBloc.recordStatement(statement);
 
     // Answered step 2 statement
     statement = Statement(
@@ -110,7 +110,7 @@ class StepperComponent {
       ),
     );
 
-    _lrsBloc.recordStatement(statement);
+    await _lrsBloc.recordStatement(statement);
 
     // Answered step 3 statement
     statement = Statement(
