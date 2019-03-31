@@ -145,7 +145,8 @@ void main() {
     );
 
     attachment3 = Attachment(
-      content: AttachmentContent.fromFile(File('./test/image.jpg')),
+      content: AttachmentContent.fromList(
+          File('./test/image.jpg').readAsBytesSync()),
       contentType: "image/jpeg",
       description: {'en-US': 'Test Description 3'},
       display: {'en-US': 'Test Display 3'},

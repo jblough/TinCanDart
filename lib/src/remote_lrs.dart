@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
@@ -22,6 +21,10 @@ import './statements_query.dart';
 import './statements_result.dart';
 import './validated_uri.dart';
 import './versions.dart';
+
+const contentTypeHeader = 'content-type';
+const etagHeader = 'etag';
+const lastModifiedHeader = 'last-modified';
 
 /// Class used to communicate with a TinCan API endpoint
 class RemoteLRS extends LRS {
@@ -327,10 +330,10 @@ class RemoteLRS extends LRS {
     //print('Response : $responseBody');
 
     if (response?.statusCode == 200) {
-      if (response.headers['content-type']?.startsWith('multipart/mixed;') ==
+      if (response.headers[contentTypeHeader]?.startsWith('multipart/mixed;') ==
           true) {
         // Parse mixed data
-        final contentType = response.headers['content-type'];
+        final contentType = response.headers[contentTypeHeader];
         //print(contentType);
         //print(response.body);
         final boundary = contentType.split('boundary=')[1];
@@ -396,7 +399,7 @@ class RemoteLRS extends LRS {
       }
     });
     final response = await _makeRequest('statements', 'POST',
-        additionalHeaders: {'content-type': 'application/json'},
+        additionalHeaders: {contentTypeHeader: 'application/json'},
         body: body,
         attachments: (attachments.isEmpty) ? null : attachments);
     //print('Response status : ${response?.statusCode}');
@@ -520,8 +523,8 @@ class RemoteLRS extends LRS {
       headers.addAll(additionalHeaders);
     }
 
-    if (!headers.containsKey('content-type')) {
-      headers['content-type'] = 'application/json';
+    if (!headers.containsKey(contentTypeHeader)) {
+      headers[contentTypeHeader] = 'application/json';
     }
 
     final version = TinCanVersion.toJsonString(_version);
@@ -596,7 +599,7 @@ class RemoteLRS extends LRS {
   Future<LRSResponse> _saveDocument(
       String resource, Map<String, String> params, Document document) async {
     final headers = {
-      'content-type': document.contentType ?? 'application/octet-stream',
+      contentTypeHeader: document.contentType ?? 'application/octet-stream',
     };
     if (document.etag != null) {
       headers['If-Match'] = document.etag;
@@ -628,12 +631,11 @@ class RemoteLRS extends LRS {
         id: document.id,
         agent: document.agent,
         activity: document.activity,
-        contentType: response.headers[HttpHeaders.contentTypeHeader],
+        contentType: response.headers[contentTypeHeader],
         content: AttachmentContent.fromUint8List(response.bodyBytes),
         registration: document.registration,
-        etag: response.headers[HttpHeaders.etagHeader],
-        timestamp:
-            DateTime.tryParse(response.headers[HttpHeaders.lastModifiedHeader]),
+        etag: response.headers[etagHeader],
+        timestamp: DateTime.tryParse(response.headers[lastModifiedHeader]),
       );
       return LRSResponse<StateDocument>(success: true, data: data);
     } else if (response?.statusCode == 404) {
@@ -652,11 +654,10 @@ class RemoteLRS extends LRS {
       final data = AgentProfileDocument(
         id: document.id,
         agent: document.agent,
-        contentType: response.headers[HttpHeaders.contentTypeHeader],
+        contentType: response.headers[contentTypeHeader],
         content: AttachmentContent.fromUint8List(response.bodyBytes),
-        etag: response.headers[HttpHeaders.etagHeader],
-        timestamp:
-            DateTime.tryParse(response.headers[HttpHeaders.lastModifiedHeader]),
+        etag: response.headers[etagHeader],
+        timestamp: DateTime.tryParse(response.headers[lastModifiedHeader]),
       );
       return LRSResponse<AgentProfileDocument>(success: true, data: data);
     } else {
@@ -673,11 +674,10 @@ class RemoteLRS extends LRS {
       final data = ActivityProfileDocument(
         id: document.id,
         activity: document.activity,
-        contentType: response.headers[HttpHeaders.contentTypeHeader],
+        contentType: response.headers[contentTypeHeader],
         content: AttachmentContent.fromUint8List(response.bodyBytes),
-        etag: response.headers[HttpHeaders.etagHeader],
-        timestamp:
-            DateTime.tryParse(response.headers[HttpHeaders.lastModifiedHeader]),
+        etag: response.headers[etagHeader],
+        timestamp: DateTime.tryParse(response.headers[lastModifiedHeader]),
       );
       return LRSResponse<ActivityProfileDocument>(success: true, data: data);
     } else {
@@ -694,9 +694,9 @@ class RemoteLRS extends LRS {
 
     if (document.contentType != null) {
       if (headers == null) {
-        headers = {'content-type': document.contentType};
+        headers = {contentTypeHeader: document.contentType};
       } else {
-        headers['content-type'] = document.contentType;
+        headers[contentTypeHeader] = document.contentType;
       }
     }
 
@@ -718,10 +718,10 @@ class RemoteLRS extends LRS {
         await _makeRequest('statements', 'GET', queryParams: params);
 
     if (response?.statusCode == 200) {
-      if (response.headers['content-type']?.startsWith('multipart/mixed;') ==
+      if (response.headers[contentTypeHeader]?.startsWith('multipart/mixed;') ==
           true) {
         // Parse mixed data
-        final contentType = response.headers['content-type'];
+        final contentType = response.headers[contentTypeHeader];
         //print(contentType);
         final boundary = contentType.split('boundary=')[1];
         final statement =

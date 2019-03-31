@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 class AttachmentContent {
@@ -15,14 +14,13 @@ class AttachmentContent {
   AttachmentContent.fromByteData(ByteData content)
       : _content = content.buffer.asUint8List();
 
-  AttachmentContent.fromFile(File content)
-      : _content = content.readAsBytesSync();
-
   ByteBuffer asByteBuffer() => Uint8List.fromList(_content).buffer;
 
   String asString() => utf8.decode(_content);
 
   List<int> asList() => _content;
+
+  Uint8List asUint8List() => Uint8List.fromList(_content);
 
   int get length => _content.length;
 }

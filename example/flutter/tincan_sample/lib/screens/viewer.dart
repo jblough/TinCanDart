@@ -178,7 +178,7 @@ class _StatementViewerState extends State<StatementViewer> {
         return AlertDialog(
           title: Text(attachment.display?.values?.first ?? ''),
           content: Container(
-            child: Image.memory(attachment.content.asList()),
+            child: Image.memory(attachment.content.asUint8List()),
           ),
           actions: <Widget>[
             FlatButton(
