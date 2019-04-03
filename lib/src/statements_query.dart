@@ -5,7 +5,16 @@ import './statement_target.dart';
 import './validated_uri.dart';
 import './versions.dart';
 
-enum QueryResultFormat { IDS, EXACT, CANONICAL }
+enum QueryResultFormat {
+  /// Only return IDs
+  IDS,
+
+  /// Return the statements exactly as they were received by the LRS
+  EXACT,
+
+  /// Return internal definitions of objects not those provided in the statement
+  CANONICAL,
+}
 
 class StatementsQuery {
   ///  ID to query on
