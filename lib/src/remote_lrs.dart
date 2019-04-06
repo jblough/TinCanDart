@@ -635,7 +635,9 @@ class RemoteLRS extends LRS {
         content: AttachmentContent.fromUint8List(response.bodyBytes),
         registration: document.registration,
         etag: response.headers[etagHeader],
-        timestamp: DateTime.tryParse(response.headers[lastModifiedHeader]),
+        timestamp: response.headers[lastModifiedHeader] == null
+            ? null
+            : DateTime.tryParse(response.headers[lastModifiedHeader]),
       );
       return LRSResponse<StateDocument>(success: true, data: data);
     } else if (response?.statusCode == 404) {
@@ -657,7 +659,9 @@ class RemoteLRS extends LRS {
         contentType: response.headers[contentTypeHeader],
         content: AttachmentContent.fromUint8List(response.bodyBytes),
         etag: response.headers[etagHeader],
-        timestamp: DateTime.tryParse(response.headers[lastModifiedHeader]),
+        timestamp: response.headers[lastModifiedHeader] == null
+            ? null
+            : DateTime.tryParse(response.headers[lastModifiedHeader]),
       );
       return LRSResponse<AgentProfileDocument>(success: true, data: data);
     } else {
@@ -677,7 +681,9 @@ class RemoteLRS extends LRS {
         contentType: response.headers[contentTypeHeader],
         content: AttachmentContent.fromUint8List(response.bodyBytes),
         etag: response.headers[etagHeader],
-        timestamp: DateTime.tryParse(response.headers[lastModifiedHeader]),
+        timestamp: response.headers[lastModifiedHeader] == null
+            ? null
+            : DateTime.tryParse(response.headers[lastModifiedHeader]),
       );
       return LRSResponse<ActivityProfileDocument>(success: true, data: data);
     } else {
