@@ -156,7 +156,6 @@ void main() {
 
   setUp(() {
     lrs = RemoteLRS(
-      version: Version.V103,
       endpoint: endpoint,
       username: username,
       password: password,
@@ -899,15 +898,12 @@ void main() {
     );
 
     final saved = await lrs.saveStatement(statement);
+    print(saved.errMsg);
     expect(saved.success, isTrue);
 
     final retrieved = await lrs.retrieveStatement(saved.data.id, true);
     print(retrieved.errMsg);
     expect(retrieved.success, isTrue);
-
-    print(
-        'calculated - ${retrieved.data.attachments[0].content.asList().sublist(0, 20)}');
-    print('expected - ${attachment3.content.asList().sublist(0, 20)}');
 
     final calculated =
         sha256.convert(retrieved.data.attachments[0].content.asList());

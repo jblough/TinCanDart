@@ -36,7 +36,6 @@ void main() {
 
   setUp(() {
     lrs = RemoteLRS(
-      version: Version.V103,
       endpoint: endpoint,
       username: username,
       password: password,
@@ -79,15 +78,17 @@ void main() {
       "object": { "id": "http://www.example.org/activity" },
     }
     */
-    final putResponse = await lrs.saveStatement(Statement(
-      id: 'efb7218c-0fc9-4dfc-9524-d497097de028',
-      actor: Agent(mbox: 'mailto:test@example.org'),
-      verb: Verb(
-        id: 'http://www.example.org/verb',
-        display: {'en-US': 'verb'},
+    final putResponse = await lrs.saveStatement(
+      Statement(
+        id: 'efb7218c-0fc9-4dfc-9524-d497097de028',
+        actor: Agent(mbox: 'mailto:test@example.org'),
+        verb: Verb(
+          id: 'http://www.example.org/verb',
+          display: {'en-US': 'verb'},
+        ),
+        object: Activity(id: 'http://www.example.org/activity'),
       ),
-      object: Activity(id: 'http://www.example.org/activity'),
-    ));
+    );
     print(putResponse.errMsg);
     expect(putResponse.success, isTrue);
     expect(putResponse.data.id, 'efb7218c-0fc9-4dfc-9524-d497097de028');
