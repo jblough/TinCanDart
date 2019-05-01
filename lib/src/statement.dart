@@ -123,7 +123,7 @@ class Statement {
     );
   }
 
-  static final headerRegExp = RegExp(r'^(.*?): ?(.*?)$');
+  static final _headerRegExp = RegExp(r'^(.*?): ?(.*?)$');
 
   static List<Statement> fromMixedMultipart(String boundary, dynamic body) {
     if (body == null) {
@@ -145,7 +145,7 @@ class Statement {
     Map<String, dynamic> headers = {};
     while (line.isNotEmpty && line != '\r\n') {
       line = reader.readNextLine(); // Headers
-      final match = headerRegExp.firstMatch(line);
+      final match = _headerRegExp.firstMatch(line);
       if (match != null) {
         headers[match[1]] = match[2];
       }
@@ -180,7 +180,7 @@ class Statement {
       line = reader.readNextLine(); // Boundary
       while (!reader.done() && line.isNotEmpty && line != '\r\n') {
         line = reader.readNextLine(); // Headers
-        final match = headerRegExp.firstMatch(line);
+        final match = _headerRegExp.firstMatch(line);
         if (match != null) {
           headers[match[1]] = match[2];
         }
