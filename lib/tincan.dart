@@ -1,6 +1,3 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
 library tincan;
 
 export 'src/about.dart';
@@ -20,6 +17,7 @@ export 'src/group.dart';
 export 'src/interaction_component.dart';
 export 'src/interaction_type.dart';
 export 'src/lrs.dart';
+export 'src/lrs_response.dart';
 export 'src/person.dart';
 export 'src/remote_lrs.dart';
 export 'src/result.dart';

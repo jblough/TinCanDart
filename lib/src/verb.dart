@@ -4,6 +4,7 @@ class Verb {
   final ValidatedUri id;
   final Map<String, dynamic> display;
 
+  /// Examples: https://registry.tincanapi.com/#home/verbs
   Verb({
     dynamic id,
     this.display,

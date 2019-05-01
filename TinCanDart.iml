@@ -7,6 +7,7 @@
       <excludeFolder url="file://$MODULE_DIR$/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/example/angulardart/tincan_sample/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/example/flutter" />
       <excludeFolder url="file://$MODULE_DIR$/example/flutter/tincan_sample/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/example/flutter/tincan_sample/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/example/flutter/tincan_sample/build" />
@@ -14,6 +15,7 @@
       <excludeFolder url="file://$MODULE_DIR$/example/flutter/tincan_sample/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/example/flutter/tincan_sample/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/example/flutter/tincan_sample/build" />
+      <excludeFolder url="file://$MODULE_DIR$/example/web" />
       <excludeFolder url="file://$MODULE_DIR$/example/web/tincan_sample/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/example/web/tincan_sample/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/example/web/tincan_sample/build" />

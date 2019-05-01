@@ -328,7 +328,7 @@ void main() {
   test("should test activity state", () async {
     // http://docs.learninglocker.net/http-xapi-states/
     // PUT/POST/GET/DELETE
-    // Big question is if TinCan supports the arbitrary payload
+    // Include testing if TinCan supports the arbitrary payload
 
     final contentString = json.encode({
       'key_to_keep': 'value_to_keep',
@@ -354,8 +354,11 @@ void main() {
 
     // Retrieve single state
     final getResponse = await lrs.retrieveState(
-        stateDocumentParam.id, activityParam, agentParam,
-        registration: stateDocumentParam.registration);
+      stateDocumentParam.id,
+      activityParam,
+      agentParam,
+      registration: stateDocumentParam.registration,
+    );
     expect(getResponse.success, isTrue);
     expect(getResponse.data.etag, isNotNull);
     expect(getResponse.data.content.asString(), contentString);

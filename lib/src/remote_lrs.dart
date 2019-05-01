@@ -39,9 +39,9 @@ class RemoteLRS extends LRS {
 
   RemoteLRS({
     dynamic endpoint,
-    Version version,
     String username,
     String password,
+    Version version,
     this.extended,
     this.prettyJson = false,
     http.Client client,
