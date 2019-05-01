@@ -97,7 +97,7 @@ class MultipartMixedRequest extends BaseRequest {
     headers['Content-Type'] = 'multipart/mixed; boundary=$boundary';
     super.finalize();
 
-    var controller = StreamController<List<int>>(sync: true);
+    var controller = StreamController<List<int>>(sync: false);
 
     controller.add(utf8.encode('--$boundary\r\n'));
     controller.sink.add(utf8.encode('Content-Type: application/json\r\n\r\n'));

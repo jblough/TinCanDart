@@ -129,8 +129,6 @@ class Statement {
     if (body == null) {
       return [];
     }
-    //print(body);
-    //File('test0327yet.bin').writeAsBytes(body);
 
     final statements = <Statement>[];
 
@@ -189,17 +187,26 @@ class Statement {
       }
 
       if (headers.isNotEmpty) {
+        final hash = headers['X-Experience-API-Hash'];
+
         int length = (headers['Content-Length'] == null)
             ? null
             : int.tryParse(headers['Content-Length']);
-        final bytes = reader.readNextBinary(length);
-        //line = reader.readNextLine(); // Boundary
 
-        final hash = headers['X-Experience-API-Hash'];
+        // If the length wasn't found as a header, try to get it from the statement
+        if (length == null) {
+          statements?.forEach((statement) {
+            statement.attachments?.forEach((attachment) {
+              if (attachment.sha2 == hash) {
+                length = attachment.length;
+              }
+            });
+          });
+        }
+        final bytes = reader.readNextBinary(length);
         statements?.forEach((statement) {
           statement.attachments?.forEach((attachment) {
             if (attachment.sha2 == hash && attachment.content == null) {
-              //attachment.content = ConversionUtils.listToBuffer(bytes);
               attachment.content = AttachmentContent.fromList(bytes);
             }
           });
