@@ -40,6 +40,8 @@ abstract class LRS {
   Future<LRSResponse<StatementsResult>> moreStatements(String moreURL);
 
   /// Retrieve the list of IDs for a state
+  /// optionally limit retrieved states to those associated with a [registration]
+  /// and/or those states stored [since] a specified time
   Future<LRSResponse<List<String>>> retrieveStateIds(
       Activity activity, Agent agent,
       {String registration, DateTime since});

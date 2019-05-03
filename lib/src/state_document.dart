@@ -7,6 +7,8 @@ import './versions.dart';
 class StateDocument extends Document {
   final Activity activity;
   final Agent agent;
+
+  /// The registration associated with this state (UUID)
   final String registration; // UUID
 
   StateDocument({

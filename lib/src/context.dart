@@ -5,8 +5,13 @@ import './statement_ref.dart';
 import './versions.dart';
 
 class Context {
+  /// The registration that the Statement is associated with
   final String registration; // UUID
+
+  /// Instructor that the Statement relates to, if not included as the Actor of the Statement
   final Agent instructor;
+
+  /// Team that this Statement relates to, if not included as the Actor of the Statement
   final Agent team;
   final ContextActivities contextActivities;
   final String revision;
@@ -15,6 +20,7 @@ class Context {
   final StatementRef statement;
   final Extensions extensions;
 
+  /// https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Data.md#246-context
   Context({
     this.registration,
     this.instructor,

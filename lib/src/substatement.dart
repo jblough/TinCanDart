@@ -18,6 +18,7 @@ class SubStatement extends StatementTarget {
   @deprecated
   final bool voided;
 
+  /// https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Data.md#substatements
   SubStatement({
     this.actor,
     this.verb,

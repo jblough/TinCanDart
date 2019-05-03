@@ -4,6 +4,7 @@ import './versions.dart';
 class StatementRef extends StatementTarget {
   final String id; // UUID
 
+  /// https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Data.md#statement-references
   StatementRef({this.id});
 
   factory StatementRef.fromJson(Map<String, dynamic> json) {
