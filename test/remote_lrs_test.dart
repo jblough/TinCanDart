@@ -401,8 +401,7 @@ void main() {
     final stateResponse = await lrs.retrieveState('test', activity, agent);
     print('state attachment - "${stateResponse.data.content.asString()}"');
     expect(stateResponse.success, isTrue);
-    expect(
-        stateResponse.data.etag, '"c140f82cb70e3884ad729b5055b7eaa81c795f1f"');
+    expect(stateResponse.data.etag, 'c140f82cb70e3884ad729b5055b7eaa81c795f1f');
   });
 
   test("should save state", () async {
@@ -545,7 +544,7 @@ void main() {
   });
 
   test("should retrieve activity", () async {
-    final response = await lrs.retrieveActivity(activity);
+    final response = await lrs.retrieveActivity(activity.id.toString());
     expect(response.success, isTrue);
 
     final returnedActivity = response.data;
@@ -578,8 +577,8 @@ void main() {
 
     final retrieveResponse =
         await lrs.retrieveActivityProfile('test', activity);
-    expect(retrieveResponse.data.etag,
-        '"6e6e6c11d7e0bffe0369873a2a5fd751ab2ea64f"');
+    expect(
+        retrieveResponse.data.etag, '6e6e6c11d7e0bffe0369873a2a5fd751ab2ea64f');
     expect(retrieveResponse.success, isTrue);
   });
 
@@ -684,7 +683,7 @@ void main() {
 
     final retrieve = await lrs.retrieveAgentProfile('test', agent);
     expect(retrieve.success, isTrue);
-    expect(retrieve.data.etag, '"da16d3e0cbd55e0f13558ad0ecfd2605e2238c71"');
+    expect(retrieve.data.etag, 'da16d3e0cbd55e0f13558ad0ecfd2605e2238c71');
   });
 
   test("should save agent profile", () async {

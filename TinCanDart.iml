@@ -11,10 +11,6 @@
       <excludeFolder url="file://$MODULE_DIR$/example/flutter/tincan_sample/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/example/flutter/tincan_sample/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/example/flutter/tincan_sample/build" />
-      <excludeFolder url="file://$MODULE_DIR$/example/flutter/tincan_sample/ios/Flutter/App.framework/flutter_assets/packages" />
-      <excludeFolder url="file://$MODULE_DIR$/example/flutter/tincan_sample/.dart_tool" />
-      <excludeFolder url="file://$MODULE_DIR$/example/flutter/tincan_sample/.pub" />
-      <excludeFolder url="file://$MODULE_DIR$/example/flutter/tincan_sample/build" />
       <excludeFolder url="file://$MODULE_DIR$/example/web" />
       <excludeFolder url="file://$MODULE_DIR$/example/web/tincan_sample/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/example/web/tincan_sample/.pub" />

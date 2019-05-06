@@ -178,9 +178,9 @@ class RemoteLRS extends LRS {
   }
 
   @override
-  Future<LRSResponse<Activity>> retrieveActivity(Activity activity) async {
+  Future<LRSResponse<Activity>> retrieveActivity(String id) async {
     final params = {
-      'activityId': activity.id.toString(),
+      'activityId': id,
     };
     final response =
         await _makeRequest('activities', 'GET', queryParams: params);
@@ -619,7 +619,12 @@ class RemoteLRS extends LRS {
     if (response?.statusCode == 204) {
       return LRSResponse(success: true);
     } else {
-      return LRSResponse(success: false, errMsg: response?.body);
+      if ((response?.body != null && response?.body != 'null') ||
+          response?.statusCode != 412) {
+        return LRSResponse(success: false, errMsg: response?.body);
+      } else {
+        return LRSResponse(success: false, errMsg: 'Conflict');
+      }
     }
   }
 
@@ -634,7 +639,7 @@ class RemoteLRS extends LRS {
         contentType: response.headers[contentTypeHeader],
         content: AttachmentContent.fromUint8List(response.bodyBytes),
         registration: document.registration,
-        etag: response.headers[etagHeader],
+        etag: (response.headers[etagHeader] as String)?.replaceAll('"', ''),
         timestamp: response.headers[lastModifiedHeader] == null
             ? null
             : DateTime.tryParse(response.headers[lastModifiedHeader]),
@@ -658,7 +663,7 @@ class RemoteLRS extends LRS {
         agent: document.agent,
         contentType: response.headers[contentTypeHeader],
         content: AttachmentContent.fromUint8List(response.bodyBytes),
-        etag: response.headers[etagHeader],
+        etag: (response.headers[etagHeader] as String)?.replaceAll('"', ''),
         timestamp: response.headers[lastModifiedHeader] == null
             ? null
             : DateTime.tryParse(response.headers[lastModifiedHeader]),
@@ -680,7 +685,7 @@ class RemoteLRS extends LRS {
         activity: document.activity,
         contentType: response.headers[contentTypeHeader],
         content: AttachmentContent.fromUint8List(response.bodyBytes),
-        etag: response.headers[etagHeader],
+        etag: (response.headers[etagHeader] as String)?.replaceAll('"', ''),
         timestamp: response.headers[lastModifiedHeader] == null
             ? null
             : DateTime.tryParse(response.headers[lastModifiedHeader]),
@@ -710,6 +715,11 @@ class RemoteLRS extends LRS {
         queryParams: params,
         additionalHeaders: headers,
         body: document.content?.asList());
+
+    //print('Response code : ${response?.statusCode}');
+    //print('Response body : ${response?.body}');
+    //print('headers: ${response?.headers}');
+
     if (response?.statusCode == 204) {
       return LRSResponse(success: true);
     } else {

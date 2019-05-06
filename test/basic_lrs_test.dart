@@ -279,7 +279,7 @@ void main() {
     expect(profileResponse.data.content.asString(), 'test');
 
     // Get activity
-    final getResponse = await lrs.retrieveActivity(activityParam);
+    final getResponse = await lrs.retrieveActivity(activityParam.id.toString());
     expect(getResponse.success, isTrue);
     print(getResponse.data.toJson());
   });

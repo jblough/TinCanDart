@@ -11,6 +11,7 @@ class StateDocument extends Document {
   /// The registration associated with this state (UUID)
   final String registration; // UUID
 
+  /// https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Communication.md#23-state-resource
   StateDocument({
     this.activity,
     this.agent,

@@ -70,6 +70,7 @@ class StatementsQuery {
   /// Include attachments in multipart response (default: false)
   final bool attachments;
 
+  /// https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Communication.md#213-get-statements
   StatementsQuery({
     dynamic verbID,
     this.object,

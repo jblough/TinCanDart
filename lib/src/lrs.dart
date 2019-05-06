@@ -64,8 +64,8 @@ abstract class LRS {
   Future<LRSResponse> clearState(Activity activity, Agent agent,
       {String registration});
 
-  /// Retrieve an activity
-  Future<LRSResponse<Activity>> retrieveActivity(Activity activity);
+  /// Retrieve a full description of an Activity from the LRS
+  Future<LRSResponse<Activity>> retrieveActivity(String id);
 
   /// Retrieve the list of IDs for an activity profile
   Future<LRSResponse<List<String>>> retrieveActivityProfileIds(
