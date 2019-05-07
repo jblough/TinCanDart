@@ -47,6 +47,6 @@ final statement = Statement(
   ),
 );
 
-lrs.sendStatement(statement);
+lrs.saveStatement(statement);
 ```
 

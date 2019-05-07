@@ -1,3 +1,7 @@
+## 1.0.6
+
+- Mainly documentation changes and minor tweaks to make the API more usable
+
 ## 1.0.3
 
 - Improved support for Learning Locker and Yet Analytics LRS servers
