@@ -1,3 +1,7 @@
+## 1.1.0
+
+- Compile against more modern version of dependencies
+
 ## 1.0.6
 
 - Mainly documentation changes and minor tweaks to make the API more usable

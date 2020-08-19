@@ -6,6 +6,7 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   MyApp() {
+    WidgetsFlutterBinding.ensureInitialized();
     // Doing this to give lrsBloc time to
     // initialize from settings file
     print(lrsBloc);

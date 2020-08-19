@@ -1,4 +1,4 @@
-## A Dart library of the Tin Can API
+## A Dart library of the Tin Can API (also known as xAPI)
 
 For more information about the Tin Can API visit:
 

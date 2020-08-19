@@ -8,9 +8,9 @@ environment:
   sdk: '>=2.1.0 <3.0.0'
 
 dependencies:
-  angular: ^5.2.0
-  angular_components: ^0.11.0
-  rxdart: any
+  angular: ^5.3.1
+  angular_components: ^0.13.0+1
+  rxdart: ^0.24.1
   tincan:
     path: ../../../
 
