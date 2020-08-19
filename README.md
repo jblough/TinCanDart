@@ -10,7 +10,7 @@ http://tincanapi.com/
 In your pubspec.yaml
 ```
 dependencies:
-  tincan: any
+  tincan: ^1.1.0
 ```
 
 
