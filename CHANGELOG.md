@@ -1,3 +1,7 @@
+## 1.1.1
+
+- Static analysis warning fixes
+
 ## 1.1.0
 
 - Compile against more modern version of dependencies

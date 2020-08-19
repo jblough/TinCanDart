@@ -1,7 +1,7 @@
 name: tincan
 description: TincanDart in an implmentation of the Tin Can API for the Dart language
 
-version: 1.1.0
+version: 1.1.1
 homepage: https://github.com/jblough/TinCanDart
 
 environment:
