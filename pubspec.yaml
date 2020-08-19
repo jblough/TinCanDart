@@ -3,7 +3,6 @@ description: TincanDart in an implmentation of the Tin Can API for the Dart lang
 
 version: 1.1.0
 homepage: https://github.com/jblough/TinCanDart
-author: Joe Blough <joe.blough@gmail.com>
 
 environment:
   sdk: '>=2.4.0 <3.0.0'
