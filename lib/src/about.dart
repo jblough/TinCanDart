@@ -25,7 +25,7 @@ class About {
       return null;
     }
 
-    List<Version> versions = [];
+    final versions = <Version>[];
     json['version']?.forEach((version) {
       final tcVersion = TinCanVersion.fromJsonString(version);
       if (tcVersion != null) {

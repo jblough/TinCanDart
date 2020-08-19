@@ -10,7 +10,7 @@ class Activity extends StatementTarget {
   Activity({
     dynamic id,
     this.definition,
-  }) : this.id = ValidatedUri.fromString(id?.toString());
+  }) : id = ValidatedUri.fromString(id?.toString());
 
   factory Activity.fromJson(Map<String, dynamic> json) {
     if (json == null) {
