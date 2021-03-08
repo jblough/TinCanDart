@@ -545,19 +545,20 @@ class RemoteLRS extends LRS {
       var response;
       switch (verb.toUpperCase()) {
         case 'GET':
-          response = _client.get(url, headers: headers);
+          response = _client.get(Uri.parse(url), headers: headers);
           break;
         case 'POST':
-          response = _client.post(url, headers: headers, body: body);
+          response = _client.post(Uri.parse(url), headers: headers, body: body);
           break;
         case 'PUT':
-          response = _client.put(url, headers: headers, body: body);
+          response = _client.put(Uri.parse(url), headers: headers, body: body);
           break;
         case 'DELETE':
-          response = _client.delete(url, headers: headers);
+          response = _client.delete(Uri.parse(url), headers: headers);
           break;
         case 'PATCH':
-          response = _client.patch(url, headers: headers, body: body);
+          response =
+              _client.patch(Uri.parse(url), headers: headers, body: body);
           break;
       }
 

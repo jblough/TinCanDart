@@ -80,7 +80,6 @@ class Statement {
       'context': context?.toJson(version),
       'timestamp': timestamp?.toUtc()?.toIso8601String(),
       'attachments': attachments?.map((a) => a.toJson(version))?.toList(),
-      'voided': voided,
     };
 
     // Remove all keys where the value is null
@@ -119,7 +118,6 @@ class Statement {
       context: context ?? this.context,
       timestamp: timestamp ?? this.timestamp,
       attachments: attachments ?? this.attachments,
-      voided: voided ?? this.voided,
     );
   }
 
