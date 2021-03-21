@@ -55,9 +55,8 @@ class Group extends Agent {
 
     // Add the members
     if (this.members?.isNotEmpty == true) {
-      final list = [];
-      this.members.forEach((member) => list.add(member.toJson(version)));
-      json['member'] = list;
+      json['member'] =
+          this.members.map((member) => member.toJson(version)).toList();
     }
 
     return json;

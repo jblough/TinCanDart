@@ -21,7 +21,7 @@ class Statement {
   final Result result;
   final Context context;
   final DateTime timestamp;
-  final List<Attachment> attachments;
+  final List<Attachment /*!*/ > attachments;
 
   @deprecated
   final bool voided;
@@ -140,7 +140,7 @@ class Statement {
     }
 
     // Read the headers
-    Map<String, dynamic> headers = {};
+    Map<String /*!*/, dynamic> headers = {};
     while (line.isNotEmpty && line != '\r\n') {
       line = reader.readNextLine(); // Headers
       final match = _headerRegExp.firstMatch(line);

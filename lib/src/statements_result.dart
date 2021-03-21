@@ -11,7 +11,7 @@ class StatementsResult {
       return null;
     }
 
-    List<Statement> list = [];
+    final list = <Statement>[];
     json['statements']?.forEach((statement) {
       list.add(Statement.fromJson(statement));
     });

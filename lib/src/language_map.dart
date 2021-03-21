@@ -3,7 +3,7 @@ class LanguageMap {
 
   LanguageMap(this.map);
 
-  static LanguageMap fromJson(Map<String, dynamic> json) {
+  static LanguageMap /*?*/ fromJson(Map<String, dynamic> /*?*/ json) {
     if (json == null) {
       return null;
     }

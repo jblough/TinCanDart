@@ -4,7 +4,7 @@ class InteractionComponent {
 
   InteractionComponent({this.id, this.description});
 
-  static InteractionComponent fromJson(Map<String, dynamic> json) {
+  static InteractionComponent /*?*/ fromJson(Map<String, dynamic> /*?*/ json) {
     if (json == null) {
       return null;
     }
@@ -15,18 +15,9 @@ class InteractionComponent {
     );
   }
 
-  static List<InteractionComponent> listFromJson(
-      List<Map<String, dynamic>> list) {
-    if (list == null || list.isEmpty) {
-      return null;
-    }
-
-    List<InteractionComponent> components = [];
-    list.forEach((json) {
-      components.add(InteractionComponent.fromJson(json));
-    });
-
-    return components;
+  static List<InteractionComponent /*!*/ > listFromJson(
+      List<Map<String, dynamic>> /*?*/ list) {
+    return list?.map((json) => InteractionComponent.fromJson(json))?.toList();
   }
 
   Map<String, dynamic> toJson() {

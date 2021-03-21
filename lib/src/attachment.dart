@@ -36,7 +36,7 @@ class Attachment {
   }
 
   static Attachment fromJson(
-      Map<String, dynamic> json, AttachmentContent content) {
+      Map<String, dynamic> /*?*/ json, AttachmentContent content) {
     if (json == null) {
       return null;
     }
@@ -53,17 +53,11 @@ class Attachment {
     );
   }
 
-  static List<Attachment> listFromJson(List<dynamic> list) {
-    if (list == null || list.isEmpty) {
-      return null;
-    }
-
-    List<Attachment> attachments = [];
-    list.forEach((json) {
-      attachments.add(Attachment.fromJson(json, null));
-    });
-
-    return attachments;
+  static List<Attachment /*!*/ > listFromJson(List<dynamic> list) {
+    return list
+        ?.map((json) => Attachment.fromJson(json, null))
+        ?.where((attachment) => attachment != null)
+        ?.toList();
   }
 
   Map<String, dynamic> toJson([Version version]) {

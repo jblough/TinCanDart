@@ -125,7 +125,7 @@ class TinCanDuration {
     return TinCanDuration.fromDuration(end.difference(start));
   }
 
-  static TinCanDuration fromDuration(Duration duration) {
+  static TinCanDuration /*?*/ fromDuration(Duration /*?*/ duration) {
     if (duration == null) {
       return null;
     }
@@ -198,6 +198,6 @@ class TinCanDuration {
         return duration;
     }
 
-    return null;
+    return '';
   }
 }

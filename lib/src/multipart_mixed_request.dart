@@ -33,16 +33,16 @@ class MultipartMixedRequest extends BaseRequest {
   final String _body;
 
   /// The private version of [files].
-  final List<Attachment> _attachments;
+  final List<Attachment /*!*/ > /*?*/ _attachments;
 
   /// Creates a new [MultipartMixedRequest].
   MultipartMixedRequest(String method, Uri url, String body)
       : _body = body,
-        _attachments = <Attachment>[],
+        _attachments = <Attachment /*!*/ >[],
         super(method, url);
 
   /// The list of attachments to upload for this request.
-  List<Attachment> get attachments => _attachments;
+  List<Attachment /*!*/ > get attachments => _attachments;
 
   /// The total length of the request body, in bytes. This is calculated from
   /// body and [attachments] and cannot be set manually.

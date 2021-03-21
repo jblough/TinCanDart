@@ -56,7 +56,7 @@ class ActivityDefinition {
     );
   }
 
-  Map<String, dynamic> toJson({Version version, bool pretty}) {
+  Map<String, dynamic> toJson({Version version}) {
     if (version == null) {
       version = TinCanVersion.latest();
     }

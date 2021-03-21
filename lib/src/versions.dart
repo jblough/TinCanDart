@@ -33,7 +33,7 @@ class TinCanVersion {
     }
   }
 
-  static String toJsonString(Version version) {
+  static String /*?*/ toJsonString(Version /*?*/ version) {
     if (version == null) {
       return null;
     }
