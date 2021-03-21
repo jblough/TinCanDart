@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:tincan_sample/blocs/lrs_bloc.dart';
@@ -10,14 +11,13 @@ class StepperScreen extends StatefulWidget {
 
 class _StepperScreenState extends State<StepperScreen> {
   int _currentStep = 0;
-  DateTime _start;
-  DateTime _finish;
+  DateTime? _start;
+  DateTime? _finish;
   final _stepOneFocus = FocusNode();
   final _stepTwoFocus = FocusNode();
   final _stepThreeFocus = FocusNode();
 
   final _data = <String, dynamic>{};
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -39,7 +39,6 @@ class _StepperScreenState extends State<StepperScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: _scaffoldKey,
         appBar: AppBar(
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
@@ -53,28 +52,34 @@ class _StepperScreenState extends State<StepperScreen> {
               Container(
                 height: 15,
               ),
-              RaisedButton(
-                color: Theme.of(context).primaryColor,
-                textColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(32.0)),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  //color: Theme.of(context).primaryColor,
+                  //textColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(32.0)),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                       vertical: 16.0, horizontal: 64.0),
                   child: Text(
                     "SUBMIT",
-                    style: Theme.of(context).textTheme.headline.copyWith(
-                          color: Colors.white,
-                        ),
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .headline5!
+                        .copyWith(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 onPressed: () {
                   _finish = DateTime.now();
-                  if (_formKey.currentState.validate()) {
-                    _formKey.currentState.save();
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
                     _sendStatements(context);
                   } else {
-                    _scaffoldKey.currentState.showSnackBar(SnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text(
                             'Please fill in the form completely before submitting')));
                   }
@@ -91,11 +96,9 @@ class _StepperScreenState extends State<StepperScreen> {
           title: Text('Step 1'),
           content: TextFormField(
             decoration:
-                InputDecoration(hintText: 'First name (not necessarily yours)'),
+            InputDecoration(hintText: 'First name (not necessarily yours)'),
             validator: (value) {
-              if (value.isEmpty) {
-                return 'Please enter a value';
-              }
+              return (value!.isEmpty) ? 'Please enter a value' : null;
             },
             onSaved: (value) {
               _data['firstName'] = value;
@@ -108,11 +111,9 @@ class _StepperScreenState extends State<StepperScreen> {
           title: Text('Step 2'),
           content: TextFormField(
             decoration:
-                InputDecoration(hintText: 'Last name (not necessarily yours)'),
+            InputDecoration(hintText: 'Last name (not necessarily yours)'),
             validator: (value) {
-              if (value.isEmpty) {
-                return 'Please enter a value';
-              }
+              return (value!.isEmpty) ? 'Please enter a value' : null;
             },
             onSaved: (value) {
               _data['lastName'] = value;
@@ -126,9 +127,8 @@ class _StepperScreenState extends State<StepperScreen> {
             decoration: InputDecoration(hintText: 'Number'),
             keyboardType: TextInputType.number,
             validator: (value) {
-              if (value.isEmpty) {
-                return 'Please enter a number';
-              }
+              return (value!.isEmpty ||
+                  int.tryParse(value) == null) ? 'Please enter a number' : null;
             },
             onSaved: (value) {
               _data['number'] = value;
@@ -215,7 +215,7 @@ class _StepperScreenState extends State<StepperScreen> {
       extensions: Extensions(
         {
           'http://id.tincanapi.com/extension/powered-by':
-              Platform.operatingSystemVersion
+          Platform.operatingSystemVersion
         },
       ),
       platform: Platform.operatingSystem,

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tincan_sample/blocs/lrs_bloc.dart';
 
 class CounterScreen extends StatefulWidget {
-  CounterScreen({Key key}) : super(key: key);
+  CounterScreen({Key? key}) : super(key: key);
 
   @override
   State createState() => _CounterScreenState();
@@ -13,15 +13,13 @@ class CounterScreen extends StatefulWidget {
 class _CounterScreenState extends State<CounterScreen> {
   int _counter = 0;
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  LrsFeedback _feedback;
-  StreamSubscription<LrsFeedback> _subscription;
+  StreamSubscription<LrsFeedback>? _subscription;
 
   @override
   void initState() {
     super.initState();
 
-    _subscription = lrsBloc.feedback.listen(_listenForFeedback);
+    _subscription = lrsBloc.feedback!.listen(_listenForFeedback);
   }
 
   @override
@@ -41,13 +39,7 @@ class _CounterScreenState extends State<CounterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_feedback != null) {
-      _showFeedback(_feedback);
-      _feedback = null;
-    }
-
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Counter'),
       ),
@@ -60,12 +52,12 @@ class _CounterScreenState extends State<CounterScreen> {
               Text(
                 'You have pushed the button this many times:',
                 style:
-                    Theme.of(context).textTheme.body1.copyWith(fontSize: 24.0),
+                    Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: 24.0),
                 textAlign: TextAlign.center,
               ),
               Text(
                 '$_counter',
-                style: Theme.of(context).textTheme.display1,
+                style: Theme.of(context).textTheme.headline4,
               ),
             ],
           ),
@@ -101,29 +93,26 @@ class _CounterScreenState extends State<CounterScreen> {
 
   void _showFeedback(LrsFeedback feedback) async {
     if (feedback.isError) {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Row(children: <Widget>[
           Icon(Icons.error),
           Container(width: 5, height: 1),
-          Text(feedback.feedback),
+          Text(feedback.feedback!),
         ]),
         backgroundColor: Colors.red,
       ));
     } else {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Row(children: <Widget>[
           Icon(Icons.done),
           Container(width: 5, height: 1),
-          Text(feedback.feedback),
+          Text(feedback.feedback!),
         ]),
-        duration: Duration(milliseconds: 500),
       ));
     }
   }
 
   void _listenForFeedback(LrsFeedback feedback) {
-    setState(() {
-      _feedback = feedback;
-    });
+    _showFeedback(feedback);
   }
 }

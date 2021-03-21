@@ -9,21 +9,21 @@ export 'package:tincan/tincan.dart';
 
 class LrsFeedback {
   final bool isError;
-  final String feedback;
+  final String? feedback;
 
   LrsFeedback({this.isError = false, this.feedback});
 }
 
 class LrsBloc {
-  final _statementStream = BehaviorSubject<List<Statement>>();
+  final _statementStream = BehaviorSubject<List<Statement>?>();
   final _feedback = StreamController<LrsFeedback>();
-  Stream<LrsFeedback> _feedbackBroadcast;
+  Stream<LrsFeedback>? _feedbackBroadcast;
 
   /// Stream of statements retrieved from the LRS
-  Stream<List<Statement>> get statements => _statementStream.stream;
+  Stream<List<Statement>?> get statements => _statementStream.stream;
 
   /// Stream of responses from LRS operations
-  Stream<LrsFeedback> get feedback => _feedbackBroadcast;
+  Stream<LrsFeedback>? get feedback => _feedbackBroadcast;
 
   final _reportStatementController = StreamController<Statement>();
 
@@ -31,7 +31,7 @@ class LrsBloc {
   Function(Statement) get recordStatement =>
       _reportStatementController.sink.add;
 
-  LRS _lrs;
+  late LRS _lrs;
   final Agent _agent = Agent(
       mbox: 'mailto:test-${Random.secure().nextInt(30000)}@example.com',
       name: 'Sample User');
@@ -67,7 +67,7 @@ class LrsBloc {
     _reportStatementController.stream.listen((statement) async {
       final response =
           await _lrs.saveStatement(statement.copyWith(actor: _agent));
-      if (response.success) {
+      if (response.success!) {
         print('Recorded statement successfully');
         _feedback.add(LrsFeedback(feedback: 'Recorded statement successfully'));
       } else {
@@ -83,8 +83,8 @@ class LrsBloc {
       attachments: true,
     ));
 
-    if (response.success) {
-      _statementStream.add(response.data.statements);
+    if (response.success!) {
+      _statementStream.add(response.data!.statements);
     } else {
       print('Error : ${response.errMsg}');
       _feedback.add(LrsFeedback(feedback: response.errMsg));

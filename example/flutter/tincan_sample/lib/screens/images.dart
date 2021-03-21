@@ -12,15 +12,13 @@ class ImageSelectionScreen extends StatefulWidget {
 class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
   final _nameRegex = RegExp('assets/images/(.*).png');
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  LrsFeedback _feedback;
-  StreamSubscription<LrsFeedback> _subscription;
+  StreamSubscription<LrsFeedback>? _subscription;
 
   @override
   void initState() {
     super.initState();
 
-    _subscription = lrsBloc.feedback.listen(_listenForFeedback);
+    _subscription = lrsBloc.feedback!.listen(_listenForFeedback);
   }
 
   @override
@@ -31,13 +29,7 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_feedback != null) {
-      _showFeedback(_feedback);
-      _feedback = null;
-    }
-
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
@@ -64,14 +56,14 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
   }
 
   Widget _imageButton(String asset) {
-    return FlatButton(
+    return TextButton(
       child: Image.asset(asset),
       onPressed: () => _imageSelected(asset),
     );
   }
 
   Future<void> _imageSelected(String asset) async {
-    final name = _nameRegex.firstMatch(asset).group(1);
+    final name = _nameRegex.firstMatch(asset)!.group(1);
     // Save the selection as an xAPI statement with the image as an attachment
     final image = await rootBundle.load(asset);
     lrsBloc.recordStatement(
@@ -98,29 +90,26 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
 
   void _showFeedback(LrsFeedback feedback) async {
     if (feedback.isError) {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Row(children: <Widget>[
           Icon(Icons.error),
           Container(width: 5, height: 1),
-          Text(feedback.feedback),
+          Text(feedback.feedback!),
         ]),
         backgroundColor: Colors.red,
       ));
     } else {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Row(children: <Widget>[
           Icon(Icons.done),
           Container(width: 5, height: 1),
-          Text(feedback.feedback),
+          Text(feedback.feedback!),
         ]),
-        duration: Duration(milliseconds: 500),
       ));
     }
   }
 
   void _listenForFeedback(LrsFeedback feedback) {
-    setState(() {
-      _feedback = feedback;
-    });
+    _showFeedback(feedback);
   }
 }

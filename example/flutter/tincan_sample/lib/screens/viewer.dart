@@ -10,7 +10,7 @@ class StatementViewer extends StatefulWidget {
 }
 
 class _StatementViewerState extends State<StatementViewer> {
-  String _currentlyExpanded;
+  String? _currentlyExpanded;
 
   @override
   void initState() {
@@ -28,7 +28,7 @@ class _StatementViewerState extends State<StatementViewer> {
       body: SingleChildScrollView(
           child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: StreamBuilder<List<Statement>>(
+        child: StreamBuilder<List<Statement>?>(
             stream: lrsBloc.statements,
             builder: (context, snapshot) {
               return _generateBody(context, snapshot);
@@ -38,7 +38,7 @@ class _StatementViewerState extends State<StatementViewer> {
   }
 
   Widget _generateBody(
-      BuildContext context, AsyncSnapshot<List<Statement>> snapshot) {
+      BuildContext context, AsyncSnapshot<List<Statement>?> snapshot) {
     if (snapshot.hasData) {
       final statements = snapshot.data ?? [];
       final encoder = JsonEncoder.withIndent('  ');
@@ -79,9 +79,9 @@ class _StatementViewerState extends State<StatementViewer> {
             statementWidgets.add(ListTile(
               onTap: () => _displayAttachment(context, attachment),
               leading: Icon(Icons.attachment, size: 48.0),
-              title: Text(attachment.display?.values?.first ?? 'Unknown'),
+              title: Text(attachment.display?.values.first ?? 'Unknown'),
               subtitle:
-                  Text(attachment.description?.values?.first ?? 'Unknown'),
+                  Text(attachment.description?.values.first ?? 'Unknown'),
             ));
           });
 
@@ -125,20 +125,20 @@ class _StatementViewerState extends State<StatementViewer> {
   }
 
   String _statementSummary(Statement statement) {
-    String who = '';
+    String? who = '';
     if (statement.actor is Group) {
       who = 'Group: ${(statement.actor as Group).name}';
     } else {
-      who = statement.actor.name;
+      who = statement.actor!.name;
     }
 
-    String verb = statement.verb.display?.values?.first;
+    String? verb = statement.verb!.display?.values.first;
 
     String when = statement.timestamp?.toIso8601String() ?? '';
 
     String what = '';
     if (statement.object is Activity) {
-      what = (statement.object as Activity).definition?.name?.values?.first ??
+      what = (statement.object as Activity).definition?.name?.values.first ??
           'Unknown';
     } else if (statement.object is StatementRef) {
       what = (statement.object as StatementRef).id ?? 'Unknown';
@@ -147,10 +147,10 @@ class _StatementViewerState extends State<StatementViewer> {
     String result = '';
 
     if (statement.result != null) {
-      if (statement.result.score != null) {
-        result = '${statement.result.score?.raw ?? 0}%';
+      if (statement.result!.score != null) {
+        result = '${statement.result!.score?.raw ?? 0}%';
       } else {
-        result = statement.result.response ?? 'Unknown';
+        result = statement.result!.response ?? 'Unknown';
       }
     }
 
@@ -158,11 +158,11 @@ class _StatementViewerState extends State<StatementViewer> {
   }
 
   String _statementShortSummary(Statement statement) {
-    String who = '';
+    String? who = '';
     if (statement.actor is Group) {
       who = 'Group: ${(statement.actor as Group).name}';
     } else {
-      who = statement.actor.name;
+      who = statement.actor!.name;
     }
 
     String when = statement.timestamp?.toIso8601String() ?? '';
@@ -176,12 +176,12 @@ class _StatementViewerState extends State<StatementViewer> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(attachment.display?.values?.first ?? ''),
+          title: Text(attachment.display?.values.first ?? ''),
           content: Container(
-            child: Image.memory(attachment.content.asUint8List()),
+            child: Image.memory(attachment.content!.asUint8List()),
           ),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text('Close'),
               onPressed: () {
                 Navigator.of(context).pop();
