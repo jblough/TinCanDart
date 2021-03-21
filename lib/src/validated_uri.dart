@@ -3,7 +3,7 @@ class ValidatedUri {
 
   ValidatedUri(this.uri);
 
-  factory ValidatedUri.fromString(String value,
+  static ValidatedUri fromString(String value,
       {bool appendTrailingSlash = false}) {
     if (value == null) {
       return null;

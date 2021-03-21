@@ -21,7 +21,7 @@ class ContextActivities {
     this.category,
   });
 
-  factory ContextActivities.fromJson(Map<String, dynamic> json) {
+  static ContextActivities fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

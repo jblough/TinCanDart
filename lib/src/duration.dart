@@ -71,7 +71,7 @@ class TinCanDuration {
         minutes = null,
         seconds = null;
 
-  factory TinCanDuration.fromString(String duration) {
+  static TinCanDuration fromString(String duration) {
     if (duration == null || duration.isEmpty) {
       return null;
     }
@@ -117,7 +117,7 @@ class TinCanDuration {
     );
   }
 
-  factory TinCanDuration.fromDiff(DateTime start, DateTime end) {
+  static TinCanDuration fromDiff(DateTime start, DateTime end) {
     if (start == null || end == null) {
       return null;
     }
@@ -125,7 +125,7 @@ class TinCanDuration {
     return TinCanDuration.fromDuration(end.difference(start));
   }
 
-  factory TinCanDuration.fromDuration(Duration duration) {
+  static TinCanDuration fromDuration(Duration duration) {
     if (duration == null) {
       return null;
     }

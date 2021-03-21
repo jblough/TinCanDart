@@ -33,7 +33,7 @@ class Context {
     this.extensions,
   });
 
-  factory Context.fromJson(Map<String, dynamic> json) {
+  static Context fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

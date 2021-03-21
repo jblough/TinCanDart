@@ -11,7 +11,7 @@ class Score {
     this.max,
   });
 
-  factory Score.fromJson(Map<String, dynamic> json) {
+  static Score fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

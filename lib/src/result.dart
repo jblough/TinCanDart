@@ -38,7 +38,7 @@ class Result {
     );
   }
 
-  factory Result.fromJson(Map<String, dynamic> json) {
+  static Result fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

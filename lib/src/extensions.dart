@@ -20,7 +20,7 @@ class Extensions {
     return data;
   }
 
-  factory Extensions.fromJson(Map<String, dynamic> json) {
+  static Extensions fromJson(Map<String, dynamic> json) {
     return Extensions(json);
   }
 

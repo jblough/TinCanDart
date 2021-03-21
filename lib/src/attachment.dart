@@ -35,7 +35,7 @@ class Attachment {
     return sha256.convert(data).toString();
   }
 
-  factory Attachment.fromJson(
+  static Attachment fromJson(
       Map<String, dynamic> json, AttachmentContent content) {
     if (json == null) {
       return null;

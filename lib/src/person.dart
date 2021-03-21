@@ -15,7 +15,7 @@ class Person {
     this.account,
   });
 
-  factory Person.fromJson(Map<String, dynamic> json) {
+  static Person fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

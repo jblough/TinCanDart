@@ -10,7 +10,7 @@ class Verb {
     this.display,
   }) : this.id = ValidatedUri.fromString(id?.toString());
 
-  factory Verb.fromJson(Map<String, dynamic> json) {
+  static Verb fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

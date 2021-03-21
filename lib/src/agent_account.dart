@@ -6,7 +6,7 @@ class AgentAccount {
 
   AgentAccount({this.homePage, this.name});
 
-  factory AgentAccount.fromJson(Map<String, dynamic> json) {
+  static AgentAccount fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

@@ -35,7 +35,7 @@ class ActivityDefinition {
   })  : this.type = ValidatedUri.fromString(type?.toString()),
         this.moreInfo = ValidatedUri.fromString(moreInfo?.toString());
 
-  factory ActivityDefinition.fromJson(Map<String, dynamic> json) {
+  static ActivityDefinition fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

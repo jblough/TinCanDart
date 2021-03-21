@@ -20,7 +20,7 @@ class About {
 
   About({this.version, this.extensions});
 
-  factory About.fromJson(Map<String, dynamic> json) {
+  static About fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

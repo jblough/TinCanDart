@@ -7,7 +7,7 @@ class StatementRef extends StatementTarget {
   /// https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Data.md#statement-references
   StatementRef({this.id});
 
-  factory StatementRef.fromJson(Map<String, dynamic> json) {
+  static StatementRef fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

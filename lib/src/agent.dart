@@ -24,7 +24,7 @@ class Agent extends StatementTarget {
     return sha1.convert(value.codeUnits).toString();
   }
 
-  factory Agent.fromJson(Map<String, dynamic> json) {
+  static Agent fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

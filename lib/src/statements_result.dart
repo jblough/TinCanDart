@@ -6,7 +6,7 @@ class StatementsResult {
 
   StatementsResult({this.statements, this.moreUrl});
 
-  factory StatementsResult.fromJson(Map<String, dynamic> json) {
+  static StatementsResult fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

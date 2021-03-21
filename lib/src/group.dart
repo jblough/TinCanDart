@@ -20,7 +20,7 @@ class Group extends Agent {
           account: account,
         );
 
-  factory Group.fromJson(Map<String, dynamic> json) {
+  static Group fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

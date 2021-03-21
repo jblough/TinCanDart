@@ -4,7 +4,7 @@ class InteractionComponent {
 
   InteractionComponent({this.id, this.description});
 
-  factory InteractionComponent.fromJson(Map<String, dynamic> json) {
+  static InteractionComponent fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

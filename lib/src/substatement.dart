@@ -30,7 +30,7 @@ class SubStatement extends StatementTarget {
     this.voided,
   });
 
-  factory SubStatement.fromJson(Map<String, dynamic> json) {
+  static SubStatement fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

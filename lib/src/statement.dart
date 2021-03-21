@@ -41,7 +41,7 @@ class Statement {
     this.voided,
   });
 
-  factory Statement.fromJson(Map<String, dynamic> json) {
+  static Statement fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }
