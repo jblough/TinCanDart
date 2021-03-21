@@ -2,12 +2,12 @@ import './statement_target.dart';
 import './versions.dart';
 
 class StatementRef extends StatementTarget {
-  final String id; // UUID
+  final String? id; // UUID
 
   /// https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Data.md#statement-references
   StatementRef({this.id});
 
-  factory StatementRef.fromJson(Map<String, dynamic> json) {
+  static StatementRef? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
@@ -18,7 +18,7 @@ class StatementRef extends StatementTarget {
   }
 
   @override
-  Map<String, dynamic> toJson([Version version]) {
+  Map<String, dynamic> toJson([Version? version]) {
     return {
       'objectType': 'StatementRef',
       'id': id,

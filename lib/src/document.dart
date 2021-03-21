@@ -1,12 +1,12 @@
 import './attachment_content.dart';
 
 abstract class Document {
-  final String id;
-  final String etag;
-  final DateTime timestamp;
-  final String contentType;
+  final String? id;
+  final String? etag;
+  final DateTime? timestamp;
+  final String? contentType;
 
-  final AttachmentContent content;
+  final AttachmentContent? content;
 
   Document({
     this.id,

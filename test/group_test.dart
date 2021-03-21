@@ -6,12 +6,13 @@ import 'package:tincan/tincan.dart'
 
 void main() {
   test("should import group", () {
-    final result = Group.fromJson(json.decode(_json));
+    final result = Group.fromJson(json.decode(_json))!;
     expect(result, isNotNull);
     expect(result.name, 'HT2');
-    expect(result.members.length, 1);
-    expect(result.members[0].account.name, '123');
-    expect(result.members[0].account.homePage, 'http://www.example.com/users/');
+    expect(result.members!.length, 1);
+    expect(result.members![0].account!.name, '123');
+    expect(
+        result.members![0].account!.homePage, 'http://www.example.com/users/');
   });
 
   test("should export group", () {

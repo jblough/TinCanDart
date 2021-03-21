@@ -1,9 +1,9 @@
 class InteractionType {
-  final String text;
+  final String? text;
 
   InteractionType({this.text});
 
-  factory InteractionType.fromString(String text) {
+  static InteractionType? fromString(String? text) {
     if (text == null) {
       return null;
     }

@@ -5,17 +5,17 @@ import 'package:tincan/tincan.dart' show Statement, Group, Version;
 
 void main() {
   test("should import statement", () {
-    final result = Statement.fromJson(json.decode(_json));
+    final result = Statement.fromJson(json.decode(_json))!;
     expect(result, isNotNull);
     expect(result.id, '6690e6c9-3ef0-4ed3-8b37-7f3964730bee');
     expect(result.actor.runtimeType.toString(), 'Group');
-    expect(result.actor.name, 'Team PB');
+    expect(result.actor!.name, 'Team PB');
     final group = result.actor as Group;
-    expect(group.members.length, 3);
+    expect(group.members!.length, 3);
   });
 
   test("should export statement", () {
-    final statement = Statement.fromJson(json.decode(_json));
+    final statement = Statement.fromJson(json.decode(_json))!;
     final exported = statement.toJson(Version.V100);
     final expected = json.decode(_json);
     expect(exported, expected);

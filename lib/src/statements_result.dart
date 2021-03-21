@@ -1,19 +1,19 @@
 import './statement.dart';
 
 class StatementsResult {
-  final List<Statement> statements;
-  final String moreUrl;
+  final List<Statement>? statements;
+  final String? moreUrl;
 
   StatementsResult({this.statements, this.moreUrl});
 
-  factory StatementsResult.fromJson(Map<String, dynamic> json) {
+  static StatementsResult? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
 
-    List<Statement> list = [];
+    final list = <Statement>[];
     json['statements']?.forEach((statement) {
-      list.add(Statement.fromJson(statement));
+      list.add(Statement.fromJson(statement)!);
     });
 
     return StatementsResult(

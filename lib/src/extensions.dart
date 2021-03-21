@@ -1,10 +1,10 @@
 class Extensions {
-  final Map<Uri, dynamic> json;
+  final Map<Uri, dynamic>? json;
 
   /// Examples: https://registry.tincanapi.com/#home/extensions
-  Extensions(Map<dynamic, dynamic> json) : this.json = _convertMap(json);
+  Extensions(Map<dynamic, dynamic>? json) : this.json = _convertMap(json);
 
-  static Map<Uri, dynamic> _convertMap(Map<dynamic, dynamic> json) {
+  static Map<Uri, dynamic>? _convertMap(Map<dynamic, dynamic>? json) {
     if (json == null) {
       return null;
     }
@@ -20,17 +20,17 @@ class Extensions {
     return data;
   }
 
-  factory Extensions.fromJson(Map<String, dynamic> json) {
+  static Extensions fromJson(Map<String, dynamic>? json) {
     return Extensions(json);
   }
 
-  Map<String, dynamic> toJson() {
-    if (json == null || json.isEmpty) {
+  Map<String, dynamic>? toJson() {
+    if (json == null || json!.isEmpty) {
       return null;
     }
 
     final map = <String, dynamic>{};
-    json.forEach((key, value) => map[key.toString()] = value);
+    json!.forEach((key, value) => map[key.toString()] = value);
     return map;
   }
 }

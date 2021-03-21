@@ -5,15 +5,15 @@ import './validated_uri.dart';
 import './versions.dart';
 
 class Attachment {
-  final ValidatedUri usageType;
-  final Map<String, dynamic> display;
-  final Map<String, dynamic> description;
-  final String contentType;
-  final int length;
-  final String sha2;
-  final ValidatedUri fileUrl;
+  final ValidatedUri? usageType;
+  final Map<String, dynamic>? display;
+  final Map<String, dynamic>? description;
+  final String? contentType;
+  final int? length;
+  final String? sha2;
+  final ValidatedUri? fileUrl;
 
-  AttachmentContent content;
+  AttachmentContent? content;
 
   /// Examples: https://registry.tincanapi.com/#home/attachmentUsages
   Attachment({
@@ -21,22 +21,22 @@ class Attachment {
     this.display,
     this.description,
     this.contentType,
-    int length,
-    String sha2,
+    int? length,
+    String? sha2,
     dynamic fileUrl,
     this.content,
   })  : this.usageType = ValidatedUri.fromString(usageType?.toString()),
         this.fileUrl = ValidatedUri.fromString(fileUrl?.toString()),
         this.length = length ?? content?.length,
         this.sha2 =
-            sha2 ?? ((content != null) ? sha2sum(content.asList()) : null);
+            sha2 ?? ((content != null) ? sha2sum(content.asList()!) : null);
 
   static String sha2sum(List<int> data) {
     return sha256.convert(data).toString();
   }
 
-  factory Attachment.fromJson(
-      Map<String, dynamic> json, AttachmentContent content) {
+  static Attachment? fromJson(
+      Map<String, dynamic>? json, AttachmentContent? content) {
     if (json == null) {
       return null;
     }
@@ -53,20 +53,11 @@ class Attachment {
     );
   }
 
-  static List<Attachment> listFromJson(List<dynamic> list) {
-    if (list == null || list.isEmpty) {
-      return null;
-    }
-
-    List<Attachment> attachments = [];
-    list.forEach((json) {
-      attachments.add(Attachment.fromJson(json, null));
-    });
-
-    return attachments;
+  static List<Attachment>? listFromJson(List<dynamic>? list) {
+    return list?.map((json) => Attachment.fromJson(json, null)!).toList();
   }
 
-  Map<String, dynamic> toJson([Version version]) {
+  Map<String, dynamic> toJson([Version? version]) {
     final json = {
       'usageType': usageType?.toString(),
       'display': display,

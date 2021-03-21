@@ -30,19 +30,19 @@ class MultipartMixedRequest extends BaseRequest {
   /// can't be longer than 70.
   static const int _BOUNDARY_LENGTH = 55;
 
-  final String _body;
+  final String? _body;
 
   /// The private version of [files].
-  final List<Attachment> _attachments;
+  final List<Attachment>? _attachments;
 
   /// Creates a new [MultipartMixedRequest].
-  MultipartMixedRequest(String method, Uri url, String body)
+  MultipartMixedRequest(String method, Uri url, String? body)
       : _body = body,
         _attachments = <Attachment>[],
         super(method, url);
 
   /// The list of attachments to upload for this request.
-  List<Attachment> get attachments => _attachments;
+  List<Attachment>? get attachments => _attachments;
 
   /// The total length of the request body, in bytes. This is calculated from
   /// body and [attachments] and cannot be set manually.
@@ -53,14 +53,14 @@ class MultipartMixedRequest extends BaseRequest {
 
     length += "--".length + _BOUNDARY_LENGTH + newLineLength;
     length += 'Content-Type: application/json\r\n\r\n'.length;
-    length += _body.length + newLineLength;
+    length += _body!.length + newLineLength;
 
-    for (var attachment in _attachments) {
+    for (var attachment in _attachments!) {
       length += "--".length +
           _BOUNDARY_LENGTH +
           newLineLength +
           utf8.encode(_headerForAttachment(attachment)).length +
-          attachment.length +
+          attachment.length! +
           newLineLength;
     }
 
@@ -68,7 +68,7 @@ class MultipartMixedRequest extends BaseRequest {
     return length;
   }
 
-  set contentLength(int value) {
+  set contentLength(int? value) {
     throw UnsupportedError("Cannot set the contentLength property of "
         "multipart requests.");
   }
@@ -103,10 +103,10 @@ class MultipartMixedRequest extends BaseRequest {
     controller.sink.add(utf8.encode('Content-Type: application/json\r\n\r\n'));
     controller.sink.add(utf8.encode('$_body\r\n'));
 
-    Future.forEach(_attachments, (Attachment attachment) {
+    Future.forEach(_attachments!, (Attachment attachment) {
       writeAscii(controller, '--$boundary\r\n');
       writeAscii(controller, _headerForAttachment(attachment));
-      controller.add(attachment.content.asList());
+      controller.add(attachment.content!.asList()!);
       writeLine(controller);
     });
     writeAscii(controller, '--$boundary--\r\n');
@@ -140,7 +140,7 @@ class ByteStream extends StreamView<List<int>> {
 
   /// Returns a single-subscription byte stream that will emit the given bytes
   /// in a single chunk.
-  factory ByteStream.fromBytes(List<int> bytes) =>
+  static ByteStream fromBytes(List<int> bytes) =>
       ByteStream(Stream.fromIterable([bytes]));
 
   /// Collects the data of this stream in a [Uint8List].

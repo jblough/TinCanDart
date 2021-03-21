@@ -7,16 +7,13 @@ import './verb.dart';
 import './versions.dart';
 
 class SubStatement extends StatementTarget {
-  final Agent actor;
-  final Verb verb;
-  final StatementTarget object;
-  final Result result;
-  final Context context;
-  final DateTime timestamp;
-  final List<Attachment> attachments;
-
-  @deprecated
-  final bool voided;
+  final Agent? actor;
+  final Verb? verb;
+  final StatementTarget? object;
+  final Result? result;
+  final Context? context;
+  final DateTime? timestamp;
+  final List<Attachment>? attachments;
 
   /// https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Data.md#substatements
   SubStatement({
@@ -27,10 +24,9 @@ class SubStatement extends StatementTarget {
     this.context,
     this.timestamp,
     this.attachments,
-    this.voided,
   });
 
-  factory SubStatement.fromJson(Map<String, dynamic> json) {
+  static SubStatement? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
@@ -43,12 +39,11 @@ class SubStatement extends StatementTarget {
       context: Context.fromJson(json['context']),
       timestamp: _readDate(json['timestamp']),
       attachments: Attachment.listFromJson(json['attachments']),
-      voided: json['voided'],
     );
   }
 
   @override
-  Map<String, dynamic> toJson([Version version]) {
+  Map<String, dynamic> toJson([Version? version]) {
     version ??= TinCanVersion.latest();
 
     return {
@@ -61,7 +56,7 @@ class SubStatement extends StatementTarget {
     };
   }
 
-  static DateTime _readDate(String date) {
+  static DateTime? _readDate(String? date) {
     return (date == null) ? null : DateTime.tryParse(date);
   }
 }

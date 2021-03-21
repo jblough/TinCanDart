@@ -1,12 +1,12 @@
 import './versions.dart';
 
 class AgentAccount {
-  final String homePage;
-  final String name;
+  final String? homePage;
+  final String? name;
 
   AgentAccount({this.homePage, this.name});
 
-  factory AgentAccount.fromJson(Map<String, dynamic> json) {
+  static AgentAccount? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
@@ -17,20 +17,12 @@ class AgentAccount {
     );
   }
 
-  static List<AgentAccount> listFromJson(List<dynamic> list) {
-    if (list == null || list.isEmpty) {
-      return null;
-    }
-
-    List<AgentAccount> accounts = [];
-    list.forEach((json) {
-      accounts.add(AgentAccount.fromJson(json));
-    });
-
-    return accounts;
+  static List<AgentAccount>? listFromJson(List<dynamic>? list) {
+    return list?.map((json) => AgentAccount.fromJson(json)).toList()
+        as List<AgentAccount>?;
   }
 
-  Map<String, dynamic> toJson([Version version]) {
+  Map<String, dynamic> toJson([Version? version]) {
     return {
       'name': name,
       'homePage': homePage,

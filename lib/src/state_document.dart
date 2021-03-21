@@ -5,22 +5,22 @@ import './document.dart';
 import './versions.dart';
 
 class StateDocument extends Document {
-  final Activity activity;
-  final Agent agent;
+  final Activity? activity;
+  final Agent? agent;
 
   /// The registration associated with this state (UUID)
-  final String registration; // UUID
+  final String? registration; // UUID
 
   /// https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Communication.md#23-state-resource
   StateDocument({
     this.activity,
     this.agent,
     this.registration,
-    String id,
-    String etag,
-    DateTime timestamp,
-    String contentType,
-    AttachmentContent content,
+    String? id,
+    String? etag,
+    DateTime? timestamp,
+    String? contentType,
+    AttachmentContent? content,
   }) : super(
             id: id,
             etag: etag,
@@ -28,7 +28,7 @@ class StateDocument extends Document {
             contentType: contentType,
             content: content);
 
-  Map<String, dynamic> toJson([Version version]) {
+  Map<String, dynamic> toJson([Version? version]) {
     version ??= TinCanVersion.latest();
     return {
       'id': id,
@@ -43,14 +43,14 @@ class StateDocument extends Document {
   }
 
   StateDocument copyWith({
-    Activity activity,
-    Agent agent,
-    String registration,
-    String id,
-    String etag,
-    DateTime timestamp,
-    String contentType,
-    AttachmentContent content,
+    Activity? activity,
+    Agent? agent,
+    String? registration,
+    String? id,
+    String? etag,
+    DateTime? timestamp,
+    String? contentType,
+    AttachmentContent? content,
   }) {
     return StateDocument(
       activity: activity ?? this.activity,

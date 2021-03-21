@@ -6,19 +6,19 @@ import './versions.dart';
 
 class Context {
   /// The registration that the Statement is associated with
-  final String registration; // UUID
+  final String? registration; // UUID
 
   /// Instructor that the Statement relates to, if not included as the Actor of the Statement
-  final Agent instructor;
+  final Agent? instructor;
 
   /// Team that this Statement relates to, if not included as the Actor of the Statement
-  final Agent team;
-  final ContextActivities contextActivities;
-  final String revision;
-  final String platform;
-  final String language;
-  final StatementRef statement;
-  final Extensions extensions;
+  final Agent? team;
+  final ContextActivities? contextActivities;
+  final String? revision;
+  final String? platform;
+  final String? language;
+  final StatementRef? statement;
+  final Extensions? extensions;
 
   /// https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Data.md#246-context
   Context({
@@ -33,7 +33,7 @@ class Context {
     this.extensions,
   });
 
-  factory Context.fromJson(Map<String, dynamic> json) {
+  static Context? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
@@ -51,7 +51,7 @@ class Context {
     );
   }
 
-  Map<String, dynamic> toJson([Version version]) {
+  Map<String, dynamic> toJson([Version? version]) {
     version ??= TinCanVersion.latest();
 
     final json = {

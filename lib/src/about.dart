@@ -15,12 +15,12 @@ class About {
   ///      "version" : [ "0.9", "0.95", "1.0.3" ]
   ///  }
   ///
-  final List<Version> version;
-  final Extensions extensions;
+  final List<Version>? version;
+  final Extensions? extensions;
 
   About({this.version, this.extensions});
 
-  factory About.fromJson(Map<String, dynamic> json) {
+  static About? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }

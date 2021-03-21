@@ -9,20 +9,20 @@ class TinCanDuration {
 
   // P3Y6M4DT12H30M5S
   // P[n]Y[n]M[n]DT[n]H[n]M[n]S
-  final String years;
-  final String months;
-  final String days;
+  final String? years;
+  final String? months;
+  final String? days;
 
-  final String hours;
-  final String minutes;
-  final String seconds;
+  final String? hours;
+  final String? minutes;
+  final String? seconds;
 
   // PYYYYMMDDThhmmss or in the extended format P[YYYY]-[MM]-[DD]T[hh]:[mm]:[ss]
-  final String date;
-  final String time;
+  final String? date;
+  final String? time;
 
   // P[n]W
-  final String weeks;
+  final String? weeks;
 
   /*TinCanDuration({
     this.years,
@@ -71,7 +71,7 @@ class TinCanDuration {
         minutes = null,
         seconds = null;
 
-  factory TinCanDuration.fromString(String duration) {
+  static TinCanDuration? fromString(String? duration) {
     if (duration == null || duration.isEmpty) {
       return null;
     }
@@ -97,15 +97,15 @@ class TinCanDuration {
     }
 
     // Else use fromParts
-    String years = RegExp(r'([0-9,.]+)Y').firstMatch(duration)?.group(1);
+    String? years = RegExp(r'([0-9,.]+)Y').firstMatch(duration)?.group(1);
     // Since months and minutes both use 'M', split on the 'T' if present
-    String months = (duration.contains('T'))
+    String? months = (duration.contains('T'))
         ? RegExp(r'([0-9,.]+)M').firstMatch(duration.split('T')[0])?.group(1)
         : RegExp(r'[^T]([0-9,.]+)M').firstMatch(duration)?.group(1);
-    String days = RegExp(r'([0-9,.]+)D').firstMatch(duration)?.group(1);
-    String hours = RegExp(r'([0-9,.]+)H').firstMatch(duration)?.group(1);
-    String minutes = RegExp(r'T.*?([0-9,.]+)M').firstMatch(duration)?.group(1);
-    String seconds = RegExp(r'([0-9,.]+)S').firstMatch(duration)?.group(1);
+    String? days = RegExp(r'([0-9,.]+)D').firstMatch(duration)?.group(1);
+    String? hours = RegExp(r'([0-9,.]+)H').firstMatch(duration)?.group(1);
+    String? minutes = RegExp(r'T.*?([0-9,.]+)M').firstMatch(duration)?.group(1);
+    String? seconds = RegExp(r'([0-9,.]+)S').firstMatch(duration)?.group(1);
 
     return TinCanDuration.fromParts(
       years: years,
@@ -117,7 +117,7 @@ class TinCanDuration {
     );
   }
 
-  factory TinCanDuration.fromDiff(DateTime start, DateTime end) {
+  static TinCanDuration? fromDiff(DateTime? start, DateTime? end) {
     if (start == null || end == null) {
       return null;
     }
@@ -125,23 +125,23 @@ class TinCanDuration {
     return TinCanDuration.fromDuration(end.difference(start));
   }
 
-  factory TinCanDuration.fromDuration(Duration duration) {
+  static TinCanDuration? fromDuration(Duration? duration) {
     if (duration == null) {
       return null;
     }
 
     // 00:00:16.043000
     final pattern = RegExp(r'([0-9]+):([0-9]+):([0-9.]+)');
-    final match = pattern.firstMatch(duration.toString());
+    final match = pattern.firstMatch(duration.toString())!;
     int inDays = duration.inDays;
-    int days = (inDays > 0) ? inDays : null;
-    int hours =
-        (inDays > 0) ? (duration.inHours % 24) : int.tryParse(match.group(1));
+    int? days = (inDays > 0) ? inDays : null;
+    int? hours =
+        (inDays > 0) ? (duration.inHours % 24) : int.tryParse(match.group(1)!);
     if (hours == 0) {
       hours = null;
     }
-    int minutes = int.tryParse(match.group(2));
-    double seconds = double.tryParse(match.group(3));
+    int? minutes = int.tryParse(match.group(2)!);
+    double? seconds = double.tryParse(match.group(3)!);
     // Truncate (round) to only 0.01 second precision
     if (seconds != null) {
       seconds = double.parse(seconds.toStringAsFixed(2));
@@ -197,7 +197,5 @@ class TinCanDuration {
 
         return duration;
     }
-
-    return null;
   }
 }

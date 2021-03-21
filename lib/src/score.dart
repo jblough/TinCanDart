@@ -1,8 +1,8 @@
 class Score {
-  final num scaled;
-  final num raw;
-  final num min;
-  final num max;
+  final num? scaled;
+  final num? raw;
+  final num? min;
+  final num? max;
 
   Score({
     this.scaled,
@@ -11,7 +11,7 @@ class Score {
     this.max,
   });
 
-  factory Score.fromJson(Map<String, dynamic> json) {
+  static Score? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }

@@ -5,11 +5,11 @@ import 'package:tincan/tincan.dart' show Person;
 
 void main() {
   test("should import person", () {
-    final result = Person.fromJson(json.decode(_json));
+    final result = Person.fromJson(json.decode(_json))!;
     expect(result, isNotNull);
-    expect(result.name.length, 1);
-    expect(result.name[0], 'Test Agent');
-    expect(result.mbox[0], 'mailto:tincanjava@tincanapi.com');
+    expect(result.name!.length, 1);
+    expect(result.name![0], 'Test Agent');
+    expect(result.mbox![0], 'mailto:tincanjava@tincanapi.com');
   });
 
   test("should export person", () {

@@ -1,19 +1,19 @@
 name: tincan
 description: TincanDart is an xAPI implmentation for the Dart language
 
-version: 1.1.1
+version: 2.0.0
 homepage: https://github.com/jblough/TinCanDart
 
 environment:
-  sdk: '>=2.4.0 <3.0.0'
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
-  http: ^0.12.2
-  http_parser: ^3.1.4
-  uuid: ^2.2.0
-  crypto: ^2.1.5
+  http: ^0.13.1
+  http_parser: ^4.0.0
+  uuid: ^3.0.1
+  crypto: ^3.0.0
 
 dev_dependencies:
-  test: ^1.0.0
-  build_runner: ^1.0.0
-  build_web_compilers: ^0.4.0
+  test: ^1.16.8
+#  build_runner: ^1.0.0
+#  build_web_compilers: ^0.4.0

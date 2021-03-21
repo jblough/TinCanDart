@@ -20,7 +20,7 @@ void main() {
         Statement.fromMixedMultipart(boundary, body2.replaceAll('\n', '\r\n'));
     expect(result, isNotNull);
     expect(result[0].id, '7b47a074-1277-45c5-97be-a3c9c14e706d');
-    expect(result[0].attachments[0].content.length, 'hello world'.length);
+    expect(result[0].attachments![0].content!.length, 'hello world'.length);
   });
 
   test("should import binary image result", () {
@@ -29,11 +29,11 @@ void main() {
     final result = Statement.fromMixedMultipart(boundary, payload);
     expect(result, isNotNull);
     expect(result[0].id, 'db6adf7c-09a9-4854-a2b9-bbf087f1371b');
-    expect(result[0].attachments[0].content.length, 50836);
+    expect(result[0].attachments![0].content!.length, 50836);
   });
 
   test("should read content with badge", () {
-    final statement = Statement.fromJson(json.decode(_bodyWithBadge));
+    final statement = Statement.fromJson(json.decode(_bodyWithBadge))!;
 
     expect(statement, isNotNull);
     expect(statement.actor, isNotNull);
@@ -42,7 +42,7 @@ void main() {
     expect(statement.verb, isNotNull);
     expect(statement.context, isNotNull);
     expect((statement.object as Activity).definition, isNotNull);
-    expect((statement.object as Activity).definition.extensions, isNotNull);
+    expect((statement.object as Activity).definition!.extensions, isNotNull);
   });
 }
 

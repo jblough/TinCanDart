@@ -1,11 +1,11 @@
 import './agent_account.dart';
 
 class Person {
-  final List<String> name;
-  final List<String> mbox;
-  final List<String> mboxSHA1Sum;
-  final List<String> openID;
-  final List<AgentAccount> account;
+  final List<String>? name;
+  final List<String>? mbox;
+  final List<String>? mboxSHA1Sum;
+  final List<String>? openID;
+  final List<AgentAccount>? account;
 
   Person({
     this.name,
@@ -15,7 +15,7 @@ class Person {
     this.account,
   });
 
-  factory Person.fromJson(Map<String, dynamic> json) {
+  static Person? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
@@ -45,7 +45,7 @@ class Person {
     return json;
   }
 
-  static List<String> _fromItem(dynamic item) {
+  static List<String>? _fromItem(dynamic item) {
     if (item == null) {
       return null;
     }

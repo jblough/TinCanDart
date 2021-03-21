@@ -4,12 +4,12 @@ import './score.dart';
 import './versions.dart';
 
 class Result {
-  final Score score;
-  final bool success;
-  final bool completion;
-  final TinCanDuration duration;
-  final String response;
-  final Extensions extensions;
+  final Score? score;
+  final bool? success;
+  final bool? completion;
+  final TinCanDuration? duration;
+  final String? response;
+  final Extensions? extensions;
 
   Result({
     this.score,
@@ -21,12 +21,12 @@ class Result {
   });
 
   Result copyWith({
-    Score score,
-    bool success,
-    bool completion,
-    TinCanDuration duration,
-    String response,
-    Extensions extensions,
+    Score? score,
+    bool? success,
+    bool? completion,
+    TinCanDuration? duration,
+    String? response,
+    Extensions? extensions,
   }) {
     return Result(
       score: score ?? this.score,
@@ -38,7 +38,7 @@ class Result {
     );
   }
 
-  factory Result.fromJson(Map<String, dynamic> json) {
+  static Result? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
@@ -53,7 +53,7 @@ class Result {
     );
   }
 
-  Map<String, dynamic> toJson([Version version]) {
+  Map<String, dynamic> toJson([Version? version]) {
     version ??= TinCanVersion.latest();
 
     final json = {

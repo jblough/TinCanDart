@@ -9,7 +9,7 @@ environment:
 dependencies:
   angular: ^5.3.1
   angular_components: ^0.13.0+1
-  rxdart: ^0.24.1
+  rxdart: ^0.26.0
   tincan:
     path: ../../../
 

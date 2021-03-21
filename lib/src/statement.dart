@@ -10,21 +10,18 @@ import './verb.dart';
 import './versions.dart';
 
 class Statement {
-  final String id; // Uuid
-  final DateTime stored;
-  final Agent authority;
-  final Version version;
+  final String? id; // Uuid
+  final DateTime? stored;
+  final Agent? authority;
+  final Version? version;
 
-  final Agent actor;
-  final Verb verb;
-  final StatementTarget object;
-  final Result result;
-  final Context context;
-  final DateTime timestamp;
-  final List<Attachment> attachments;
-
-  @deprecated
-  final bool voided;
+  final Agent? actor;
+  final Verb? verb;
+  final StatementTarget? object;
+  final Result? result;
+  final Context? context;
+  final DateTime? timestamp;
+  final List<Attachment>? attachments;
 
   Statement({
     this.id,
@@ -38,10 +35,9 @@ class Statement {
     this.context,
     this.timestamp,
     this.attachments,
-    this.voided,
   });
 
-  factory Statement.fromJson(Map<String, dynamic> json) {
+  static Statement? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
@@ -61,16 +57,15 @@ class Statement {
       context: Context.fromJson(json['context']),
       timestamp: _readDate(json['timestamp']),
       attachments: Attachment.listFromJson(json['attachments']),
-      voided: json['voided'],
     );
   }
 
-  Map<String, dynamic> toJson([Version version]) {
+  Map<String, dynamic> toJson([Version? version]) {
     version ??= TinCanVersion.latest();
 
     final json = {
       'id': id,
-      'stored': stored?.toUtc()?.toIso8601String(),
+      'stored': stored?.toUtc().toIso8601String(),
       'authority': authority?.toJson(version),
       'version': TinCanVersion.toJsonString(version),
       'actor': actor?.toJson(version),
@@ -78,9 +73,8 @@ class Statement {
       'object': object?.toJson(version),
       'result': result?.toJson(version),
       'context': context?.toJson(version),
-      'timestamp': timestamp?.toUtc()?.toIso8601String(),
-      'attachments': attachments?.map((a) => a.toJson(version))?.toList(),
-      'voided': voided,
+      'timestamp': timestamp?.toUtc().toIso8601String(),
+      'attachments': attachments?.map((a) => a.toJson(version)).toList(),
     };
 
     // Remove all keys where the value is null
@@ -89,23 +83,23 @@ class Statement {
     return json;
   }
 
-  static DateTime _readDate(String date) {
+  static DateTime? _readDate(String? date) {
     return (date == null) ? null : DateTime.tryParse(date);
   }
 
   Statement copyWith({
-    String id, // Uuid
-    DateTime stored,
-    Agent authority,
-    Version version,
-    Agent actor,
-    Verb verb,
-    StatementTarget object,
-    Result result,
-    Context context,
-    DateTime timestamp,
-    List<Attachment> attachments,
-    bool voided,
+    String? id, // Uuid
+    DateTime? stored,
+    Agent? authority,
+    Version? version,
+    Agent? actor,
+    Verb? verb,
+    StatementTarget? object,
+    Result? result,
+    Context? context,
+    DateTime? timestamp,
+    List<Attachment>? attachments,
+    bool? voided,
   }) {
     return Statement(
       id: id ?? this.id,
@@ -119,13 +113,12 @@ class Statement {
       context: context ?? this.context,
       timestamp: timestamp ?? this.timestamp,
       attachments: attachments ?? this.attachments,
-      voided: voided ?? this.voided,
     );
   }
 
   static final _headerRegExp = RegExp(r'^(.*?): ?(.*?)$');
 
-  static List<Statement> fromMixedMultipart(String boundary, dynamic body) {
+  static List<Statement> fromMixedMultipart(String? boundary, dynamic body) {
     if (body == null) {
       return [];
     }
@@ -147,12 +140,12 @@ class Statement {
       line = reader.readNextLine(); // Headers
       final match = _headerRegExp.firstMatch(line);
       if (match != null) {
-        headers[match[1]] = match[2];
+        headers[match[1]!] = match[2];
       }
     }
 
     // Read the Statements
-    int length = (headers['Content-Length'] == null)
+    int? length = (headers['Content-Length'] == null)
         ? null
         : int.tryParse(headers['Content-Length']);
     final jsonData = (length != null)
@@ -182,20 +175,20 @@ class Statement {
         line = reader.readNextLine(); // Headers
         final match = _headerRegExp.firstMatch(line);
         if (match != null) {
-          headers[match[1]] = match[2];
+          headers[match[1]!] = match[2];
         }
       }
 
       if (headers.isNotEmpty) {
         final hash = headers['X-Experience-API-Hash'];
 
-        int length = (headers['Content-Length'] == null)
+        int? length = (headers['Content-Length'] == null)
             ? null
             : int.tryParse(headers['Content-Length']);
 
         // If the length wasn't found as a header, try to get it from the statement
         if (length == null) {
-          statements?.forEach((statement) {
+          statements.forEach((statement) {
             statement.attachments?.forEach((attachment) {
               if (attachment.sha2 == hash) {
                 length = attachment.length;
@@ -204,7 +197,7 @@ class Statement {
           });
         }
         final bytes = reader.readNextBinary(length);
-        statements?.forEach((statement) {
+        statements.forEach((statement) {
           statement.attachments?.forEach((attachment) {
             if (attachment.sha2 == hash && attachment.content == null) {
               attachment.content = AttachmentContent.fromList(bytes);
@@ -243,7 +236,7 @@ hello world 2
 
 class _MixedReader {
   final List<int> bytes;
-  final String boundary;
+  final String? boundary;
   final int length;
   int _currentPosition = 0;
 
@@ -263,7 +256,7 @@ class _MixedReader {
     return buffer.toString().replaceAll('\r\n', '');
   }
 
-  List<int> readNextBinary(int bytesToRead) {
+  List<int> readNextBinary(int? bytesToRead) {
     // If value passed in was null, read until the remainder of the content
     bytesToRead ??= length - _currentPosition - (boundary?.length ?? 0 + 2);
 

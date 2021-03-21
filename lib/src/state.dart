@@ -5,12 +5,12 @@ import 'package:uuid/uuid.dart';
 import './agent.dart';
 
 class State {
-  final String id;
-  final DateTime updated;
-  final ByteBuffer contents;
-  final Agent agent;
-  final Uri activityId;
-  final Uuid registration;
+  final String? id;
+  final DateTime? updated;
+  final ByteBuffer? contents;
+  final Agent? agent;
+  final Uri? activityId;
+  final Uuid? registration;
 
   State({
     this.id,

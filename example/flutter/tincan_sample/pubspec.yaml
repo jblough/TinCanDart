@@ -22,10 +22,10 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.3
+  cupertino_icons: ^1.0.2
   tincan:
     path: ../../../
-  rxdart: ^0.24.1
+  rxdart: ^0.26.0
 
 
 dev_dependencies:
@@ -46,16 +46,7 @@ flutter:
 
   assets:
     - assets/lrs.properties
-    - assets/images/bird.png
-    - assets/images/books.png
-    - assets/images/checkmark.png
-    - assets/images/fire.png
-    - assets/images/fish.png
-    - assets/images/night-city.png
-    - assets/images/pencil.png
-    - assets/images/soccer-ball.png
-    - assets/images/tux.png
-    - assets/images/yin-yang.png
+    - assets/images/
 
     # To add assets to your application, add an assets section, like this:
     # assets:
