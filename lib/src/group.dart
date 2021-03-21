@@ -3,7 +3,7 @@ import './agent_account.dart';
 import './versions.dart';
 
 class Group extends Agent {
-  final List<Agent?>? members;
+  final List<Agent>? members;
 
   Group({
     String? name,
@@ -56,7 +56,7 @@ class Group extends Agent {
     // Add the members
     if (this.members?.isNotEmpty == true) {
       json['member'] =
-          this.members!.map((member) => member!.toJson(version)).toList();
+          this.members!.map((member) => member.toJson(version)).toList();
     }
 
     return json;

@@ -99,7 +99,8 @@ void main() {
     context = Context(
       registration: Uuid().v4().toString(),
       statement: statementRef,
-      contextActivities: ContextActivities(parent: [parent]),
+      contextActivities:
+          ContextActivities(parent: (parent != null) ? [parent!] : []),
     );
 
     score = Score(
@@ -316,8 +317,8 @@ void main() {
     final response = await lrs.saveStatements(statements);
     expect(response.success, isTrue);
 
-    final s1 = response.data!.statements![0]!;
-    final s2 = response.data!.statements![1]!;
+    final s1 = response.data!.statements![0];
+    final s2 = response.data!.statements![1];
 
     expect(s1.id, isNotNull);
     expect(s2.id, isNotNull);
@@ -863,10 +864,10 @@ void main() {
 
     final response = await lrs.saveStatements(statements);
     expect(response.success, isTrue);
-    compareStatements(response.data!.statements![1]!, statement2);
+    compareStatements(response.data!.statements![1], statement2);
     expect(response.data, isNotNull);
-    expect(response.data!.statements![0]!.id, isNotNull);
-    expect(response.data!.statements![1]!.id, isNotNull);
+    expect(response.data!.statements![0].id, isNotNull);
+    expect(response.data!.statements![1].id, isNotNull);
   });
 
   test("should retrieve statement with attachment", () async {
@@ -932,7 +933,7 @@ void main() {
     expect(queryResult.success, isTrue);
 
     final calculated = sha256.convert(
-        queryResult.data!.statements![0]!.attachments![0].content!.asList()!);
+        queryResult.data!.statements![0].attachments![0].content!.asList()!);
     final expected = sha256.convert(attachment1!.content!.asList()!);
     expect(calculated, expected);
   });
@@ -1019,7 +1020,7 @@ void main() {
     final statement = Statement(
       actor: Group(
         name: 'test agents',
-        members: [agent],
+        members: (agent != null) ? [agent!] : [],
       ),
       verb: verb,
       object: activity,

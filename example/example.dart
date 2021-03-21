@@ -22,8 +22,8 @@ main() async {
   }
 }
 
-void _printStatements(List<Statement?>? statements) {
+void _printStatements(List<Statement>? statements) {
   statements?.forEach((statement) {
-    print('  Statement - ${statement!.id}');
+    print('  Statement - ${statement.id}');
   });
 }

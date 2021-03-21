@@ -129,9 +129,9 @@ void main() {
     print(postResponse.errMsg);
     expect(postResponse.success, isTrue);
     expect(postResponse.data!.statements!.length, 2);
-    expect(postResponse.data!.statements![0]!.id,
+    expect(postResponse.data!.statements![0].id,
         'efb7218c-0fc9-4dfc-9524-d497097de027');
-    expect(postResponse.data!.statements![1]!.id, isNotNull);
+    expect(postResponse.data!.statements![1].id, isNotNull);
 
     // Get single statement
     final getResponse =
@@ -139,7 +139,8 @@ void main() {
     expect(getResponse.success, isTrue);
     expect(getResponse.data!.id, 'efb7218c-0fc9-4dfc-9524-d497097de027');
     expect(getResponse.data!.actor!.mbox, 'mailto:test1@example.org');
-    expect(getResponse.data!.verb!.id.toString(), 'http://www.example.org/verb');
+    expect(
+        getResponse.data!.verb!.id.toString(), 'http://www.example.org/verb');
     expect((getResponse.data!.object as Activity).id.toString(),
         'http://www.example.org/activity');
 

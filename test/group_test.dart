@@ -10,8 +10,9 @@ void main() {
     expect(result, isNotNull);
     expect(result.name, 'HT2');
     expect(result.members!.length, 1);
-    expect(result.members![0]!.account!.name, '123');
-    expect(result.members![0]!.account!.homePage, 'http://www.example.com/users/');
+    expect(result.members![0].account!.name, '123');
+    expect(
+        result.members![0].account!.homePage, 'http://www.example.com/users/');
   });
 
   test("should export group", () {

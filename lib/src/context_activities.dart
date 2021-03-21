@@ -3,7 +3,7 @@ import './versions.dart';
 
 class ContextActivities {
   /// Parent: an Activity with a direct relation to the Activity which is the Object of the Statement. In almost all cases there is only one sensible parent or none, not multiple. For example: a Statement about a quiz question would have the quiz as its parent Activity.
-  final List<Activity?>? parent;
+  final List<Activity>? parent;
 
   /// Grouping: an Activity with an indirect relation to the Activity which is the Object of the Statement. For example: a course that is part of a qualification. The course has several classes. The course relates to a class as the parent, the qualification relates to the class as the grouping.
   final List<Activity>? grouping;
@@ -38,7 +38,7 @@ class ContextActivities {
     version ??= TinCanVersion.latest();
 
     final json = {
-      'parent': parent?.map((a) => a!.toJson(version)).toList(),
+      'parent': parent?.map((a) => a.toJson(version)).toList(),
       'grouping': grouping?.map((a) => a.toJson(version)).toList(),
       'other': other?.map((a) => a.toJson(version)).toList(),
       'category': category?.map((a) => a.toJson(version)).toList(),
