@@ -2,6 +2,10 @@
 
 - Static analysis warning fixes
 
+## 2.0.0
+
+- Null safety
+
 ## 1.1.0
 
 - Compile against more modern version of dependencies
