@@ -10,7 +10,7 @@ enum Version {
 class TinCanVersion {
   static Version latest() => Version.V103;
 
-  static Version fromJsonString(String version) {
+  static Version? fromJsonString(String? version) {
     if (version == null) {
       return null;
     }
@@ -33,7 +33,7 @@ class TinCanVersion {
     }
   }
 
-  static String /*?*/ toJsonString(Version /*?*/ version) {
+  static String? toJsonString(Version? version) {
     if (version == null) {
       return null;
     }

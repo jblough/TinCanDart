@@ -3,15 +3,15 @@ import './attachment_content.dart';
 import './document.dart';
 
 class ActivityProfileDocument extends Document {
-  final Activity activity;
+  final Activity? activity;
 
   ActivityProfileDocument({
     this.activity,
-    String id,
-    String etag,
-    DateTime timestamp,
-    String contentType,
-    AttachmentContent content,
+    String? id,
+    String? etag,
+    DateTime? timestamp,
+    String? contentType,
+    AttachmentContent? content,
   }) : super(
             id: id,
             etag: etag,
@@ -20,12 +20,12 @@ class ActivityProfileDocument extends Document {
             content: content);
 
   ActivityProfileDocument copyWith(
-      {Activity activity,
-      String id,
-      String etag,
-      DateTime timestamp,
-      String contentType,
-      AttachmentContent content}) {
+      {Activity? activity,
+      String? id,
+      String? etag,
+      DateTime? timestamp,
+      String? contentType,
+      AttachmentContent? content}) {
     return ActivityProfileDocument(
       activity: activity ?? this.activity,
       id: id ?? this.id,

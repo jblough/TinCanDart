@@ -3,15 +3,15 @@ import './attachment_content.dart';
 import './document.dart';
 
 class AgentProfileDocument extends Document {
-  final Agent agent;
+  final Agent? agent;
 
   AgentProfileDocument({
     this.agent,
-    String id,
-    String etag,
-    DateTime timestamp,
-    String contentType,
-    AttachmentContent content,
+    String? id,
+    String? etag,
+    DateTime? timestamp,
+    String? contentType,
+    AttachmentContent? content,
   }) : super(
             id: id,
             etag: etag,
@@ -20,12 +20,12 @@ class AgentProfileDocument extends Document {
             content: content);
 
   AgentProfileDocument copyWith({
-    Agent agent,
-    String id,
-    String etag,
-    DateTime timestamp,
-    String contentType,
-    AttachmentContent content,
+    Agent? agent,
+    String? id,
+    String? etag,
+    DateTime? timestamp,
+    String? contentType,
+    AttachmentContent? content,
   }) {
     return AgentProfileDocument(
       agent: agent ?? this.agent,

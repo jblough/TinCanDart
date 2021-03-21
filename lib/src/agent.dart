@@ -6,11 +6,11 @@ import './statement_target.dart';
 import './versions.dart';
 
 class Agent extends StatementTarget {
-  final String name;
-  final String mbox;
-  final String mboxSHA1Sum;
-  final String openID;
-  final AgentAccount account;
+  final String? name;
+  final String? mbox;
+  final String? mboxSHA1Sum;
+  final String? openID;
+  final AgentAccount? account;
 
   Agent({
     this.name,
@@ -24,7 +24,7 @@ class Agent extends StatementTarget {
     return sha1.convert(value.codeUnits).toString();
   }
 
-  static Agent fromJson(Map<String, dynamic> json) {
+  static Agent? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
@@ -44,7 +44,7 @@ class Agent extends StatementTarget {
   }
 
   @override
-  Map<String, dynamic> toJson([Version version]) {
+  Map<String, dynamic> toJson([Version? version]) {
     version ??= TinCanVersion.latest();
 
     final json = {

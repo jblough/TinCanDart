@@ -4,15 +4,15 @@ import './validated_uri.dart';
 import './versions.dart';
 
 class Activity extends StatementTarget {
-  final ValidatedUri id;
-  final ActivityDefinition definition;
+  final ValidatedUri? id;
+  final ActivityDefinition? definition;
 
   Activity({
     dynamic id,
     this.definition,
   }) : id = ValidatedUri.fromString(id?.toString());
 
-  static Activity fromJson(Map<String, dynamic> json) {
+  static Activity? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
@@ -23,12 +23,12 @@ class Activity extends StatementTarget {
     );
   }
 
-  static List<Activity /*!*/ > listFromJson(List<dynamic> list) {
-    return list?.map((json) => Activity.fromJson(json))?.toList();
+  static List<Activity>? listFromJson(List<dynamic>? list) {
+    return list?.map((json) => Activity.fromJson(json)!).toList();
   }
 
   @override
-  Map<String, dynamic> toJson([Version version]) {
+  Map<String, dynamic> toJson([Version? version]) {
     version ??= TinCanVersion.latest();
 
     final json = {

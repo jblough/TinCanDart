@@ -3,14 +3,14 @@ import './agent_account.dart';
 import './versions.dart';
 
 class Group extends Agent {
-  final List<Agent> members;
+  final List<Agent?>? members;
 
   Group({
-    String name,
-    String mbox,
-    String mboxSHA1Sum,
-    String openID,
-    AgentAccount account,
+    String? name,
+    String? mbox,
+    String? mboxSHA1Sum,
+    String? openID,
+    AgentAccount? account,
     this.members,
   }) : super(
           name: name,
@@ -20,7 +20,7 @@ class Group extends Agent {
           account: account,
         );
 
-  static Group fromJson(Map<String, dynamic> json) {
+  static Group? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
@@ -44,7 +44,7 @@ class Group extends Agent {
   }
 
   @override
-  Map<String, dynamic> toJson([Version version]) {
+  Map<String, dynamic> toJson([Version? version]) {
     version ??= TinCanVersion.latest();
 
     // Start with the base class members
@@ -56,7 +56,7 @@ class Group extends Agent {
     // Add the members
     if (this.members?.isNotEmpty == true) {
       json['member'] =
-          this.members.map((member) => member.toJson(version)).toList();
+          this.members!.map((member) => member!.toJson(version)).toList();
     }
 
     return json;

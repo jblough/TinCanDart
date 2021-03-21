@@ -11,7 +11,7 @@ void main() {
   var username;
   var password;
 
-  LRS lrs;
+  late LRS lrs;
 
   setUpAll(() {
     final config = File('./test/lrs.properties');
@@ -91,7 +91,7 @@ void main() {
     );
     print(putResponse.errMsg);
     expect(putResponse.success, isTrue);
-    expect(putResponse.data.id, 'efb7218c-0fc9-4dfc-9524-d497097de028');
+    expect(putResponse.data!.id, 'efb7218c-0fc9-4dfc-9524-d497097de028');
 
     // POST
     /*
@@ -128,19 +128,19 @@ void main() {
 
     print(postResponse.errMsg);
     expect(postResponse.success, isTrue);
-    expect(postResponse.data.statements.length, 2);
-    expect(postResponse.data.statements[0].id,
+    expect(postResponse.data!.statements!.length, 2);
+    expect(postResponse.data!.statements![0]!.id,
         'efb7218c-0fc9-4dfc-9524-d497097de027');
-    expect(postResponse.data.statements[1].id, isNotNull);
+    expect(postResponse.data!.statements![1]!.id, isNotNull);
 
     // Get single statement
     final getResponse =
         await lrs.retrieveStatement('efb7218c-0fc9-4dfc-9524-d497097de027');
     expect(getResponse.success, isTrue);
-    expect(getResponse.data.id, 'efb7218c-0fc9-4dfc-9524-d497097de027');
-    expect(getResponse.data.actor.mbox, 'mailto:test1@example.org');
-    expect(getResponse.data.verb.id.toString(), 'http://www.example.org/verb');
-    expect((getResponse.data.object as Activity).id.toString(),
+    expect(getResponse.data!.id, 'efb7218c-0fc9-4dfc-9524-d497097de027');
+    expect(getResponse.data!.actor!.mbox, 'mailto:test1@example.org');
+    expect(getResponse.data!.verb!.id.toString(), 'http://www.example.org/verb');
+    expect((getResponse.data!.object as Activity).id.toString(),
         'http://www.example.org/activity');
 
     // Get multiple statements
@@ -269,19 +269,19 @@ void main() {
     final profileIdResponse =
         await lrs.retrieveActivityProfileIds(activityParam);
     expect(profileIdResponse.success, isTrue);
-    expect(profileIdResponse.data.length, 1);
+    expect(profileIdResponse.data!.length, 1);
 
     final profileResponse = await lrs.retrieveActivityProfile(
-      profileIdResponse.data[0],
+      profileIdResponse.data![0],
       activityParam,
     );
     expect(profileResponse.success, isTrue);
-    expect(profileResponse.data.content.asString(), 'test');
+    expect(profileResponse.data!.content!.asString(), 'test');
 
     // Get activity
     final getResponse = await lrs.retrieveActivity(activityParam.id.toString());
     expect(getResponse.success, isTrue);
-    print(getResponse.data.toJson());
+    print(getResponse.data!.toJson());
   });
 
   test("should test agent profiles", () async {
@@ -294,7 +294,7 @@ void main() {
     // Get a person/agent
     final response = await lrs.retrievePerson(agentParam);
     expect(response.success, isTrue);
-    print(response.data.toJson());
+    print(response.data!.toJson());
 
     final agentProfile = AgentProfileDocument(
       id: 'example_profile_id',
@@ -313,7 +313,7 @@ void main() {
     final getResponse =
         await lrs.retrieveAgentProfile('example_profile_id', agentParam);
     expect(getResponse.success, isTrue);
-    expect(getResponse.data.etag, isNotNull);
+    expect(getResponse.data!.etag, isNotNull);
 
     // Get multiple agent profiles (without since)
     var getManyResponse = await lrs.retrieveAgentProfileIds(agentParam);
@@ -360,16 +360,16 @@ void main() {
       registration: stateDocumentParam.registration,
     );
     expect(getResponse.success, isTrue);
-    expect(getResponse.data.etag, isNotNull);
-    expect(getResponse.data.content.asString(), contentString);
+    expect(getResponse.data!.etag, isNotNull);
+    expect(getResponse.data!.content!.asString(), contentString);
 
     // Many state IDs
     final getManyResponse = await lrs.retrieveStateIds(
         activityParam, agentParam,
         since: DateTime.parse('2017-09-04T12:45:31+00:00'));
     expect(getManyResponse.success, isTrue);
-    expect(getManyResponse.data.length, 1);
-    expect(getManyResponse.data[0], 'example_state_id');
+    expect(getManyResponse.data!.length, 1);
+    expect(getManyResponse.data![0], 'example_state_id');
 
     final deleteResponse = await lrs.deleteState(stateDocumentParam);
     expect(deleteResponse.success, isTrue);
@@ -378,6 +378,6 @@ void main() {
     final getManyResponseAfterDelete =
         await lrs.retrieveStateIds(activityParam, agentParam);
     expect(getManyResponseAfterDelete.success, isTrue);
-    expect(getManyResponseAfterDelete.data.length, 0);
+    expect(getManyResponseAfterDelete.data!.length, 0);
   });
 }

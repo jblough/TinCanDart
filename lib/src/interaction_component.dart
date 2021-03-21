@@ -1,10 +1,10 @@
 class InteractionComponent {
-  final String id;
-  final Map<String, dynamic> description;
+  final String? id;
+  final Map<String, dynamic>? description;
 
   InteractionComponent({this.id, this.description});
 
-  static InteractionComponent /*?*/ fromJson(Map<String, dynamic> /*?*/ json) {
+  static InteractionComponent? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
@@ -15,9 +15,10 @@ class InteractionComponent {
     );
   }
 
-  static List<InteractionComponent /*!*/ > listFromJson(
-      List<Map<String, dynamic>> /*?*/ list) {
-    return list?.map((json) => InteractionComponent.fromJson(json))?.toList();
+  static List<InteractionComponent>? listFromJson(
+      List<Map<String, dynamic>>? list) {
+    return list?.map((json) => InteractionComponent.fromJson(json)).toList()
+        as List<InteractionComponent>?;
   }
 
   Map<String, dynamic> toJson() {

@@ -26,19 +26,19 @@ void main() {
   var username;
   var password;
 
-  LRS lrs;
-  Agent agent;
-  Verb verb;
-  Activity activity;
-  Activity parent;
-  StatementRef statementRef;
-  Context context;
+  late LRS lrs;
+  Agent? agent;
+  Verb? verb;
+  Activity? activity;
+  Activity? parent;
+  StatementRef? statementRef;
+  Context? context;
   Score score;
-  Result result;
-  SubStatement subStatement;
-  Attachment attachment1;
-  Attachment attachment2;
-  Attachment attachment3;
+  Result? result;
+  SubStatement? subStatement;
+  Attachment? attachment1;
+  Attachment? attachment2;
+  Attachment? attachment3;
 
   setUpAll(() {
     final config = File('./test/lrs.properties');
@@ -223,7 +223,7 @@ void main() {
     expect(statement.id, isNull);
     final response = await lrs.saveStatement(statement);
     expect(response.success, isTrue);
-    compareStatements(response.data, statement);
+    compareStatements(response.data!, statement);
   });
 
   test("should save statement with id", () async {
@@ -238,8 +238,8 @@ void main() {
     final originalId = statement.id;
     final response = await lrs.saveStatement(statement);
     expect(response.success, isTrue);
-    expect(response.data.id, originalId);
-    compareStatements(response.data, statement);
+    expect(response.data!.id, originalId);
+    compareStatements(response.data!, statement);
   });
 
   test("should save statement with context", () async {
@@ -252,7 +252,7 @@ void main() {
 
     final response = await lrs.saveStatement(statement);
     expect(response.success, isTrue);
-    compareStatements(response.data, statement);
+    compareStatements(response.data!, statement);
   });
 
   test("should save statement with result", () async {
@@ -266,7 +266,7 @@ void main() {
 
     final response = await lrs.saveStatement(statement);
     expect(response.success, isTrue);
-    compareStatements(response.data, statement);
+    compareStatements(response.data!, statement);
   });
 
   test("should save statement with StatementRef", () async {
@@ -280,7 +280,7 @@ void main() {
 
     final response = await lrs.saveStatement(statement);
     expect(response.success, isTrue);
-    compareStatements(response.data, statement);
+    compareStatements(response.data!, statement);
   });
 
   test("should save statement with substatement", () async {
@@ -294,7 +294,7 @@ void main() {
 
     final response = await lrs.saveStatement(statement);
     expect(response.success, isTrue);
-    compareStatements(response.data, statement);
+    compareStatements(response.data!, statement);
   });
 
   test("should save statements", () async {
@@ -316,8 +316,8 @@ void main() {
     final response = await lrs.saveStatements(statements);
     expect(response.success, isTrue);
 
-    final s1 = response.data.statements[0];
-    final s2 = response.data.statements[1];
+    final s1 = response.data!.statements![0]!;
+    final s2 = response.data!.statements![1]!;
 
     expect(s1.id, isNotNull);
     expect(s2.id, isNotNull);
@@ -346,15 +346,15 @@ void main() {
     final saveResponse = await lrs.saveStatement(statement);
     expect(saveResponse.success, isTrue);
 
-    final getResponse = await lrs.retrieveStatement(saveResponse.data.id);
+    final getResponse = await lrs.retrieveStatement(saveResponse.data!.id);
     expect(getResponse.success, isTrue);
   });
 
   test("should query statements", () async {
     final query = StatementsQuery(
       agent: agent,
-      verbID: verb.id,
-      activityID: parent.id,
+      verbID: verb!.id,
+      activityID: parent!.id,
       relatedActivities: true,
       relatedAgents: true,
       format: QueryResultFormat.IDS,
@@ -373,9 +373,9 @@ void main() {
 
     final response = await lrs.queryStatements(query);
     expect(response.success, isTrue);
-    expect(response.data.moreUrl, isNotNull);
+    expect(response.data!.moreUrl, isNotNull);
 
-    final moreResponse = await lrs.moreStatements(response.data.moreUrl);
+    final moreResponse = (await lrs.moreStatements(response.data!.moreUrl))!;
     expect(moreResponse.success, isTrue);
   });
 
@@ -399,9 +399,10 @@ void main() {
     expect(save.success, isTrue);
 
     final stateResponse = await lrs.retrieveState('test', activity, agent);
-    print('state attachment - "${stateResponse.data.content.asString()}"');
+    print('state attachment - "${stateResponse.data!.content!.asString()}"');
     expect(stateResponse.success, isTrue);
-    expect(stateResponse.data.etag, 'c140f82cb70e3884ad729b5055b7eaa81c795f1f');
+    expect(
+        stateResponse.data!.etag, 'c140f82cb70e3884ad729b5055b7eaa81c795f1f');
   });
 
   test("should save state", () async {
@@ -432,7 +433,7 @@ void main() {
     expect(save.success, isTrue);
 
     final retrieve = await lrs.retrieveState('test', activity, agent);
-    print(retrieve.data.toJson());
+    print(retrieve.data!.toJson());
     expect(retrieve.success, isTrue);
 
     final doc2 = StateDocument(
@@ -440,7 +441,7 @@ void main() {
       activity: parent,
       agent: agent,
       content: AttachmentContent.fromString('Test value'),
-      etag: retrieve.data.etag,
+      etag: retrieve.data!.etag,
     );
     final stateResponse = await lrs.saveState(doc2);
     expect(stateResponse.success, isTrue);
@@ -486,8 +487,8 @@ void main() {
         await lrs.retrieveState('test', activity, agent);
     expect(retrieveBeforeUpdate.success, isTrue);
 
-    final beforeDoc = retrieveBeforeUpdate.data;
-    final c = json.decode(String.fromCharCodes(beforeDoc.content.asList()));
+    final beforeDoc = retrieveBeforeUpdate.data!;
+    final c = json.decode(String.fromCharCodes(beforeDoc.content!.asList()!));
     c.forEach((key, value) {
       currentSet[key] = value;
     });
@@ -518,8 +519,8 @@ void main() {
         await lrs.retrieveState('test', activity, agent);
     expect(retrieveAfterUpdate.success, isTrue);
 
-    final afterDoc = retrieveAfterUpdate.data;
-    final ac = json.decode(String.fromCharCodes(afterDoc.content.asList()));
+    final afterDoc = retrieveAfterUpdate.data!;
+    final ac = json.decode(String.fromCharCodes(afterDoc.content!.asList()!));
     ac.forEach((key, value) {
       currentSet[key] = value;
     });
@@ -544,11 +545,11 @@ void main() {
   });
 
   test("should retrieve activity", () async {
-    final response = await lrs.retrieveActivity(activity.id.toString());
+    final response = await lrs.retrieveActivity(activity!.id.toString());
     expect(response.success, isTrue);
 
-    final returnedActivity = response.data;
-    expect(activity.id.toString(), returnedActivity.id.toString());
+    final returnedActivity = response.data!;
+    expect(activity!.id.toString(), returnedActivity.id.toString());
   });
 
   test("should retrieve activity profile ids", () async {
@@ -577,8 +578,8 @@ void main() {
 
     final retrieveResponse =
         await lrs.retrieveActivityProfile('test', activity);
-    expect(
-        retrieveResponse.data.etag, '6e6e6c11d7e0bffe0369873a2a5fd751ab2ea64f');
+    expect(retrieveResponse.data!.etag,
+        '6e6e6c11d7e0bffe0369873a2a5fd751ab2ea64f');
     expect(retrieveResponse.success, isTrue);
   });
 
@@ -623,7 +624,7 @@ void main() {
     final lrsResp = await lrs.saveActivityProfile(ActivityProfileDocument(
       id: 'test2',
       activity: activity,
-      etag: retrieve.data.etag,
+      etag: retrieve.data!.etag,
       content: AttachmentContent.fromString('Test value3'),
     ));
     expect(lrsResp.success, isTrue);
@@ -656,10 +657,10 @@ void main() {
     final response = await lrs.retrievePerson(agent);
     expect(response.success, isTrue);
 
-    final person = response.data;
+    final person = response.data!;
     print(person.toJson());
     //expect(person.name[0], agent.name);
-    expect(person.mbox[0], agent.mbox);
+    expect(person.mbox![0], agent!.mbox);
   });
 
   test("should retrieve agent profile ids", () async {
@@ -683,7 +684,7 @@ void main() {
 
     final retrieve = await lrs.retrieveAgentProfile('test', agent);
     expect(retrieve.success, isTrue);
-    expect(retrieve.data.etag, 'da16d3e0cbd55e0f13558ad0ecfd2605e2238c71');
+    expect(retrieve.data!.etag, 'da16d3e0cbd55e0f13558ad0ecfd2605e2238c71');
   });
 
   test("should save agent profile", () async {
@@ -742,8 +743,8 @@ void main() {
 
     final retrieveBeforeUpdate = await lrs.retrieveAgentProfile('test', agent);
     expect(retrieveBeforeUpdate.success, isTrue);
-    final beforeDoc = retrieveBeforeUpdate.data;
-    final c = json.decode(String.fromCharCodes(beforeDoc.content.asList()));
+    final beforeDoc = retrieveBeforeUpdate.data!;
+    final c = json.decode(String.fromCharCodes(beforeDoc.content!.asList()!));
     c.forEach((key, value) {
       currentSet[key] = value;
     });
@@ -773,8 +774,8 @@ void main() {
     final retrieveAfterUpdate = await lrs.retrieveAgentProfile('test', agent);
     expect(retrieveAfterUpdate.success, isTrue);
 
-    final afterDoc = retrieveAfterUpdate.data;
-    final ac = json.decode(String.fromCharCodes(afterDoc.content.asList()));
+    final afterDoc = retrieveAfterUpdate.data!;
+    final ac = json.decode(String.fromCharCodes(afterDoc.content!.asList()!));
     ac.forEach((key, value) {
       currentSet[key] = value;
     });
@@ -802,7 +803,7 @@ void main() {
     final overwrite = await lrs.saveAgentProfile(AgentProfileDocument(
       id: 'test2',
       agent: agent,
-      etag: retrieve.data.etag,
+      etag: retrieve.data!.etag,
       content: AttachmentContent.fromString('Test value5'),
     ));
     expect(overwrite.success, isTrue);
@@ -821,14 +822,14 @@ void main() {
       actor: agent,
       verb: verb,
       object: activity,
-      attachments: [attachment1],
+      attachments: [attachment1!],
     );
 
     final response = await lrs.saveStatement(statement);
     print(response.errMsg);
     expect(response.success, isTrue);
-    expect(response.data.id, isNotNull);
-    compareStatements(response.data, statement);
+    expect(response.data!.id, isNotNull);
+    compareStatements(response.data!, statement);
   });
 
   test("should save statement with multiple attachments", () async {
@@ -836,12 +837,12 @@ void main() {
         actor: agent,
         verb: verb,
         object: activity,
-        attachments: [attachment1, attachment2]);
+        attachments: [attachment1!, attachment2!]);
 
     final response = await lrs.saveStatement(statement);
     expect(response.success, isTrue);
-    expect(response.data.id, isNotNull);
-    compareStatements(response.data, statement);
+    expect(response.data!.id, isNotNull);
+    compareStatements(response.data!, statement);
   });
 
   test("should save statements with attachment", () async {
@@ -849,7 +850,7 @@ void main() {
       actor: agent,
       verb: verb,
       object: activity,
-      attachments: [attachment1],
+      attachments: [attachment1!],
     );
 
     final statement2 = Statement(
@@ -862,10 +863,10 @@ void main() {
 
     final response = await lrs.saveStatements(statements);
     expect(response.success, isTrue);
-    compareStatements(response.data.statements[1], statement2);
+    compareStatements(response.data!.statements![1]!, statement2);
     expect(response.data, isNotNull);
-    expect(response.data.statements[0].id, isNotNull);
-    expect(response.data.statements[1].id, isNotNull);
+    expect(response.data!.statements![0]!.id, isNotNull);
+    expect(response.data!.statements![1]!.id, isNotNull);
   });
 
   test("should retrieve statement with attachment", () async {
@@ -873,18 +874,18 @@ void main() {
       actor: agent,
       verb: verb,
       object: activity,
-      attachments: [attachment1],
+      attachments: [attachment1!],
     );
 
     final saved = await lrs.saveStatement(statement);
     print(saved.errMsg);
     expect(saved.success, isTrue);
 
-    final retrieved = await lrs.retrieveStatement(saved.data.id, true);
+    final retrieved = await lrs.retrieveStatement(saved.data!.id, true);
     expect(retrieved.success, isTrue);
     final calculated =
-        sha256.convert(retrieved.data.attachments[0].content.asList());
-    final expected = sha256.convert(attachment1.content.asList());
+        sha256.convert(retrieved.data!.attachments![0].content!.asList()!);
+    final expected = sha256.convert(attachment1!.content!.asList()!);
     expect(calculated, expected);
   });
 
@@ -893,20 +894,20 @@ void main() {
       actor: agent,
       verb: verb,
       object: activity,
-      attachments: [attachment3],
+      attachments: [attachment3!],
     );
 
     final saved = await lrs.saveStatement(statement);
     print(saved.errMsg);
     expect(saved.success, isTrue);
 
-    final retrieved = await lrs.retrieveStatement(saved.data.id, true);
+    final retrieved = await lrs.retrieveStatement(saved.data!.id, true);
     print(retrieved.errMsg);
     expect(retrieved.success, isTrue);
 
     final calculated =
-        sha256.convert(retrieved.data.attachments[0].content.asList());
-    final expected = sha256.convert(attachment3.content.asList());
+        sha256.convert(retrieved.data!.attachments![0].content!.asList()!);
+    final expected = sha256.convert(attachment3!.content!.asList()!);
     expect(calculated, expected);
   });
 
@@ -915,7 +916,7 @@ void main() {
       actor: agent,
       verb: verb,
       object: activity,
-      attachments: [attachment1],
+      attachments: [attachment1!],
     );
 
     final saved = await lrs.saveStatement(statement);
@@ -931,8 +932,8 @@ void main() {
     expect(queryResult.success, isTrue);
 
     final calculated = sha256.convert(
-        queryResult.data.statements[0].attachments[0].content.asList());
-    final expected = sha256.convert(attachment1.content.asList());
+        queryResult.data!.statements![0]!.attachments![0].content!.asList()!);
+    final expected = sha256.convert(attachment1!.content!.asList()!);
     expect(calculated, expected);
   });
 
@@ -973,8 +974,8 @@ void main() {
         await lrs.retrieveActivityProfile('test', activity);
     expect(retrieveBeforeUpdate.success, isTrue);
 
-    final beforeDoc = retrieveBeforeUpdate.data;
-    final c = json.decode(String.fromCharCodes(beforeDoc.content.asList()));
+    final beforeDoc = retrieveBeforeUpdate.data!;
+    final c = json.decode(String.fromCharCodes(beforeDoc.content!.asList()!));
     c.forEach((key, value) {
       currentSet[key] = value;
     });
@@ -1005,8 +1006,8 @@ void main() {
         await lrs.retrieveActivityProfile('test', activity);
     expect(retrieveAfterUpdate.success, isTrue);
 
-    final afterDoc = retrieveAfterUpdate.data;
-    final ac = json.decode(String.fromCharCodes(afterDoc.content.asList()));
+    final afterDoc = retrieveAfterUpdate.data!;
+    final ac = json.decode(String.fromCharCodes(afterDoc.content!.asList()!));
     ac.forEach((key, value) {
       currentSet[key] = value;
     });
@@ -1027,7 +1028,7 @@ void main() {
     expect(statement.id, isNull);
     final response = await lrs.saveStatement(statement);
     expect(response.success, isTrue);
-    compareStatements(response.data, statement);
+    compareStatements(response.data!, statement);
   });
 
   test("should save agent with sha1sum", () async {
@@ -1056,7 +1057,7 @@ void main() {
       actor: agent,
       verb: verb,
       object: activity,
-      result: result.copyWith(
+      result: result!.copyWith(
         duration: TinCanDuration.fromDiff(
           DateTime.now().subtract(Duration(hours: 1, seconds: 9)),
           DateTime.now(),
@@ -1068,6 +1069,6 @@ void main() {
     final response = await lrs.saveStatement(statement);
     print(response.errMsg);
     expect(response.success, isTrue);
-    compareStatements(response.data, statement);
+    compareStatements(response.data!, statement);
   });
 }

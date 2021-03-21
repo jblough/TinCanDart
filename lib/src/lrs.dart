@@ -25,7 +25,7 @@ abstract class LRS {
 
   /// Retrieve a statement by [id]
   /// optionally include [attachments] in multipart response (default: false)
-  Future<LRSResponse<Statement>> retrieveStatement(String id,
+  Future<LRSResponse<Statement>> retrieveStatement(String? id,
       [bool attachments = false]);
 
   /// Retrieve a voided statement by [id]
@@ -37,19 +37,19 @@ abstract class LRS {
   Future<LRSResponse<StatementsResult>> queryStatements(StatementsQuery query);
 
   /// Fetch more statements from a previous query
-  Future<LRSResponse<StatementsResult>> moreStatements(String moreURL);
+  Future<LRSResponse<StatementsResult>?> moreStatements(String? moreURL);
 
   /// Retrieve the list of IDs for a state
   /// optionally limit retrieved states to those associated with a [registration]
   /// and/or those states stored [since] a specified time
   Future<LRSResponse<List<String>>> retrieveStateIds(
-      Activity activity, Agent agent,
-      {String registration, DateTime since});
+      Activity? activity, Agent? agent,
+      {String? registration, DateTime? since});
 
   /// Retrieve a state value by [id] with [activity] in document identifier and [agent] in document identifier
   Future<LRSResponse<StateDocument>> retrieveState(
-      String id, Activity activity, Agent agent,
-      {String registration});
+      String? id, Activity? activity, Agent? agent,
+      {String? registration});
 
   /// Save a state value
   Future<LRSResponse> saveState(StateDocument state);
@@ -61,19 +61,19 @@ abstract class LRS {
   Future<LRSResponse> deleteState(StateDocument state);
 
   /// Remove all state values
-  Future<LRSResponse> clearState(Activity activity, Agent agent,
-      {String registration});
+  Future<LRSResponse> clearState(Activity? activity, Agent? agent,
+      {String? registration});
 
   /// Retrieve a full description of an Activity from the LRS
   Future<LRSResponse<Activity>> retrieveActivity(String id);
 
   /// Retrieve the list of IDs for an activity profile
   Future<LRSResponse<List<String>>> retrieveActivityProfileIds(
-      Activity activity);
+      Activity? activity);
 
   /// Retrieve an activity profile value
   Future<LRSResponse<ActivityProfileDocument>> retrieveActivityProfile(
-      String id, Activity activity);
+      String id, Activity? activity);
 
   /// Save an activity profile
   Future<LRSResponse> saveActivityProfile(ActivityProfileDocument profile);
@@ -85,15 +85,15 @@ abstract class LRS {
   Future<LRSResponse> deleteActivityProfile(ActivityProfileDocument profile);
 
   /// Retrieve an agent
-  Future<LRSResponse<Person>> retrievePerson(Agent agent);
+  Future<LRSResponse<Person>> retrievePerson(Agent? agent);
 
   /// Retrieve the list of profileIds for an agent profile
-  Future<LRSResponse<List<String>>> retrieveAgentProfileIds(Agent agent,
-      {DateTime since});
+  Future<LRSResponse<List<String>>> retrieveAgentProfileIds(Agent? agent,
+      {DateTime? since});
 
   /// Retrieve an agent profile by [id] and [agent] in document identifier
   Future<LRSResponse<AgentProfileDocument>> retrieveAgentProfile(
-      String id, Agent agent);
+      String id, Agent? agent);
 
   /// Save an agent profile
   Future<LRSResponse> saveAgentProfile(AgentProfileDocument profile);

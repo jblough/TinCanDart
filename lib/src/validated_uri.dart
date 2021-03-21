@@ -3,7 +3,7 @@ class ValidatedUri {
 
   ValidatedUri(this.uri);
 
-  static ValidatedUri fromString(String value,
+  static ValidatedUri? fromString(String? value,
       {bool appendTrailingSlash = false}) {
     if (value == null) {
       return null;
@@ -28,6 +28,6 @@ class ValidatedUri {
 
   @override
   String toString() {
-    return uri?.toString();
+    return uri.toString();
   }
 }

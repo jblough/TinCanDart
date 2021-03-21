@@ -1,8 +1,8 @@
 import './validated_uri.dart';
 
 class Verb {
-  final ValidatedUri id;
-  final Map<String, dynamic> display;
+  final ValidatedUri? id;
+  final Map<String, dynamic>? display;
 
   /// Examples: https://registry.tincanapi.com/#home/verbs
   Verb({
@@ -10,7 +10,7 @@ class Verb {
     this.display,
   }) : this.id = ValidatedUri.fromString(id?.toString());
 
-  static Verb fromJson(Map<String, dynamic> json) {
+  static Verb? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
