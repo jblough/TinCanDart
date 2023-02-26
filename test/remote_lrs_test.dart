@@ -36,9 +36,9 @@ void main() {
   Score score;
   Result? result;
   SubStatement? subStatement;
-  Attachment? attachment1;
-  Attachment? attachment2;
-  Attachment? attachment3;
+  late Attachment attachment1;
+  late Attachment attachment2;
+  late Attachment attachment3;
 
   setUpAll(() {
     final config = File('./test/lrs.properties');
@@ -823,7 +823,7 @@ void main() {
       actor: agent,
       verb: verb,
       object: activity,
-      attachments: [attachment1!],
+      attachments: [attachment1],
     );
 
     final response = await lrs.saveStatement(statement);
@@ -838,7 +838,7 @@ void main() {
         actor: agent,
         verb: verb,
         object: activity,
-        attachments: [attachment1!, attachment2!]);
+        attachments: [attachment1, attachment2]);
 
     final response = await lrs.saveStatement(statement);
     expect(response.success, isTrue);
@@ -851,7 +851,7 @@ void main() {
       actor: agent,
       verb: verb,
       object: activity,
-      attachments: [attachment1!],
+      attachments: [attachment1],
     );
 
     final statement2 = Statement(
@@ -875,7 +875,7 @@ void main() {
       actor: agent,
       verb: verb,
       object: activity,
-      attachments: [attachment1!],
+      attachments: [attachment1],
     );
 
     final saved = await lrs.saveStatement(statement);
@@ -886,7 +886,7 @@ void main() {
     expect(retrieved.success, isTrue);
     final calculated =
         sha256.convert(retrieved.data!.attachments![0].content!.asList()!);
-    final expected = sha256.convert(attachment1!.content!.asList()!);
+    final expected = sha256.convert(attachment1.content!.asList()!);
     expect(calculated, expected);
   });
 
@@ -895,7 +895,7 @@ void main() {
       actor: agent,
       verb: verb,
       object: activity,
-      attachments: [attachment3!],
+      attachments: [attachment3],
     );
 
     final saved = await lrs.saveStatement(statement);
@@ -908,7 +908,7 @@ void main() {
 
     final calculated =
         sha256.convert(retrieved.data!.attachments![0].content!.asList()!);
-    final expected = sha256.convert(attachment3!.content!.asList()!);
+    final expected = sha256.convert(attachment3.content!.asList()!);
     expect(calculated, expected);
   });
 
@@ -917,7 +917,7 @@ void main() {
       actor: agent,
       verb: verb,
       object: activity,
-      attachments: [attachment1!],
+      attachments: [attachment1],
     );
 
     final saved = await lrs.saveStatement(statement);
@@ -934,7 +934,7 @@ void main() {
 
     final calculated = sha256.convert(
         queryResult.data!.statements![0].attachments![0].content!.asList()!);
-    final expected = sha256.convert(attachment1!.content!.asList()!);
+    final expected = sha256.convert(attachment1.content!.asList()!);
     expect(calculated, expected);
   });
 
@@ -1071,5 +1071,57 @@ void main() {
     print(response.errMsg);
     expect(response.success, isTrue);
     compareStatements(response.data!, statement);
+  });
+
+  test("should save non-UTF-8 statements with attachment", () async {
+    final nonUtf8Verb = Verb(
+      id: 'http://adlnet.gov/expapi/verbs/experienced',
+      display: {'en-US': 'experienced - 😀ê'},
+    );
+
+    final statement1 = Statement(
+      actor: agent,
+      verb: nonUtf8Verb,
+      object: activity,
+      attachments: [attachment1],
+    );
+
+    final statement2 = Statement(
+      actor: agent,
+      verb: nonUtf8Verb,
+      object: activity,
+    );
+
+    final statements = [statement1, statement2];
+
+    final response = await lrs.saveStatements(statements);
+    expect(response.success, isTrue);
+    compareStatements(response.data!.statements![1], statement2);
+    expect(response.data, isNotNull);
+    expect(response.data!.statements![0].id, isNotNull);
+    expect(response.data!.statements![1].id, isNotNull);
+  });
+
+  test("should retrieve non-UTF-8 statement with attachment", () async {
+    final statement = Statement(
+      actor: agent,
+      verb: Verb(
+        id: 'http://adlnet.gov/expapi/verbs/experienced',
+        display: {'en-US': 'experienced - 😀ê'},
+      ),
+      object: activity,
+      attachments: [attachment1],
+    );
+
+    final saved = await lrs.saveStatement(statement);
+    print(saved.errMsg);
+    expect(saved.success, isTrue);
+
+    final retrieved = await lrs.retrieveStatement(saved.data!.id, true);
+    expect(retrieved.success, isTrue);
+    final calculated =
+        sha256.convert(retrieved.data!.attachments![0].content!.asList()!);
+    final expected = sha256.convert(attachment1.content!.asList()!);
+    expect(calculated, expected);
   });
 }
