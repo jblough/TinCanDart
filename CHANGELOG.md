@@ -1,10 +1,14 @@
-## 1.1.1
+## 2.1.0
 
-- Static analysis warning fixes
+- Fix for content-length on non-UTF-8 characters in statements with attachments 
 
 ## 2.0.0
 
 - Null safety
+
+## 1.1.1
+
+- Static analysis warning fixes
 
 ## 1.1.0
 
