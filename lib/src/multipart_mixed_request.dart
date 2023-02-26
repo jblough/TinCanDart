@@ -28,7 +28,7 @@ class MultipartMixedRequest extends BaseRequest {
   /// The total length of the multipart boundaries used when building the
   /// request body. According to http://tools.ietf.org/html/rfc1341.html, this
   /// can't be longer than 70.
-  static const int _BOUNDARY_LENGTH = 55;
+  static const int _boundaryLength = 55;
 
   final String? _body;
 
@@ -51,20 +51,20 @@ class MultipartMixedRequest extends BaseRequest {
 
     final newLineLength = "\r\n".length;
 
-    length += "--".length + _BOUNDARY_LENGTH + newLineLength;
+    length += "--".length + _boundaryLength + newLineLength;
     length += 'Content-Type: application/json\r\n\r\n'.length;
     length += utf8.encode(_body!).length + newLineLength;
 
     for (var attachment in _attachments!) {
       length += "--".length +
-          _BOUNDARY_LENGTH +
+          _boundaryLength +
           newLineLength +
           utf8.encode(_headerForAttachment(attachment)).length +
           attachment.length! +
           newLineLength;
     }
 
-    length += "--".length + _BOUNDARY_LENGTH + "--\r\n".length;
+    length += "--".length + _boundaryLength + "--\r\n".length;
     return length;
   }
 
@@ -167,8 +167,8 @@ class ByteStream extends StreamView<List<int>> {
 
 /// A regular expression that matches strings that are composed entirely of
 /// ASCII-compatible characters.
-final RegExp _ASCII_ONLY = RegExp(r"^[\x00-\x7F]+$");
+final RegExp _asciiOnly = RegExp(r"^[\x00-\x7F]+$");
 
 /// Returns whether [string] is composed entirely of ASCII-compatible
 /// characters.
-bool isPlainAscii(String string) => _ASCII_ONLY.hasMatch(string);
+bool isPlainAscii(String string) => _asciiOnly.hasMatch(string);

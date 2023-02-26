@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 import './about.dart';
 import './activity.dart';
@@ -544,7 +545,7 @@ class RemoteLRS extends LRS {
       request.attachments!.addAll(attachments!);
       return await request.send();
     } else {
-      var response;
+      Future<Response>? response;
       switch (verb.toUpperCase()) {
         case 'GET':
           response = _client.get(Uri.parse(url), headers: headers);
