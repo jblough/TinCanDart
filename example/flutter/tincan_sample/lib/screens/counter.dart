@@ -52,12 +52,12 @@ class _CounterScreenState extends State<CounterScreen> {
               Text(
                 'You have pushed the button this many times:',
                 style:
-                    Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: 24.0),
+                    Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 24.0),
                 textAlign: TextAlign.center,
               ),
               Text(
                 '$_counter',
-                style: Theme.of(context).textTheme.headline4,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
             ],
           ),

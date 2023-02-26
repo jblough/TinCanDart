@@ -53,7 +53,7 @@ class MultipartMixedRequest extends BaseRequest {
 
     length += "--".length + _BOUNDARY_LENGTH + newLineLength;
     length += 'Content-Type: application/json\r\n\r\n'.length;
-    length += _body!.length + newLineLength;
+    length += utf8.encode(_body!).length + newLineLength;
 
     for (var attachment in _attachments!) {
       length += "--".length +
