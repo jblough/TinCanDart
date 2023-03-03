@@ -1,3 +1,7 @@
+## 2.1.1
+
+- Reverted minimum Dart version for increased compatibility
+
 ## 2.1.0
 
 - Fix for content-length on non-UTF-8 characters in statements with attachments 
