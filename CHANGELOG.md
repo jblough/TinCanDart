@@ -1,3 +1,7 @@
+## 2.1.2
+
+- Fixed null safety logic on parsing JSON lists
+
 ## 2.1.1
 
 - Reverted minimum Dart version for increased compatibility
