@@ -18,8 +18,17 @@ class AgentAccount {
   }
 
   static List<AgentAccount>? listFromJson(List<dynamic>? list) {
-    return list?.map((json) => AgentAccount.fromJson(json)).toList()
-        as List<AgentAccount>?;
+    if (list == null) {
+      return null;
+    }
+    final agents = <AgentAccount>[];
+    for (final json in list) {
+      final agent = AgentAccount.fromJson(json);
+      if (agent != null) {
+        agents.add(agent);
+      }
+    }
+    return agents;
   }
 
   Map<String, dynamic> toJson([Version? version]) {

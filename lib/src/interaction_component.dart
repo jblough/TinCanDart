@@ -17,8 +17,17 @@ class InteractionComponent {
 
   static List<InteractionComponent>? listFromJson(
       List<Map<String, dynamic>>? list) {
-    return list?.map((json) => InteractionComponent.fromJson(json)).toList()
-        as List<InteractionComponent>?;
+    if (list == null) {
+      return null;
+    }
+    final components = <InteractionComponent>[];
+    for (final json in list) {
+      final component = InteractionComponent.fromJson(json);
+      if (component != null) {
+        components.add(component);
+      }
+    }
+    return components;
   }
 
   Map<String, dynamic> toJson() {

@@ -24,7 +24,17 @@ class Activity extends StatementTarget {
   }
 
   static List<Activity>? listFromJson(List<dynamic>? list) {
-    return list?.map((json) => Activity.fromJson(json)!).toList();
+    if (list == null) {
+      return null;
+    }
+    final activities = <Activity>[];
+    for (final json in list) {
+      final activity = Activity.fromJson(json);
+      if (activity != null) {
+        activities.add(activity);
+      }
+    }
+    return activities;
   }
 
   @override

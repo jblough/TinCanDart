@@ -54,7 +54,17 @@ class Attachment {
   }
 
   static List<Attachment>? listFromJson(List<dynamic>? list) {
-    return list?.map((json) => Attachment.fromJson(json, null)!).toList();
+    if (list == null) {
+      return null;
+    }
+    final attachments = <Attachment>[];
+    for (final json in list) {
+      final attachment = Attachment.fromJson(json, null);
+      if (attachment != null) {
+        attachments.add(attachment);
+      }
+    }
+    return attachments;
   }
 
   Map<String, dynamic> toJson([Version? version]) {
