@@ -1,3 +1,7 @@
+## 2.1.3
+
+- Fixed parsing an activity definition with "choice" elements
+
 ## 2.1.2
 
 - Fixed null safety logic on parsing JSON lists

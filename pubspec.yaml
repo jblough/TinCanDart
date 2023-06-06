@@ -1,7 +1,7 @@
 name: tincan
 description: TinCanDart is an xAPI implementation for the Dart programming language
 
-version: 2.1.2
+version: 2.1.3
 homepage: https://github.com/jblough/TinCanDart
 
 environment:
