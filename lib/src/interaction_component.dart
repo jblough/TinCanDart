@@ -15,8 +15,7 @@ class InteractionComponent {
     );
   }
 
-  static List<InteractionComponent>? listFromJson(
-      List<Map<String, dynamic>>? list) {
+  static List<InteractionComponent>? listFromJson(List<dynamic>? list) {
     if (list == null) {
       return null;
     }
