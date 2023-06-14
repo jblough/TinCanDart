@@ -1,3 +1,7 @@
+## 3.0.0
+
+- Upgrade to Dart 3.0
+
 ## 2.1.3
 
 - Fixed parsing an activity definition with "choice" elements

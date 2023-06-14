@@ -13,18 +13,12 @@ abstract class StatementTarget {
       return null;
     }
 
-    final type = json['objectType'];
-    switch (type) {
-      case 'Group':
-        return Group.fromJson(json);
-      case 'Agent':
-        return Agent.fromJson(json);
-      case 'StatementRef':
-        return StatementRef.fromJson(json);
-      case 'SubStatement':
-        return SubStatement.fromJson(json);
-      default:
-        return Activity.fromJson(json);
-    }
+    return switch (json['objectType']) {
+      'Group' => Group.fromJson(json),
+      'Agent' => Agent.fromJson(json),
+      'StatementRef' => StatementRef.fromJson(json),
+      'SubStatement' => SubStatement.fromJson(json),
+      _ => Activity.fromJson(json),
+    };
   }
 }

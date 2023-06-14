@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 
 import './about.dart';
 import './activity.dart';
@@ -545,27 +544,14 @@ class RemoteLRS extends LRS {
       request.attachments!.addAll(attachments!);
       return await request.send();
     } else {
-      Future<Response>? response;
-      switch (verb.toUpperCase()) {
-        case 'GET':
-          response = _client.get(Uri.parse(url), headers: headers);
-          break;
-        case 'POST':
-          response = _client.post(Uri.parse(url), headers: headers, body: body);
-          break;
-        case 'PUT':
-          response = _client.put(Uri.parse(url), headers: headers, body: body);
-          break;
-        case 'DELETE':
-          response = _client.delete(Uri.parse(url), headers: headers);
-          break;
-        case 'PATCH':
-          response =
-              _client.patch(Uri.parse(url), headers: headers, body: body);
-          break;
-      }
-
-      return response;
+      return switch (verb.toUpperCase()) {
+        'GET' => _client.get(Uri.parse(url), headers: headers),
+        'POST' => _client.post(Uri.parse(url), headers: headers, body: body),
+        'PUT' => _client.put(Uri.parse(url), headers: headers, body: body),
+        'DELETE' => _client.delete(Uri.parse(url), headers: headers),
+        'PATCH' => _client.patch(Uri.parse(url), headers: headers, body: body),
+        _ => null,
+      };
     }
   }
 

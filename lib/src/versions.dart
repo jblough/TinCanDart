@@ -15,22 +15,15 @@ class TinCanVersion {
       return null;
     }
 
-    switch (version) {
-      case "1.0.3":
-        return Version.V103;
-      case "1.0.2":
-        return Version.V102;
-      case "1.0.1":
-        return Version.V101;
-      case "1.0.0":
-        return Version.V100;
-      case "0.95":
-        return Version.V095;
-      case "0.9":
-        return Version.V09;
-      default:
-        throw Exception("Unrecognized version $version");
-    }
+    return switch (version) {
+      '1.0.3' => Version.V103,
+      '1.0.2' => Version.V102,
+      '1.0.1' => Version.V101,
+      '1.0.0' => Version.V100,
+      '0.95' => Version.V095,
+      '0.9' => Version.V09,
+      _ => throw Exception("Unrecognized version $version"),
+    };
   }
 
   static String? toJsonString(Version? version) {
@@ -38,21 +31,14 @@ class TinCanVersion {
       return null;
     }
 
-    switch (version) {
-      case Version.V103:
-        return "1.0.3";
-      case Version.V102:
-        return "1.0.2";
-      case Version.V101:
-        return "1.0.1";
-      case Version.V100:
-        return "1.0.0";
-      case Version.V095:
-        return "0.95";
-      case Version.V09:
-        return "0.9";
-      default:
-        throw Exception("Unrecognized version $version");
-    }
+    return switch (version) {
+      Version.V103 => '1.0.3',
+      Version.V102 => '1.0.2',
+      Version.V101 => '1.0.1',
+      Version.V100 => '1.0.0',
+      Version.V095 => '0.95',
+      Version.V09 => '0.9',
+      () => throw Exception('Unrecognized version $version'),
+    };
   }
 }
