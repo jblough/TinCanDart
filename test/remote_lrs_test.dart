@@ -22,9 +22,9 @@ void compareStatements(Statement statement1, Statement statement2) {
 }
 
 void main() {
-  var endpoint;
-  var username;
-  var password;
+  String endpoint = '';
+  String username = '';
+  String password = '';
 
   late LRS lrs;
   Agent? agent;
@@ -43,7 +43,7 @@ void main() {
   setUpAll(() {
     final config = File('./test/lrs.properties');
     final lines = config.readAsLinesSync();
-    lines.forEach((line) {
+    for (var line in lines) {
       final parts = line.split('=');
       switch (parts[0].toLowerCase()) {
         case 'endpoint':
@@ -58,7 +58,7 @@ void main() {
         default:
           print("Unrecognized variable : ${parts[0]}");
       }
-    });
+    }
 
     agent = Agent(
       mbox: 'mailto:tincandart@tincanapi.com',
@@ -172,7 +172,7 @@ void main() {
     var obj = RemoteLRS();
     expect(obj.endpoint, isNull);
 
-    String strURL = "http://tincanapi.com/test/TinCanDart";
+    final String strURL = "http://tincanapi.com/test/TinCanDart";
     obj = RemoteLRS(endpoint: strURL);
     expect(obj.endpoint.toString(), '$strURL/');
   });
@@ -450,20 +450,20 @@ void main() {
 
   test("should update state", () async {
     // What changes are to be made
-    Map<String, String> changeSet = {};
+    final Map<String, String> changeSet = {};
     // What the correct content should be after change
-    Map<String, String> correctSet = {};
+    final Map<String, String> correctSet = {};
     // What the actual content is after change
-    Map<String, String> currentSet = {};
+    final Map<String, String> currentSet = {};
 
     // Load initial change set
     Map<String, String> changeSetMap = {'x': 'foo', 'y': 'bar'};
-    changeSetMap.forEach((key, value) {
+    changeSetMap.forEach((String key, String value) {
       changeSet[key] = value;
     });
-    Map<String, String> correctSetMap =
+    final Map<String, String> correctSetMap =
         changeSetMap; // In the beginning, these are equal
-    correctSetMap.forEach((key, value) {
+    correctSetMap.forEach((String key, String value) {
       correctSet[key] = value;
     });
 
@@ -489,15 +489,15 @@ void main() {
     expect(retrieveBeforeUpdate.success, isTrue);
 
     final beforeDoc = retrieveBeforeUpdate.data!;
-    final c = json.decode(String.fromCharCodes(beforeDoc.content!.asList()!));
-    c.forEach((key, value) {
-      currentSet[key] = value;
+    final c = json.decode(String.fromCharCodes(beforeDoc.content!.asList()!)) as Map<String, dynamic>;
+    c.forEach((String key, dynamic value) {
+      currentSet[key] = value as String;
     });
     expect(currentSet, correctSet);
 
     changeSetMap = {'x': 'bash', 'z': 'faz'};
     changeSet.clear();
-    changeSetMap.forEach((key, value) {
+    changeSetMap.forEach((String key, String value) {
       changeSet[key] = value;
     });
 
@@ -507,7 +507,7 @@ void main() {
     );
 
     // Update the correct set with the changes
-    changeSetMap.forEach((key, value) {
+    changeSetMap.forEach((String key, String value) {
       correctSet[key] = value;
     });
 
@@ -521,9 +521,9 @@ void main() {
     expect(retrieveAfterUpdate.success, isTrue);
 
     final afterDoc = retrieveAfterUpdate.data!;
-    final ac = json.decode(String.fromCharCodes(afterDoc.content!.asList()!));
-    ac.forEach((key, value) {
-      currentSet[key] = value;
+    final ac = json.decode(String.fromCharCodes(afterDoc.content!.asList()!)) as Map<String, dynamic>;
+    ac.forEach((String key, dynamic value) {
+      currentSet[key] = value as String;
     });
 
     expect(currentSet, correctSet);
@@ -705,11 +705,11 @@ void main() {
 
   test("should update agent profile", () async {
     // What changes are to be made
-    Map<String, String> changeSet = {};
+    final Map<String, String> changeSet = {};
     // What the correct content should be after change
-    Map<String, String> correctSet = {};
+    final Map<String, String> correctSet = {};
     // What the actual content is after change
-    Map<String, String> currentSet = {};
+    final Map<String, String> currentSet = {};
 
     // Load initial change set
     Map<String, String> changeSetMap = {
@@ -717,12 +717,12 @@ void main() {
       'lastName': 'Smith',
       'State': 'CO'
     };
-    changeSetMap.forEach((key, value) {
+    changeSetMap.forEach((String key, String value) {
       changeSet[key] = value;
     });
-    Map<String, String> correctSetMap =
+    final Map<String, String> correctSetMap =
         changeSetMap; // In the beginning, these are equal
-    correctSetMap.forEach((key, value) {
+    correctSetMap.forEach((String key, String value) {
       correctSet[key] = value;
     });
 
@@ -745,15 +745,15 @@ void main() {
     final retrieveBeforeUpdate = await lrs.retrieveAgentProfile('test', agent);
     expect(retrieveBeforeUpdate.success, isTrue);
     final beforeDoc = retrieveBeforeUpdate.data!;
-    final c = json.decode(String.fromCharCodes(beforeDoc.content!.asList()!));
-    c.forEach((key, value) {
-      currentSet[key] = value;
+    final c = json.decode(String.fromCharCodes(beforeDoc.content!.asList()!)) as Map<String, dynamic>;
+    c.forEach((String key, dynamic value) {
+      currentSet[key] = value as String;
     });
     expect(currentSet, correctSet);
 
     changeSetMap = {'lastName': 'Jones', 'City': 'Colorado Springs'};
     changeSet.clear();
-    changeSetMap.forEach((key, value) {
+    changeSetMap.forEach((String key, String value) {
       changeSet[key] = value;
     });
 
@@ -763,7 +763,7 @@ void main() {
     );
 
     // Update the correct set with the changes
-    changeSetMap.forEach((key, value) {
+    changeSetMap.forEach((String key, String value) {
       correctSet[key] = value;
     });
 
@@ -776,9 +776,9 @@ void main() {
     expect(retrieveAfterUpdate.success, isTrue);
 
     final afterDoc = retrieveAfterUpdate.data!;
-    final ac = json.decode(String.fromCharCodes(afterDoc.content!.asList()!));
-    ac.forEach((key, value) {
-      currentSet[key] = value;
+    final ac = json.decode(String.fromCharCodes(afterDoc.content!.asList()!)) as Map<String, dynamic>;
+    ac.forEach((String key, dynamic value) {
+      currentSet[key] = value as String;
     });
 
     expect(currentSet, correctSet);
@@ -940,20 +940,20 @@ void main() {
 
   test("should update activity profile", () async {
     // What changes are to be made
-    Map<String, String> changeSet = {};
+    final Map<String, String> changeSet = {};
     // What the correct content should be after change
-    Map<String, String> correctSet = {};
+    final Map<String, String> correctSet = {};
     // What the actual content is after change
-    Map<String, String> currentSet = {};
+    final Map<String, String> currentSet = {};
 
     // Load initial change set
     Map<String, String> changeSetMap = {'x': 'foo', 'y': 'bar'};
-    changeSetMap.forEach((key, value) {
+    changeSetMap.forEach((String key, String value) {
       changeSet[key] = value;
     });
-    Map<String, String> correctSetMap =
+    final Map<String, String> correctSetMap =
         changeSetMap; // In the beginning, these are equal
-    correctSetMap.forEach((key, value) {
+    correctSetMap.forEach((String key, String value) {
       correctSet[key] = value;
     });
 
@@ -976,15 +976,15 @@ void main() {
     expect(retrieveBeforeUpdate.success, isTrue);
 
     final beforeDoc = retrieveBeforeUpdate.data!;
-    final c = json.decode(String.fromCharCodes(beforeDoc.content!.asList()!));
-    c.forEach((key, value) {
-      currentSet[key] = value;
+    final c = json.decode(String.fromCharCodes(beforeDoc.content!.asList()!)) as Map<String, dynamic>;
+    c.forEach((String key, dynamic value) {
+      currentSet[key] = value as String;
     });
     expect(currentSet, correctSet);
 
     changeSetMap = {'x': 'bash', 'z': 'faz'};
     changeSet.clear();
-    changeSetMap.forEach((key, value) {
+    changeSetMap.forEach((String key, String value) {
       changeSet[key] = value;
     });
 
@@ -994,7 +994,7 @@ void main() {
     );
 
     // Update the correct set with the changes
-    changeSetMap.forEach((key, value) {
+    changeSetMap.forEach((String key, String value) {
       correctSet[key] = value;
     });
 
@@ -1008,9 +1008,9 @@ void main() {
     expect(retrieveAfterUpdate.success, isTrue);
 
     final afterDoc = retrieveAfterUpdate.data!;
-    final ac = json.decode(String.fromCharCodes(afterDoc.content!.asList()!));
-    ac.forEach((key, value) {
-      currentSet[key] = value;
+    final ac = json.decode(String.fromCharCodes(afterDoc.content!.asList()!)) as Map<String, dynamic>;
+    ac.forEach((String key, dynamic value) {
+      currentSet[key] = value as String;
     });
 
     expect(currentSet, correctSet);

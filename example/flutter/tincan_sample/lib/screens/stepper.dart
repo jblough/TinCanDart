@@ -6,7 +6,7 @@ import 'package:tincan_sample/blocs/lrs_bloc.dart';
 
 class StepperScreen extends StatefulWidget {
   @override
-  _StepperScreenState createState() => _StepperScreenState();
+  State<StepperScreen> createState() => _StepperScreenState();
 }
 
 class _StepperScreenState extends State<StepperScreen> {
@@ -236,14 +236,14 @@ class _StepperScreenState extends State<StepperScreen> {
       context: context,
     );
 
-    await lrsBloc.recordStatement(statement);
+    lrsBloc.recordStatement(statement);
 
     // Answered step 1 statement
     statement = Statement(
       verb: Verb(
           id: 'http://adlnet.gov/expapi/verbs/answered',
           display: {'en-US': 'answered'}),
-      result: Result(response: _data['firstName']),
+      result: Result(response: _data['firstName'] as String?),
       object: Activity(
         id: 'http://example.com/TinCanDart/stepper/one',
         definition: ActivityDefinition(
@@ -253,14 +253,14 @@ class _StepperScreenState extends State<StepperScreen> {
       context: context,
     );
 
-    await lrsBloc.recordStatement(statement);
+    lrsBloc.recordStatement(statement);
 
     // Answered step 2 statement
     statement = Statement(
       verb: Verb(
           id: 'http://adlnet.gov/expapi/verbs/answered',
           display: {'en-US': 'answered'}),
-      result: Result(response: _data['lastName']),
+      result: Result(response: _data['lastName'] as String?),
       object: Activity(
         id: 'http://example.com/TinCanDart/stepper/two',
         definition: ActivityDefinition(
@@ -270,14 +270,14 @@ class _StepperScreenState extends State<StepperScreen> {
       context: context,
     );
 
-    await lrsBloc.recordStatement(statement);
+    lrsBloc.recordStatement(statement);
 
     // Answered step 3 statement
     statement = Statement(
       verb: Verb(
           id: 'http://adlnet.gov/expapi/verbs/answered',
           display: {'en-US': 'answered'}),
-      result: Result(response: _data['number']),
+      result: Result(response: _data['number'] as String?),
       object: Activity(
         id: 'http://example.com/TinCanDart/stepper/three',
         definition: ActivityDefinition(

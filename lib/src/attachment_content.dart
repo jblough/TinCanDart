@@ -44,7 +44,7 @@ class AttachmentContent {
   int get length => _content!.length;
 
   static List<int> _convertNumber(num content) {
-    ByteData data = ByteData(8);
+    final data = ByteData(8);
     if (content is int) {
       data.setInt64(0, content);
     } else {

@@ -8,7 +8,7 @@ typedef MenuSelectionCallback = void Function(BuildContext);
 
 class MenuScreen extends StatefulWidget {
   @override
-  _MenuScreenState createState() => _MenuScreenState();
+  State<MenuScreen> createState() => _MenuScreenState();
 }
 
 class _MenuScreenState extends State<MenuScreen> {
@@ -23,25 +23,25 @@ class _MenuScreenState extends State<MenuScreen> {
     (context) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => CounterScreen()),
+        MaterialPageRoute<void>(builder: (context) => CounterScreen()),
       );
     },
     (context) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => StepperScreen()),
+        MaterialPageRoute<void>(builder: (context) => StepperScreen()),
       );
     },
     (context) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => ImageSelectionScreen()),
+        MaterialPageRoute<void>(builder: (context) => ImageSelectionScreen()),
       );
     },
     (context) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => StatementViewer()),
+        MaterialPageRoute<void>(builder: (context) => StatementViewer()),
       );
     },
   ];
@@ -81,7 +81,7 @@ class MenuItem extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(24.0),
         child: Text(
-          this.text,
+          text,
           style: TextStyle(fontSize: 28),
         ),
       ),

@@ -7,17 +7,12 @@ class ActivityProfileDocument extends Document {
 
   ActivityProfileDocument({
     this.activity,
-    String? id,
-    String? etag,
-    DateTime? timestamp,
-    String? contentType,
-    AttachmentContent? content,
-  }) : super(
-            id: id,
-            etag: etag,
-            timestamp: timestamp,
-            contentType: contentType,
-            content: content);
+    super.id,
+    super.etag,
+    super.timestamp,
+    super.contentType,
+    super.content,
+  });
 
   ActivityProfileDocument copyWith(
       {Activity? activity,

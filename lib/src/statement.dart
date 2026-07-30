@@ -43,20 +43,20 @@ class Statement {
     }
 
     return Statement(
-      id: json['id'],
-      stored: _readDate(json['stored']),
-      authority: Agent.fromJson(json['authority']),
-      version: TinCanVersion.fromJsonString(json['version']),
-      actor: Agent.fromJson(json['actor']),
-      verb: Verb.fromJson(json['verb']),
+      id: json['id'] as String?,
+      stored: _readDate(json['stored'] as String?),
+      authority: Agent.fromJson(json['authority'] as Map<String, dynamic>?),
+      version: TinCanVersion.fromJsonString(json['version'] as String?),
+      actor: Agent.fromJson(json['actor'] as Map<String, dynamic>?),
+      verb: Verb.fromJson(json['verb'] as Map<String, dynamic>?),
 
       // This can be StatementRef or SubStatement final StatementTarget object;
-      object: StatementTarget.toTarget(json['object']),
+      object: StatementTarget.toTarget(json['object'] as Map<String, dynamic>?),
 
-      result: Result.fromJson(json['result']),
-      context: Context.fromJson(json['context']),
-      timestamp: _readDate(json['timestamp']),
-      attachments: Attachment.listFromJson(json['attachments']),
+      result: Result.fromJson(json['result'] as Map<String, dynamic>?),
+      context: Context.fromJson(json['context'] as Map<String, dynamic>?),
+      timestamp: _readDate(json['timestamp'] as String?),
+      attachments: Attachment.listFromJson(json['attachments'] as List<dynamic>?),
     );
   }
 
@@ -126,8 +126,8 @@ class Statement {
     final statements = <Statement>[];
 
     final reader = (body.runtimeType == String)
-        ? _MixedReader(body.codeUnits, boundary: boundary)
-        : _MixedReader(body, boundary: boundary);
+        ? _MixedReader((body as String).codeUnits, boundary: boundary)
+        : _MixedReader(body as List<int>, boundary: boundary);
 
     var line = reader.readNextLine(); // Boundary (or blank line)
     if (line.isEmpty || line == '\r\n') {
@@ -135,7 +135,7 @@ class Statement {
     }
 
     // Read the headers
-    Map<String, dynamic> headers = {};
+    final Map<String, dynamic> headers = {};
     while (line.isNotEmpty && line != '\r\n') {
       line = reader.readNextLine(); // Headers
       final match = _headerRegExp.firstMatch(line);
@@ -145,23 +145,23 @@ class Statement {
     }
 
     // Read the Statements
-    int? length = (headers['Content-Length'] == null)
+    final int? length = (headers['Content-Length'] == null)
         ? null
-        : int.tryParse(headers['Content-Length']);
+        : int.tryParse(headers['Content-Length'] as String);
     final jsonData = (length != null)
         ? String.fromCharCodes(reader.readNextBinary(length))
         : reader.readNextLine();
-    final Map<String, dynamic> jsonBody = json.decode(jsonData);
+    final Map<String, dynamic> jsonBody = json.decode(jsonData) as Map<String, dynamic>;
     if (jsonBody.containsKey('statements')) {
-      final List jsonStatements = jsonBody['statements'];
-      jsonStatements.forEach((jsonStatement) {
-        var statement = Statement.fromJson(jsonStatement);
+      final List<dynamic> jsonStatements = jsonBody['statements'] as List<dynamic>;
+      for (var jsonStatement in jsonStatements) {
+        final statement = Statement.fromJson(jsonStatement as Map<String, dynamic>?);
         if (statement != null) {
           statements.add(statement);
         }
-      });
+      }
     } else {
-      var statement = Statement.fromJson(jsonBody);
+      final statement = Statement.fromJson(jsonBody);
       if (statement != null) {
         statements.add(statement);
       }
@@ -180,30 +180,30 @@ class Statement {
       }
 
       if (headers.isNotEmpty) {
-        final hash = headers['X-Experience-API-Hash'];
+        final hash = headers['X-Experience-API-Hash'] as String?;
 
         int? length = (headers['Content-Length'] == null)
             ? null
-            : int.tryParse(headers['Content-Length']);
+            : int.tryParse(headers['Content-Length'] as String);
 
         // If the length wasn't found as a header, try to get it from the statement
         if (length == null) {
-          statements.forEach((statement) {
+          for (var statement in statements) {
             statement.attachments?.forEach((attachment) {
               if (attachment.sha2 == hash) {
                 length = attachment.length;
               }
             });
-          });
+          }
         }
         final bytes = reader.readNextBinary(length);
-        statements.forEach((statement) {
+        for (var statement in statements) {
           statement.attachments?.forEach((attachment) {
             if (attachment.sha2 == hash && attachment.content == null) {
               attachment.content = AttachmentContent.fromList(bytes);
             }
           });
-        });
+        }
       }
     }
 
@@ -240,9 +240,9 @@ class _MixedReader {
   final int length;
   int _currentPosition = 0;
 
-  _MixedReader(this.bytes, {this.boundary}) : this.length = bytes.length;
+  _MixedReader(this.bytes, {this.boundary}) : length = bytes.length;
 
-  bool done() => _currentPosition >= this.length;
+  bool done() => _currentPosition >= length;
 
   String readNextLine() {
     // Read up to next '\r\n';

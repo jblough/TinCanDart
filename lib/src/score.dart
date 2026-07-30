@@ -17,10 +17,10 @@ class Score {
     }
 
     return Score(
-      scaled: json['scaled'],
-      raw: json['raw'],
-      min: json['min'],
-      max: json['max'],
+      scaled: json['scaled'] as num?,
+      raw: json['raw'] as num?,
+      min: json['min'] as num?,
+      max: json['max'] as num?,
     );
   }
 

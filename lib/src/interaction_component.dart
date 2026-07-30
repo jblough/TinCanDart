@@ -10,8 +10,8 @@ class InteractionComponent {
     }
 
     return InteractionComponent(
-      id: json['id'],
-      description: json['description'],
+      id: json['id'] as String?,
+      description: json['description'] as Map<String, dynamic>?,
     );
   }
 
@@ -20,8 +20,8 @@ class InteractionComponent {
       return null;
     }
     final components = <InteractionComponent>[];
-    for (final json in list) {
-      final component = InteractionComponent.fromJson(json);
+    for (final dynamic json in list) {
+      final component = InteractionComponent.fromJson(json as Map<String, dynamic>?);
       if (component != null) {
         components.add(component);
       }

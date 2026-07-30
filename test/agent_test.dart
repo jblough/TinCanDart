@@ -5,7 +5,7 @@ import 'package:tincan/tincan.dart' show Statement, Group, Version;
 
 void main() {
   test("should import statement", () {
-    final result = Statement.fromJson(json.decode(_json))!;
+    final result = Statement.fromJson(json.decode(_json) as Map<String, dynamic>?)!;
     expect(result, isNotNull);
     expect(result.id, '6690e6c9-3ef0-4ed3-8b37-7f3964730bee');
     expect(result.actor.runtimeType.toString(), 'Group');
@@ -15,9 +15,9 @@ void main() {
   });
 
   test("should export statement", () {
-    final statement = Statement.fromJson(json.decode(_json))!;
+    final statement = Statement.fromJson(json.decode(_json) as Map<String, dynamic>?)!;
     final exported = statement.toJson(Version.V100);
-    final expected = json.decode(_json);
+    final expected = json.decode(_json) as Map<String, dynamic>;
     expect(exported, expected);
   });
 }

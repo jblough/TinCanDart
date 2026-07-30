@@ -1,3 +1,4 @@
+// ignore_for_file: constant_identifier_names
 enum Version {
   V103, // ("1.0.3")
   V102, // ("1.0.2")
@@ -51,8 +52,6 @@ class TinCanVersion {
         return "0.95";
       case Version.V09:
         return "0.9";
-      default:
-        throw Exception("Unrecognized version $version");
     }
   }
 }

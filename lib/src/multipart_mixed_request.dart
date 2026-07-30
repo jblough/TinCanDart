@@ -36,16 +36,16 @@ class MultipartMixedRequest extends BaseRequest {
   final List<Attachment>? _attachments;
 
   /// Creates a new [MultipartMixedRequest].
-  MultipartMixedRequest(String method, Uri url, String? body)
+  MultipartMixedRequest(super.method, super.url, String? body)
       : _body = body,
-        _attachments = <Attachment>[],
-        super(method, url);
+        _attachments = <Attachment>[];
 
   /// The list of attachments to upload for this request.
   List<Attachment>? get attachments => _attachments;
 
   /// The total length of the request body, in bytes. This is calculated from
   /// body and [attachments] and cannot be set manually.
+  @override
   int get contentLength {
     var length = 0;
 
@@ -68,47 +68,49 @@ class MultipartMixedRequest extends BaseRequest {
     return length;
   }
 
+  @override
   set contentLength(int? value) {
     throw UnsupportedError("Cannot set the contentLength property of "
         "multipart requests.");
   }
 
-  void writeAscii(StreamController controller, String string) {
+  void writeAscii(StreamController<List<int>> controller, String string) {
     controller.add(utf8.encode(string));
   }
 
-  writeUtf8(StreamController controller, String string) =>
+  void writeUtf8(StreamController<List<int>> controller, String string) =>
       controller.add(utf8.encode(string));
 
-  writeLine(StreamController controller) => controller.add([13, 10]); // \r\n
+  void writeLine(StreamController<List<int>> controller) => controller.add([13, 10]); // \r\n
 
   /// Pipes all data and errors from [stream] into [sink]. Completes [Future] once
   /// [stream] is done. Unlike [store], [sink] remains open after [stream] is
   /// done.
-  void writeStreamToSink(ByteBuffer buffer, EventSink sink) {
+  void writeStreamToSink(ByteBuffer buffer, EventSink<List<int>> sink) {
     sink.add(buffer.asInt8List());
   }
 
   /// Freezes all mutable fields and returns a single-subscription [ByteStream]
   /// that will emit the request body.
+  @override
   ByteStream finalize() {
     headers.remove('content-type');
-    var boundary = _boundaryString();
+    final boundary = _boundaryString();
     headers['Content-Type'] = 'multipart/mixed; boundary=$boundary';
     super.finalize();
 
-    var controller = StreamController<List<int>>(sync: false);
+    final controller = StreamController<List<int>>(sync: false);
 
     controller.add(utf8.encode('--$boundary\r\n'));
     controller.sink.add(utf8.encode('Content-Type: application/json\r\n\r\n'));
     controller.sink.add(utf8.encode('$_body\r\n'));
 
-    Future.forEach(_attachments!, (Attachment attachment) {
+    for (final attachment in _attachments!) {
       writeAscii(controller, '--$boundary\r\n');
       writeAscii(controller, _headerForAttachment(attachment));
       controller.add(attachment.content!.asList()!);
       writeLine(controller);
-    });
+    }
     writeAscii(controller, '--$boundary--\r\n');
     controller.close();
 
@@ -122,7 +124,7 @@ class MultipartMixedRequest extends BaseRequest {
         MediaType.parse(attachment.contentType ?? 'application/octet-stream');
 
     final hash = 'X-Experience-API-Hash: ${attachment.sha2}';
-    var header =
+    final header =
         'Content-Type: $contentType\r\nContent-Transfer-Encoding: binary\r\n$hash';
 
     return '$header\r\n\r\n';

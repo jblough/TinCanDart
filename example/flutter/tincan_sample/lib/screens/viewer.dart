@@ -79,9 +79,9 @@ class _StatementViewerState extends State<StatementViewer> {
             statementWidgets.add(ListTile(
               onTap: () => _displayAttachment(context, attachment),
               leading: Icon(Icons.attachment, size: 48.0),
-              title: Text(attachment.display?.values.first ?? 'Unknown'),
+              title: Text((attachment.display?.values.first as String?) ?? 'Unknown'),
               subtitle:
-                  Text(attachment.description?.values.first ?? 'Unknown'),
+                  Text((attachment.description?.values.first as String?) ?? 'Unknown'),
             ));
           });
 
@@ -129,16 +129,16 @@ class _StatementViewerState extends State<StatementViewer> {
     if (statement.actor is Group) {
       who = 'Group: ${(statement.actor as Group).name}';
     } else {
-      who = statement.actor!.name;
+      who = statement.actor?.name;
     }
 
-    String? verb = statement.verb!.display?.values.first;
+    final String? verb = statement.verb!.display?.values.first as String?;
 
-    String when = statement.timestamp?.toIso8601String() ?? '';
+    final String when = statement.timestamp?.toIso8601String() ?? '';
 
     String what = '';
     if (statement.object is Activity) {
-      what = (statement.object as Activity).definition?.name?.values.first ??
+      what = ((statement.object as Activity).definition?.name?.values.first as String?) ??
           'Unknown';
     } else if (statement.object is StatementRef) {
       what = (statement.object as StatementRef).id ?? 'Unknown';
@@ -162,21 +162,21 @@ class _StatementViewerState extends State<StatementViewer> {
     if (statement.actor is Group) {
       who = 'Group: ${(statement.actor as Group).name}';
     } else {
-      who = statement.actor!.name;
+      who = statement.actor?.name;
     }
 
-    String when = statement.timestamp?.toIso8601String() ?? '';
+    final String when = statement.timestamp?.toIso8601String() ?? '';
 
     return '$when $who';
   }
 
   Future<void> _displayAttachment(
       BuildContext context, Attachment attachment) async {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(attachment.display?.values.first ?? ''),
+          title: Text((attachment.display?.values.first as String?) ?? ''),
           content: Container(
             child: Image.memory(attachment.content!.asUint8List()),
           ),

@@ -19,7 +19,7 @@ class Activity extends StatementTarget {
 
     return Activity(
       id: json['id'],
-      definition: ActivityDefinition.fromJson(json['definition']),
+      definition: ActivityDefinition.fromJson(json['definition'] as Map<String, dynamic>?),
     );
   }
 
@@ -28,8 +28,8 @@ class Activity extends StatementTarget {
       return null;
     }
     final activities = <Activity>[];
-    for (final json in list) {
-      final activity = Activity.fromJson(json);
+    for (final dynamic json in list) {
+      final activity = Activity.fromJson(json as Map<String, dynamic>?);
       if (activity != null) {
         activities.add(activity);
       }

@@ -6,7 +6,7 @@ import 'package:tincan/tincan.dart'
 
 void main() {
   test("should import group", () {
-    final result = Group.fromJson(json.decode(_json))!;
+    final result = Group.fromJson(json.decode(_json) as Map<String, dynamic>?)!;
     expect(result, isNotNull);
     expect(result.name, 'HT2');
     expect(result.members!.length, 1);

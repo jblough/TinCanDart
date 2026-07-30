@@ -25,11 +25,10 @@ class Attachment {
     String? sha2,
     dynamic fileUrl,
     this.content,
-  })  : this.usageType = ValidatedUri.fromString(usageType?.toString()),
-        this.fileUrl = ValidatedUri.fromString(fileUrl?.toString()),
-        this.length = length ?? content?.length,
-        this.sha2 =
-            sha2 ?? ((content != null) ? sha2sum(content.asList()!) : null);
+  })  : usageType = ValidatedUri.fromString(usageType?.toString()),
+        fileUrl = ValidatedUri.fromString(fileUrl?.toString()),
+        length = length ?? content?.length,
+        sha2 = sha2 ?? ((content != null) ? sha2sum(content.asList()!) : null);
 
   static String sha2sum(List<int> data) {
     return sha256.convert(data).toString();
@@ -43,11 +42,11 @@ class Attachment {
 
     return Attachment(
       usageType: json['usageType'],
-      display: json['display'],
-      description: json['description'],
-      contentType: json['contentType'],
-      length: json['length'],
-      sha2: json['sha2'],
+      display: json['display'] as Map<String, dynamic>?,
+      description: json['description'] as Map<String, dynamic>?,
+      contentType: json['contentType'] as String?,
+      length: json['length'] as int?,
+      sha2: json['sha2'] as String?,
       fileUrl: json['fileUrl'],
       content: content,
     );
@@ -58,8 +57,8 @@ class Attachment {
       return null;
     }
     final attachments = <Attachment>[];
-    for (final json in list) {
-      final attachment = Attachment.fromJson(json, null);
+    for (final dynamic json in list) {
+      final attachment = Attachment.fromJson(json as Map<String, dynamic>?, null);
       if (attachment != null) {
         attachments.add(attachment);
       }

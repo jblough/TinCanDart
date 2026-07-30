@@ -27,10 +27,10 @@ class ContextActivities {
     }
 
     return ContextActivities(
-      parent: Activity.listFromJson(json['parent']),
-      grouping: Activity.listFromJson(json['grouping']),
-      other: Activity.listFromJson(json['other']),
-      category: Activity.listFromJson(json['category']),
+      parent: Activity.listFromJson(json['parent'] as List<dynamic>?),
+      grouping: Activity.listFromJson(json['grouping'] as List<dynamic>?),
+      other: Activity.listFromJson(json['other'] as List<dynamic>?),
+      category: Activity.listFromJson(json['category'] as List<dynamic>?),
     );
   }
 

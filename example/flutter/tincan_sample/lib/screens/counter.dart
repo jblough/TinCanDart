@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tincan_sample/blocs/lrs_bloc.dart';
 
 class CounterScreen extends StatefulWidget {
-  CounterScreen({Key? key}) : super(key: key);
+  CounterScreen({super.key});
 
   @override
   State createState() => _CounterScreenState();

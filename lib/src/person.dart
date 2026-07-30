@@ -25,7 +25,7 @@ class Person {
       mbox: _fromItem(json['mbox']),
       mboxSHA1Sum: _fromItem(json['mbox_sha1sum']),
       openID: _fromItem(json['openid']),
-      account: AgentAccount.listFromJson(json['account']),
+      account: AgentAccount.listFromJson(json['account'] as List<dynamic>?),
     );
   }
 

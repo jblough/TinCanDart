@@ -7,16 +7,16 @@ import 'package:tincan/tincan.dart';
 /// These tests were put together from the xAPI documentation on the
 /// Learning Locker website - http://docs.learninglocker.net/overview-xapi/
 void main() {
-  var endpoint;
-  var username;
-  var password;
+  String endpoint = '';
+  String username = '';
+  String password = '';
 
   late LRS lrs;
 
   setUpAll(() {
     final config = File('./test/lrs.properties');
     final lines = config.readAsLinesSync();
-    lines.forEach((line) {
+    for (var line in lines) {
       final parts = line.split('=');
       switch (parts[0].toLowerCase()) {
         case 'endpoint':
@@ -31,7 +31,7 @@ void main() {
         default:
           print("Unrecognized variable : ${parts[0]}");
       }
-    });
+    }
   });
 
   setUp(() {

@@ -6,7 +6,7 @@ import 'package:tincan_sample/blocs/lrs_bloc.dart';
 
 class ImageSelectionScreen extends StatefulWidget {
   @override
-  _ImageSelectionScreenState createState() => _ImageSelectionScreenState();
+  State<ImageSelectionScreen> createState() => _ImageSelectionScreenState();
 }
 
 class _ImageSelectionScreenState extends State<ImageSelectionScreen> {

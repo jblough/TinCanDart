@@ -32,13 +32,13 @@ class SubStatement extends StatementTarget {
     }
 
     return SubStatement(
-      actor: Agent.fromJson(json['actor']),
-      verb: Verb.fromJson(json['verb']),
-      object: StatementTarget.toTarget(json['object']),
-      result: Result.fromJson(json['result']),
-      context: Context.fromJson(json['context']),
-      timestamp: _readDate(json['timestamp']),
-      attachments: Attachment.listFromJson(json['attachments']),
+      actor: Agent.fromJson(json['actor'] as Map<String, dynamic>?),
+      verb: Verb.fromJson(json['verb'] as Map<String, dynamic>?),
+      object: StatementTarget.toTarget(json['object'] as Map<String, dynamic>?),
+      result: Result.fromJson(json['result'] as Map<String, dynamic>?),
+      context: Context.fromJson(json['context'] as Map<String, dynamic>?),
+      timestamp: _readDate(json['timestamp'] as String?),
+      attachments: Attachment.listFromJson(json['attachments'] as List<dynamic>?),
     );
   }
 

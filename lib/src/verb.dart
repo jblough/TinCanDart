@@ -8,7 +8,7 @@ class Verb {
   Verb({
     dynamic id,
     this.display,
-  }) : this.id = ValidatedUri.fromString(id?.toString());
+  }) : id = ValidatedUri.fromString(id?.toString());
 
   static Verb? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -17,7 +17,7 @@ class Verb {
 
     return Verb(
       id: json['id'],
-      display: json['display'],
+      display: json['display'] as Map<String, dynamic>?,
     );
   }
 

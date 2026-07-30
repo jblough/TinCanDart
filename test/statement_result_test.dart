@@ -5,7 +5,7 @@ import 'package:tincan/tincan.dart' show StatementsResult;
 
 void main() {
   test("should import statement result", () {
-    final result = StatementsResult.fromJson(json.decode(_json));
+    final result = StatementsResult.fromJson(json.decode(_json) as Map<String, dynamic>?);
     expect(result, isNotNull);
   });
 }

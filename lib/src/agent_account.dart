@@ -12,8 +12,8 @@ class AgentAccount {
     }
 
     return AgentAccount(
-      name: json['name'],
-      homePage: json['homePage'],
+      name: json['name'] as String?,
+      homePage: json['homePage'] as String?,
     );
   }
 
@@ -22,8 +22,8 @@ class AgentAccount {
       return null;
     }
     final agents = <AgentAccount>[];
-    for (final json in list) {
-      final agent = AgentAccount.fromJson(json);
+    for (final dynamic json in list) {
+      final agent = AgentAccount.fromJson(json as Map<String, dynamic>?);
       if (agent != null) {
         agents.add(agent);
       }

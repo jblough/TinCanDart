@@ -32,8 +32,8 @@ class ActivityDefinition {
     this.source,
     this.target,
     this.steps,
-  })  : this.type = ValidatedUri.fromString(type?.toString()),
-        this.moreInfo = ValidatedUri.fromString(moreInfo?.toString());
+  })  : type = ValidatedUri.fromString(type?.toString()),
+        moreInfo = ValidatedUri.fromString(moreInfo?.toString());
 
   static ActivityDefinition? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -41,25 +41,23 @@ class ActivityDefinition {
     }
 
     return ActivityDefinition(
-      name: json['name'],
-      description: json['description'],
+      name: json['name'] as Map<String, dynamic>?,
+      description: json['description'] as Map<String, dynamic>?,
       type: json['type'],
       moreInfo: json['moreInfo'],
-      extensions: Extensions.fromJson(json['extensions']),
-      interactionType: InteractionType.fromString(json['interactionType']),
-      correctResponsesPattern: json['correctResponsesPattern'],
-      choices: InteractionComponent.listFromJson(json['choices']),
-      scale: InteractionComponent.listFromJson(json['scale']),
-      source: InteractionComponent.listFromJson(json['source']),
-      target: InteractionComponent.listFromJson(json['target']),
-      steps: InteractionComponent.listFromJson(json['steps']),
+      extensions: Extensions.fromJson(json['extensions'] as Map<String, dynamic>?),
+      interactionType: InteractionType.fromString(json['interactionType'] as String?),
+      correctResponsesPattern: (json['correctResponsesPattern'] as List<dynamic>?)?.cast<String>(),
+      choices: InteractionComponent.listFromJson(json['choices'] as List<dynamic>?),
+      scale: InteractionComponent.listFromJson(json['scale'] as List<dynamic>?),
+      source: InteractionComponent.listFromJson(json['source'] as List<dynamic>?),
+      target: InteractionComponent.listFromJson(json['target'] as List<dynamic>?),
+      steps: InteractionComponent.listFromJson(json['steps'] as List<dynamic>?),
     );
   }
 
   Map<String, dynamic> toJson({Version? version}) {
-    if (version == null) {
-      version = TinCanVersion.latest();
-    }
+    version ??= TinCanVersion.latest();
 
     final json = {
       'name': name,

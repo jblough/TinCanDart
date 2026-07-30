@@ -34,11 +34,11 @@ class Agent extends StatementTarget {
       return Group.fromJson(json);
     } else {
       return Agent(
-        name: json['name'],
-        mbox: json['mbox'],
-        mboxSHA1Sum: json['mbox_sha1sum'],
-        openID: json['openid'],
-        account: AgentAccount.fromJson(json['account']),
+        name: json['name'] as String?,
+        mbox: json['mbox'] as String?,
+        mboxSHA1Sum: json['mbox_sha1sum'] as String?,
+        openID: json['openid'] as String?,
+        account: AgentAccount.fromJson(json['account'] as Map<String, dynamic>?),
       );
     }
   }

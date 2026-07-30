@@ -28,7 +28,7 @@ class LrsBloc {
   final _reportStatementController = StreamController<Statement>();
 
   /// Record a Statement on the LRS
-  Function(Statement) get recordStatement =>
+  void Function(Statement) get recordStatement =>
       _reportStatementController.sink.add;
 
   late LRS _lrs;

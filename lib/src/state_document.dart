@@ -16,17 +16,12 @@ class StateDocument extends Document {
     this.activity,
     this.agent,
     this.registration,
-    String? id,
-    String? etag,
-    DateTime? timestamp,
-    String? contentType,
-    AttachmentContent? content,
-  }) : super(
-            id: id,
-            etag: etag,
-            timestamp: timestamp,
-            contentType: contentType,
-            content: content);
+    super.id,
+    super.etag,
+    super.timestamp,
+    super.contentType,
+    super.content,
+  });
 
   Map<String, dynamic> toJson([Version? version]) {
     version ??= TinCanVersion.latest();

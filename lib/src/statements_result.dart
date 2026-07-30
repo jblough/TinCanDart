@@ -12,13 +12,13 @@ class StatementsResult {
     }
 
     final list = <Statement>[];
-    json['statements']?.forEach((statement) {
-      list.add(Statement.fromJson(statement)!);
+    (json['statements'] as List<dynamic>?)?.forEach((dynamic statement) {
+      list.add(Statement.fromJson(statement as Map<String, dynamic>?)!);
     });
 
     return StatementsResult(
       statements: list,
-      moreUrl: json['more'],
+      moreUrl: json['more'] as String?,
     );
   }
 }
