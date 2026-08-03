@@ -42,7 +42,7 @@ class LrsBloc {
       String endpoint = '';
       String username = '';
       String password = '';
-      value.split('\n').forEach((line) {
+      for (final line in value.split('\n')) {
         final parts = line.split('=');
         switch (parts[0].toLowerCase()) {
           case 'endpoint':
@@ -55,7 +55,7 @@ class LrsBloc {
             password = parts[1];
             break;
         }
-      });
+      }
 
       _lrs = RemoteLRS(
         endpoint: endpoint,

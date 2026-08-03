@@ -58,7 +58,7 @@ class RemoteLRS extends LRS {
       'agent': _agentToString(profile.agent!),
     };
 
-    return await _deleteDocument('agents/profile', params);
+    return _deleteDocument('agents/profile', params);
   }
 
   @override
@@ -68,7 +68,7 @@ class RemoteLRS extends LRS {
       'agent': _agentToString(profile.agent!),
     };
 
-    return await _updateDocument('agents/profile', params, profile);
+    return _updateDocument('agents/profile', params, profile);
   }
 
   @override
@@ -78,7 +78,7 @@ class RemoteLRS extends LRS {
       'agent': _agentToString(profile.agent!),
     };
 
-    return await _saveDocument('agents/profile', params, profile);
+    return _saveDocument('agents/profile', params, profile);
   }
 
   @override
@@ -93,7 +93,7 @@ class RemoteLRS extends LRS {
       id: id,
       agent: agent,
     );
-    return await _getAgentProfileDocument('agents/profile', params, document);
+    return _getAgentProfileDocument('agents/profile', params, document);
   }
 
   @override
@@ -165,7 +165,7 @@ class RemoteLRS extends LRS {
       activity: activity,
     );
 
-    return await _getActivityProfileDocument(
+    return _getActivityProfileDocument(
         'activities/profile', params, profileDocument);
   }
 
@@ -209,7 +209,7 @@ class RemoteLRS extends LRS {
     if (registration != null) {
       params['registration'] = registration;
     }
-    return await _deleteDocument('activities/state', params);
+    return _deleteDocument('activities/state', params);
   }
 
   @override
@@ -222,7 +222,7 @@ class RemoteLRS extends LRS {
     if (state.registration != null) {
       params['registration'] = state.registration!;
     }
-    return await _deleteDocument('activities/state', params);
+    return _deleteDocument('activities/state', params);
   }
 
   @override
@@ -250,7 +250,7 @@ class RemoteLRS extends LRS {
       params['registration'] = state.registration!;
     }
 
-    return await _saveDocument('activities/state', params, state);
+    return _saveDocument('activities/state', params, state);
   }
 
   @override
@@ -273,7 +273,7 @@ class RemoteLRS extends LRS {
       registration: registration,
     );
 
-    return await _getStateDocument('activities/state', params, document);
+    return _getStateDocument('activities/state', params, document);
   }
 
   @override
@@ -291,7 +291,7 @@ class RemoteLRS extends LRS {
       params['since'] = since.toIso8601String();
     }
 
-    return await _getProfileKeys('activities/state', params);
+    return _getProfileKeys('activities/state', params);
   }
 
   @override
@@ -396,7 +396,7 @@ class RemoteLRS extends LRS {
         statements.map((statement) => statement.toJson(_version)).toList());
     final attachments = <Attachment>[];
     for (var statement in statements) {
-      if (statement.attachments?.isNotEmpty == true) {
+      if (statement.attachments?.isNotEmpty ?? false) {
         attachments.addAll(statement.attachments!);
       }
     }
@@ -490,7 +490,7 @@ class RemoteLRS extends LRS {
   }
 
   static String? generateAuth(String? username, String? password) {
-    if (username?.isNotEmpty == true && password?.isNotEmpty == true) {
+    if ((username ?? '').isNotEmpty && (password ?? '').isNotEmpty) {
       final token = base64Encode(utf8.encode('$username:$password'));
       return 'Basic $token';
     } else {
@@ -511,7 +511,7 @@ class RemoteLRS extends LRS {
         ? resource
         : '$endpoint$resource';
 
-    if (queryParams?.isNotEmpty == true) {
+    if (queryParams?.isNotEmpty ?? false) {
       url += '?${queryParams!.entries
               .map((entry) =>
                   '${Uri.encodeQueryComponent(entry.key)}=${Uri.encodeQueryComponent(entry.value!)}')
@@ -521,7 +521,7 @@ class RemoteLRS extends LRS {
     //print(\u0027url - $url\u0027);
 
     final Map<String, String> headers = {};
-    if (additionalHeaders?.isNotEmpty == true) {
+    if (additionalHeaders?.isNotEmpty ?? false) {
       headers.addAll(additionalHeaders!);
     }
 
@@ -529,44 +529,29 @@ class RemoteLRS extends LRS {
       headers[contentTypeHeader] = 'application/json';
     }
 
-    final version = TinCanVersion.toJsonString(_version);
-    if (version != null) {
-      headers['X-Experience-API-Version'] = version;
-    }
+    final version = _version.jsonString;
+    headers['X-Experience-API-Version'] = version;
     if (auth != null) {
       headers['Authorization'] = auth!;
     }
 
     //print(url);
 
-    if (attachments?.isNotEmpty == true) {
+    if (attachments?.isNotEmpty ?? false) {
       final request =
           MultipartMixedRequest(verb.toUpperCase(), Uri.parse(url), body as String?);
       request.headers.addAll(headers);
       request.attachments!.addAll(attachments!);
-      return await request.send();
+      return request.send();
     } else {
-      Future<http.Response>? response;
-      switch (verb.toUpperCase()) {
-        case 'GET':
-          response = _client.get(Uri.parse(url), headers: headers);
-          break;
-        case 'POST':
-          response = _client.post(Uri.parse(url), headers: headers, body: body);
-          break;
-        case 'PUT':
-          response = _client.put(Uri.parse(url), headers: headers, body: body);
-          break;
-        case 'DELETE':
-          response = _client.delete(Uri.parse(url), headers: headers);
-          break;
-        case 'PATCH':
-          response =
-              _client.patch(Uri.parse(url), headers: headers, body: body);
-          break;
-      }
-
-      return response;
+      return switch (verb.toUpperCase()) {
+        'GET' => _client.get(Uri.parse(url), headers: headers),
+        'POST' => _client.post(Uri.parse(url), headers: headers, body: body),
+        'PUT' => _client.put(Uri.parse(url), headers: headers, body: body),
+        'DELETE' => _client.delete(Uri.parse(url), headers: headers),
+        'PATCH' => _client.patch(Uri.parse(url), headers: headers, body: body),
+        _ => null,
+      };
     }
   }
 
@@ -608,11 +593,11 @@ class RemoteLRS extends LRS {
     };
     if (document.etag != null) {
       headers['If-Match'] = document.etag!;
-    } else {
+    } else if (document is! StateDocument) {
       headers['If-None-Match'] = '*';
     }
 
-    final dynamic response = await _makeRequest(resource, 'PUT',
+    final dynamic response = await _makeRequest(resource, 'POST',
         queryParams: params,
         additionalHeaders: headers,
         body: document.content?.asList());

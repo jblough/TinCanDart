@@ -89,7 +89,7 @@ void main() {
         object: Activity(id: 'http://www.example.org/activity'),
       ),
     );
-    print(putResponse.errMsg);
+    expect(putResponse.errMsg, isNull);
     expect(putResponse.success, isTrue);
     expect(putResponse.data!.id, 'efb7218c-0fc9-4dfc-9524-d497097de028');
 
@@ -126,7 +126,7 @@ void main() {
       ),
     ]);
 
-    print(postResponse.errMsg);
+    expect(postResponse.errMsg, isNull);
     expect(postResponse.success, isTrue);
     expect(postResponse.data!.statements!.length, 2);
     expect(postResponse.data!.statements![0].id,
@@ -136,6 +136,7 @@ void main() {
     // Get single statement
     final getResponse =
         await lrs.retrieveStatement('efb7218c-0fc9-4dfc-9524-d497097de027');
+    expect(getResponse.errMsg, isNull);
     expect(getResponse.success, isTrue);
     expect(getResponse.data!.id, 'efb7218c-0fc9-4dfc-9524-d497097de027');
     expect(getResponse.data!.actor!.mbox, 'mailto:test1@example.org');
@@ -162,6 +163,7 @@ void main() {
       ),
     );
 
+    expect(getManyResponse.errMsg, isNull);
     expect(getManyResponse.success, isTrue);
   });
 
@@ -249,7 +251,7 @@ void main() {
         ),
       ),
     ]);
-    print(response.errMsg);
+    expect(response.errMsg, isNull);
     expect(response.success, isTrue);
 
     final activityParam = Activity(id: 'http://www.example.org/activity');
@@ -265,10 +267,12 @@ void main() {
 
     // Save profile data
     final saveResponse = await lrs.saveActivityProfile(activityProfile);
+    expect(saveResponse.errMsg, isNull);
     expect(saveResponse.success, isTrue);
 
     final profileIdResponse =
         await lrs.retrieveActivityProfileIds(activityParam);
+    expect(profileIdResponse.errMsg, isNull);
     expect(profileIdResponse.success, isTrue);
     expect(profileIdResponse.data!.length, 1);
 
@@ -276,11 +280,13 @@ void main() {
       profileIdResponse.data![0],
       activityParam,
     );
+    expect(profileResponse.errMsg, isNull);
     expect(profileResponse.success, isTrue);
     expect(profileResponse.data!.content!.asString(), 'test');
 
     // Get activity
     final getResponse = await lrs.retrieveActivity(activityParam.id.toString());
+    expect(getResponse.errMsg, isNull);
     expect(getResponse.success, isTrue);
     print(getResponse.data!.toJson());
   });
@@ -294,6 +300,7 @@ void main() {
 
     // Get a person/agent
     final response = await lrs.retrievePerson(agentParam);
+    expect(response.errMsg, isNull);
     expect(response.success, isTrue);
     print(response.data!.toJson());
 
@@ -307,22 +314,25 @@ void main() {
 
     // Put a profile
     final putResponse = await lrs.saveAgentProfile(agentProfile);
-    print(putResponse.errMsg);
+    expect(putResponse.errMsg, isNull);
     expect(putResponse.success, isTrue);
 
     // Get agent profile
     final getResponse =
         await lrs.retrieveAgentProfile('example_profile_id', agentParam);
+    expect(getResponse.errMsg, isNull);
     expect(getResponse.success, isTrue);
     expect(getResponse.data!.etag, isNotNull);
 
     // Get multiple agent profiles (without since)
     var getManyResponse = await lrs.retrieveAgentProfileIds(agentParam);
+    expect(getManyResponse.errMsg, isNull);
     expect(getManyResponse.success, isTrue);
 
     // Get multiple agent profiles (with since)
     getManyResponse = await lrs.retrieveAgentProfileIds(agentParam,
         since: DateTime.parse('2017-09-04T12:45:31+00:00'));
+    expect(getManyResponse.errMsg, isNull);
     expect(getManyResponse.success, isTrue);
   });
 
@@ -347,10 +357,11 @@ void main() {
     );
 
     final response = await lrs.saveState(stateDocumentParam);
-    print(response.errMsg);
+    expect(response.errMsg, isNull);
     expect(response.success, isTrue);
 
     final updateResponse = await lrs.updateState(stateDocumentParam);
+    expect(updateResponse.errMsg, isNull);
     expect(updateResponse.success, isTrue);
 
     // Retrieve single state
@@ -360,6 +371,7 @@ void main() {
       agentParam,
       registration: stateDocumentParam.registration,
     );
+    expect(getResponse.errMsg, isNull);
     expect(getResponse.success, isTrue);
     expect(getResponse.data!.etag, isNotNull);
     expect(getResponse.data!.content!.asString(), contentString);
@@ -368,16 +380,19 @@ void main() {
     final getManyResponse = await lrs.retrieveStateIds(
         activityParam, agentParam,
         since: DateTime.parse('2017-09-04T12:45:31+00:00'));
+    expect(getManyResponse.errMsg, isNull);
     expect(getManyResponse.success, isTrue);
     expect(getManyResponse.data!.length, 1);
     expect(getManyResponse.data![0], 'example_state_id');
 
     final deleteResponse = await lrs.deleteState(stateDocumentParam);
+    expect(deleteResponse.errMsg, isNull);
     expect(deleteResponse.success, isTrue);
 
     // State ID should no longer be in the list of retrieved state IDs
     final getManyResponseAfterDelete =
         await lrs.retrieveStateIds(activityParam, agentParam);
+    expect(getManyResponseAfterDelete.errMsg, isNull);
     expect(getManyResponseAfterDelete.success, isTrue);
     expect(getManyResponseAfterDelete.data!.length, 0);
   });

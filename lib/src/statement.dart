@@ -67,7 +67,7 @@ class Statement {
       'id': id,
       'stored': stored?.toUtc().toIso8601String(),
       'authority': authority?.toJson(version),
-      'version': TinCanVersion.toJsonString(version),
+      'version': version.jsonString,
       'actor': actor?.toJson(version),
       'verb': verb?.toJson(),
       'object': object?.toJson(version),

@@ -94,15 +94,11 @@ class StatementsQuery {
   })  : verbID = ValidatedUri.fromString(verbID?.toString()),
         activityID = ValidatedUri.fromString(activityID?.toString());
 
-  Map<String, String?> toParameterMap(Version version) {
-    switch (version) {
-      case Version.V09:
-      case Version.V095:
-        return _toParameterMapVersion095(version);
-      default:
-        return _toParameterMapVersion10x(version);
-    }
-  }
+  Map<String, String?> toParameterMap(Version version) =>
+      switch (version) {
+        Version.V09 || Version.V095 => _toParameterMapVersion095(version),
+        _ => _toParameterMapVersion10x(version)
+      };
 
   Map<String, String?> _toParameterMapVersion095(Version version) {
     final Map<String, String?> params = {};

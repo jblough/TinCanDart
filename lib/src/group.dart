@@ -48,7 +48,7 @@ class Group extends Agent {
     json['objectType'] = 'Group';
 
     // Add the members
-    if (members?.isNotEmpty == true) {
+    if (members?.isNotEmpty ?? false) {
       json['member'] =
           members!.map((member) => member.toJson(version)).toList();
     }

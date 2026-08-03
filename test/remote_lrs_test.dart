@@ -165,6 +165,7 @@ void main() {
 
   test("should retrieve about", () async {
     final about = await lrs.about();
+    expect(about.errMsg, isNull);
     expect(about.success, isTrue);
   });
 
@@ -198,6 +199,7 @@ void main() {
         endpoint: 'https://cloud.scorm.com/lrs/1Y32ZYODBD/sandbox/');
     final response = await obj.about();
     final data = response.data;
+    expect(response.errMsg, isNull);
     expect(response.success, isTrue);
     expect(data, isNotNull);
   });
@@ -403,7 +405,7 @@ void main() {
     print('state attachment - "${stateResponse.data!.content!.asString()}"');
     expect(stateResponse.success, isTrue);
     expect(
-        stateResponse.data!.etag, 'c140f82cb70e3884ad729b5055b7eaa81c795f1f');
+        stateResponse.data!.etag, '7472f2218fc65ef9fc883040039de8fdde128102');
   });
 
   test("should save state", () async {
@@ -415,12 +417,13 @@ void main() {
     );
 
     final save = await lrs.saveState(doc);
-    print(save.errMsg);
+    expect(save.errMsg, isNull);
     expect(save.success, isTrue);
   });
 
   test("should overwrite state", () async {
     final clear = await lrs.clearState(activity, agent);
+    expect(clear.errMsg, isNull);
     expect(clear.success, isTrue);
 
     final doc = StateDocument(
@@ -431,10 +434,11 @@ void main() {
     );
 
     final save = await lrs.saveState(doc);
+    expect(save.errMsg, isNull);
     expect(save.success, isTrue);
 
     final retrieve = await lrs.retrieveState('test', activity, agent);
-    print(retrieve.data!.toJson());
+    expect(retrieve.errMsg, isNull);
     expect(retrieve.success, isTrue);
 
     final doc2 = StateDocument(
@@ -445,6 +449,7 @@ void main() {
       etag: retrieve.data!.etag,
     );
     final stateResponse = await lrs.saveState(doc2);
+    expect(stateResponse.errMsg, isNull);
     expect(stateResponse.success, isTrue);
   });
 
@@ -580,7 +585,7 @@ void main() {
     final retrieveResponse =
         await lrs.retrieveActivityProfile('test', activity);
     expect(retrieveResponse.data!.etag,
-        '6e6e6c11d7e0bffe0369873a2a5fd751ab2ea64f');
+        '80d034ca3519d3e6f7c282c1eda19281c71d56db');
     expect(retrieveResponse.success, isTrue);
   });
 
@@ -617,9 +622,11 @@ void main() {
         content: AttachmentContent.fromString('Test value2'),
       ),
     );
+    expect(save.errMsg, isNull);
     expect(save.success, isTrue);
 
     final retrieve = await lrs.retrieveActivityProfile('test', activity);
+    expect(retrieve.errMsg, isNull);
     expect(retrieve.success, isTrue);
 
     final lrsResp = await lrs.saveActivityProfile(ActivityProfileDocument(
@@ -628,6 +635,7 @@ void main() {
       etag: retrieve.data!.etag,
       content: AttachmentContent.fromString('Test value3'),
     ));
+    expect(lrsResp.errMsg, isNull);
     expect(lrsResp.success, isTrue);
   });
 
@@ -636,6 +644,7 @@ void main() {
       id: 'test',
       activity: activity,
     ));
+    expect(response.errMsg, isNull);
     expect(response.success, isTrue);
   });
 
@@ -647,15 +656,17 @@ void main() {
 
     // Delete any pre-existing profiles for this agent
     final deleteResponse = await lrs.deleteAgentProfile(profile);
-    print(deleteResponse.success);
+    expect(deleteResponse.errMsg, isNull);
+    expect(deleteResponse.success, isTrue);
 
     // Create the agent
     final saveResponse = await lrs.saveAgentProfile(profile);
-    print(saveResponse.errMsg);
+    expect(saveResponse.errMsg, isNull);
     expect(saveResponse.success, isTrue);
 
     // Retrieve the agent
     final response = await lrs.retrievePerson(agent);
+    expect(response.errMsg, isNull);
     expect(response.success, isTrue);
 
     final person = response.data!;
@@ -666,6 +677,7 @@ void main() {
 
   test("should retrieve agent profile ids", () async {
     final response = await lrs.retrieveAgentProfileIds(agent);
+    expect(response.errMsg, isNull);
     expect(response.success, isTrue);
   });
 
@@ -685,7 +697,7 @@ void main() {
 
     final retrieve = await lrs.retrieveAgentProfile('test', agent);
     expect(retrieve.success, isTrue);
-    expect(retrieve.data!.etag, 'da16d3e0cbd55e0f13558ad0ecfd2605e2238c71');
+    expect(retrieve.data!.etag, '38c7c2f3f7b325fec545af63e94383faa93304bb');
   });
 
   test("should save agent profile", () async {
@@ -789,6 +801,7 @@ void main() {
       id: 'test',
       agent: agent,
     ));
+    expect(response.errMsg, isNull);
     expect(response.success, isTrue);
 
     final save = await lrs.saveAgentProfile(AgentProfileDocument(
@@ -796,6 +809,7 @@ void main() {
       agent: agent,
       content: AttachmentContent.fromString('Test value4'),
     ));
+    expect(save.errMsg, isNull);
     expect(save.success, isTrue);
 
     final retrieve = await lrs.retrieveAgentProfile('test', agent);
@@ -807,6 +821,7 @@ void main() {
       etag: retrieve.data!.etag,
       content: AttachmentContent.fromString('Test value5'),
     ));
+    expect(overwrite.errMsg, isNull);
     expect(overwrite.success, isTrue);
   });
 
@@ -827,7 +842,7 @@ void main() {
     );
 
     final response = await lrs.saveStatement(statement);
-    print(response.errMsg);
+    expect(response.errMsg, isNull);
     expect(response.success, isTrue);
     expect(response.data!.id, isNotNull);
     compareStatements(response.data!, statement);
@@ -925,11 +940,15 @@ void main() {
 
     final query = StatementsQuery(
       format: QueryResultFormat.EXACT,
+      activityID: activity?.id,
       limit: 10,
+      since: DateTime.now().subtract(Duration(seconds: 10)),
       attachments: true,
+      ascending: false,
     );
 
     final queryResult = await lrs.queryStatements(query);
+    expect(queryResult.errMsg, isNull);
     expect(queryResult.success, isTrue);
 
     final calculated = sha256.convert(

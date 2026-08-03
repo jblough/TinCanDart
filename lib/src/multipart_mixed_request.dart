@@ -55,7 +55,7 @@ class MultipartMixedRequest extends BaseRequest {
     length += 'Content-Type: application/json\r\n\r\n'.length;
     length += utf8.encode(_body!).length + newLineLength;
 
-    for (var attachment in _attachments!) {
+    for (final attachment in _attachments!) {
       length += "--".length +
           _boundaryLength +
           newLineLength +
@@ -74,9 +74,7 @@ class MultipartMixedRequest extends BaseRequest {
         "multipart requests.");
   }
 
-  void writeAscii(StreamController<List<int>> controller, String string) {
-    controller.add(utf8.encode(string));
-  }
+  void writeAscii(StreamController<List<int>> controller, String string) => controller.add(utf8.encode(string));
 
   void writeUtf8(StreamController<List<int>> controller, String string) =>
       controller.add(utf8.encode(string));
@@ -86,9 +84,7 @@ class MultipartMixedRequest extends BaseRequest {
   /// Pipes all data and errors from [stream] into [sink]. Completes [Future] once
   /// [stream] is done. Unlike [store], [sink] remains open after [stream] is
   /// done.
-  void writeStreamToSink(ByteBuffer buffer, EventSink<List<int>> sink) {
-    sink.add(buffer.asInt8List());
-  }
+  void writeStreamToSink(ByteBuffer buffer, EventSink<List<int>> sink) => sink.add(buffer.asInt8List());
 
   /// Freezes all mutable fields and returns a single-subscription [ByteStream]
   /// that will emit the request body.
@@ -166,11 +162,3 @@ class ByteStream extends StreamView<List<int>> {
       encoding.decoder.bind(this);
 }
 */
-
-/// A regular expression that matches strings that are composed entirely of
-/// ASCII-compatible characters.
-final RegExp _asciiOnly = RegExp(r"^[\x00-\x7F]+$");
-
-/// Returns whether [string] is composed entirely of ASCII-compatible
-/// characters.
-bool isPlainAscii(String string) => _asciiOnly.hasMatch(string);
