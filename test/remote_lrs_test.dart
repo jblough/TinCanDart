@@ -371,6 +371,7 @@ void main() {
   test("should get more statements", () async {
     final query = StatementsQuery(
       format: QueryResultFormat.IDS,
+      since: DateTime.now().subtract(Duration(seconds: 100)),
       limit: 2,
     );
 
@@ -403,6 +404,7 @@ void main() {
 
     final stateResponse = await lrs.retrieveState('test', activity, agent);
     print('state attachment - "${stateResponse.data!.content!.asString()}"');
+    expect(stateResponse.errMsg, isNull);
     expect(stateResponse.success, isTrue);
     expect(
         stateResponse.data!.etag, '7472f2218fc65ef9fc883040039de8fdde128102');
@@ -579,7 +581,7 @@ void main() {
     );
 
     final save = await lrs.saveActivityProfile(doc2);
-    print(save.errMsg);
+    expect(save.errMsg, isNull);
     expect(save.success, isTrue);
 
     final retrieveResponse =
@@ -894,7 +896,7 @@ void main() {
     );
 
     final saved = await lrs.saveStatement(statement);
-    print(saved.errMsg);
+    expect(saved.errMsg, isNull);
     expect(saved.success, isTrue);
 
     final retrieved = await lrs.retrieveStatement(saved.data!.id, true);
@@ -914,11 +916,11 @@ void main() {
     );
 
     final saved = await lrs.saveStatement(statement);
-    print(saved.errMsg);
+    expect(saved.errMsg, isNull);
     expect(saved.success, isTrue);
 
     final retrieved = await lrs.retrieveStatement(saved.data!.id, true);
-    print(retrieved.errMsg);
+    expect(retrieved.errMsg, isNull);
     expect(retrieved.success, isTrue);
 
     final calculated =
@@ -987,7 +989,7 @@ void main() {
     );
 
     final save = await lrs.saveActivityProfile(doc2);
-    print(save.errMsg);
+    expect(save.errMsg, isNull);
     expect(save.success, isTrue);
 
     final retrieveBeforeUpdate =
@@ -1068,7 +1070,7 @@ void main() {
       agent: sumAgent,
       content: AttachmentContent.fromString('Test value'),
     ));
-    print(save.errMsg);
+    expect(save.errMsg, isNull);
     expect(save.success, isTrue);
   });
 
@@ -1087,7 +1089,7 @@ void main() {
 
     expect(statement.id, isNull);
     final response = await lrs.saveStatement(statement);
-    print(response.errMsg);
+    expect(response.errMsg, isNull);
     expect(response.success, isTrue);
     compareStatements(response.data!, statement);
   });
@@ -1133,7 +1135,7 @@ void main() {
     );
 
     final saved = await lrs.saveStatement(statement);
-    print(saved.errMsg);
+    expect(saved.errMsg, isNull);
     expect(saved.success, isTrue);
 
     final retrieved = await lrs.retrieveStatement(saved.data!.id, true);

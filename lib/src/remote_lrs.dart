@@ -591,6 +591,7 @@ class RemoteLRS extends LRS {
     final Map<String, String> headers = {
       contentTypeHeader: document.contentType ?? 'application/octet-stream',
     };
+
     if (document.etag != null) {
       headers['If-Match'] = document.etag!;
     } else if (document is! StateDocument) {
