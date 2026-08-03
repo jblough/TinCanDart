@@ -1,15 +1,16 @@
-import 'dart:io';
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:tincan_sample/blocs/lrs_bloc.dart';
+import 'package:tincan_sample/screens/lrs_feedback_screen_state.dart';
 
 class StepperScreen extends StatefulWidget {
   @override
-  State<StepperScreen> createState() => _StepperScreenState();
+  State createState() => _StepperScreenState();
 }
 
-class _StepperScreenState extends State<StepperScreen> {
+class _StepperScreenState extends LrsFeedbackScreenState<StepperScreen> {
   int _currentStep = 0;
   DateTime? _start;
   DateTime? _finish;
@@ -20,17 +21,12 @@ class _StepperScreenState extends State<StepperScreen> {
   final _data = <String, dynamic>{};
   final _formKey = GlobalKey<FormState>();
 
-  StreamSubscription<LrsFeedback>? _subscription;
-
 
   @override
   void initState() {
     super.initState();
 
     _start = DateTime.now();
-
-    _subscription = lrsBloc.feedback!.listen(_listenForFeedback);
-
   }
 
   @override
@@ -38,8 +34,6 @@ class _StepperScreenState extends State<StepperScreen> {
     _stepOneFocus.dispose();
     _stepTwoFocus.dispose();
     _stepThreeFocus.dispose();
-
-    _subscription?.cancel();
 
     super.dispose();
   }
@@ -298,30 +292,5 @@ class _StepperScreenState extends State<StepperScreen> {
     );
 
     lrsBloc.recordStatement(statement);
-  }
-
-  void _showFeedback(LrsFeedback feedback) async {
-    if (feedback.isError) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Row(children: <Widget>[
-          Icon(Icons.error),
-          Container(width: 5, height: 1),
-          Text(feedback.feedback!),
-        ]),
-        backgroundColor: Colors.red,
-      ));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Row(children: <Widget>[
-          Icon(Icons.done),
-          Container(width: 5, height: 1),
-          Text(feedback.feedback!),
-        ]),
-      ));
-    }
-  }
-
-  void _listenForFeedback(LrsFeedback feedback) {
-    _showFeedback(feedback);
   }
 }
