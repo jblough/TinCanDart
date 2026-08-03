@@ -5,7 +5,7 @@ import 'package:tincan/tincan.dart';
 
 void main() {
   test("should read activity definition with choices", () {
-    final statement = Statement.fromJson(json.decode(_json))!;
+    final statement = Statement.fromJson(json.decode(_json) as Map<String, dynamic>?)!;
 
     expect(statement, isNotNull);
     expect(statement.actor, isNotNull);

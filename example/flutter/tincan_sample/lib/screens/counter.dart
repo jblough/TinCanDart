@@ -1,33 +1,16 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:tincan_sample/blocs/lrs_bloc.dart';
+import 'package:tincan_sample/screens/lrs_feedback_screen_state.dart';
 
 class CounterScreen extends StatefulWidget {
-  CounterScreen({Key? key}) : super(key: key);
+  CounterScreen({super.key});
 
   @override
   State createState() => _CounterScreenState();
 }
 
-class _CounterScreenState extends State<CounterScreen> {
+class _CounterScreenState extends LrsFeedbackScreenState<CounterScreen> {
   int _counter = 0;
-
-  StreamSubscription<LrsFeedback>? _subscription;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _subscription = lrsBloc.feedback!.listen(_listenForFeedback);
-  }
-
-  @override
-  void dispose() {
-    _subscription?.cancel();
-
-    super.dispose();
-  }
 
   void _incrementCounter() {
     setState(() {
@@ -91,28 +74,4 @@ class _CounterScreenState extends State<CounterScreen> {
     );
   }
 
-  void _showFeedback(LrsFeedback feedback) async {
-    if (feedback.isError) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Row(children: <Widget>[
-          Icon(Icons.error),
-          Container(width: 5, height: 1),
-          Text(feedback.feedback!),
-        ]),
-        backgroundColor: Colors.red,
-      ));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Row(children: <Widget>[
-          Icon(Icons.done),
-          Container(width: 5, height: 1),
-          Text(feedback.feedback!),
-        ]),
-      ));
-    }
-  }
-
-  void _listenForFeedback(LrsFeedback feedback) {
-    _showFeedback(feedback);
-  }
 }

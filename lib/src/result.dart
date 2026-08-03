@@ -44,12 +44,12 @@ class Result {
     }
 
     return Result(
-      score: Score.fromJson(json['score']),
-      success: json['success'],
-      completion: json['completion'],
-      duration: TinCanDuration.fromString(json['duration']),
-      response: json['response'],
-      extensions: Extensions.fromJson(json['extensions']),
+      score: Score.fromJson(json['score'] as Map<String, dynamic>?),
+      success: json['success'] as bool?,
+      completion: json['completion'] as bool?,
+      duration: TinCanDuration.fromString(json['duration'] as String?),
+      response: json['response'] as String?,
+      extensions: Extensions.fromJson(json['extensions'] as Map<String, dynamic>?),
     );
   }
 

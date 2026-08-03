@@ -5,7 +5,7 @@ import 'package:tincan/tincan.dart' show Person;
 
 void main() {
   test("should import person", () {
-    final result = Person.fromJson(json.decode(_json))!;
+    final result = Person.fromJson(json.decode(_json) as Map<String, dynamic>?)!;
     expect(result, isNotNull);
     expect(result.name!.length, 1);
     expect(result.name![0], 'Test Agent');

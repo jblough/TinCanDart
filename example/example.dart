@@ -1,6 +1,6 @@
 import 'package:tincan/tincan.dart';
 
-main() async {
+Future<void> main() async {
   final lrs = RemoteLRS(
     endpoint: '',
     username: '',

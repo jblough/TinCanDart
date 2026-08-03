@@ -97,15 +97,15 @@ class TinCanDuration {
     }
 
     // Else use fromParts
-    String? years = RegExp(r'([0-9,.]+)Y').firstMatch(duration)?.group(1);
+    final years = RegExp(r'([0-9,.]+)Y').firstMatch(duration)?.group(1);
     // Since months and minutes both use 'M', split on the 'T' if present
-    String? months = (duration.contains('T'))
+    final months = (duration.contains('T'))
         ? RegExp(r'([0-9,.]+)M').firstMatch(duration.split('T')[0])?.group(1)
         : RegExp(r'[^T]([0-9,.]+)M').firstMatch(duration)?.group(1);
-    String? days = RegExp(r'([0-9,.]+)D').firstMatch(duration)?.group(1);
-    String? hours = RegExp(r'([0-9,.]+)H').firstMatch(duration)?.group(1);
-    String? minutes = RegExp(r'T.*?([0-9,.]+)M').firstMatch(duration)?.group(1);
-    String? seconds = RegExp(r'([0-9,.]+)S').firstMatch(duration)?.group(1);
+    final days = RegExp(r'([0-9,.]+)D').firstMatch(duration)?.group(1);
+    final hours = RegExp(r'([0-9,.]+)H').firstMatch(duration)?.group(1);
+    final minutes = RegExp(r'T.*?([0-9,.]+)M').firstMatch(duration)?.group(1);
+    final seconds = RegExp(r'([0-9,.]+)S').firstMatch(duration)?.group(1);
 
     return TinCanDuration.fromParts(
       years: years,
@@ -133,8 +133,8 @@ class TinCanDuration {
     // 00:00:16.043000
     final pattern = RegExp(r'([0-9]+):([0-9]+):([0-9.]+)');
     final match = pattern.firstMatch(duration.toString())!;
-    int inDays = duration.inDays;
-    int? days = (inDays > 0) ? inDays : null;
+    final int inDays = duration.inDays;
+    final int? days = (inDays > 0) ? inDays : null;
     int? hours =
         (inDays > 0) ? (duration.inHours % 24) : int.tryParse(match.group(1)!);
     if (hours == 0) {

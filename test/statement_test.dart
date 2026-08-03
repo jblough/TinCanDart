@@ -33,7 +33,7 @@ void main() {
   });
 
   test("should read content with badge", () {
-    final statement = Statement.fromJson(json.decode(_bodyWithBadge))!;
+    final statement = Statement.fromJson(json.decode(_bodyWithBadge) as Map<String, dynamic>?)!;
 
     expect(statement, isNotNull);
     expect(statement.actor, isNotNull);

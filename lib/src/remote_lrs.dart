@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 
 import './about.dart';
 import './activity.dart';
@@ -33,7 +32,7 @@ class RemoteLRS extends LRS {
   final Version _version;
 
   final String? auth;
-  final Map? extended;
+  final Map<String, dynamic>? extended;
   final bool prettyJson;
 
   final http.Client _client;
@@ -46,46 +45,46 @@ class RemoteLRS extends LRS {
     this.extended,
     this.prettyJson = false,
     http.Client? client,
-  })  : this.endpoint = ValidatedUri.fromString(endpoint?.toString(),
+  })  : endpoint = ValidatedUri.fromString(endpoint?.toString(),
             appendTrailingSlash: true),
         _client = client ?? http.Client(),
         auth = generateAuth(username, password),
         _version = version ?? TinCanVersion.latest();
 
   @override
-  Future<LRSResponse> deleteAgentProfile(AgentProfileDocument profile) async {
-    final params = {
-      'profileId': profile.id,
+  Future<LRSResponse<void>> deleteAgentProfile(AgentProfileDocument profile) async {
+    final Map<String, String> params = {
+      'profileId': profile.id!,
       'agent': _agentToString(profile.agent!),
     };
 
-    return await _deleteDocument('agents/profile', params);
+    return _deleteDocument('agents/profile', params);
   }
 
   @override
-  Future<LRSResponse> updateAgentProfile(AgentProfileDocument profile) async {
-    final params = {
-      'profileId': profile.id,
+  Future<LRSResponse<void>> updateAgentProfile(AgentProfileDocument profile) async {
+    final Map<String, String> params = {
+      'profileId': profile.id!,
       'agent': _agentToString(profile.agent!),
     };
 
-    return await _updateDocument('agents/profile', params, profile);
+    return _updateDocument('agents/profile', params, profile);
   }
 
   @override
-  Future<LRSResponse> saveAgentProfile(AgentProfileDocument profile) async {
-    final params = {
-      'profileId': profile.id,
+  Future<LRSResponse<void>> saveAgentProfile(AgentProfileDocument profile) async {
+    final Map<String, String> params = {
+      'profileId': profile.id!,
       'agent': _agentToString(profile.agent!),
     };
 
-    return await _saveDocument('agents/profile', params, profile);
+    return _saveDocument('agents/profile', params, profile);
   }
 
   @override
   Future<LRSResponse<AgentProfileDocument>> retrieveAgentProfile(
       String id, Agent? agent) async {
-    final params = {
+    final Map<String, String> params = {
       'profileId': id,
       'agent': _agentToString(agent!),
     };
@@ -94,13 +93,13 @@ class RemoteLRS extends LRS {
       id: id,
       agent: agent,
     );
-    return await _getAgentProfileDocument('agents/profile', params, document);
+    return _getAgentProfileDocument('agents/profile', params, document);
   }
 
   @override
   Future<LRSResponse<List<String>>> retrieveAgentProfileIds(Agent? agent,
       {DateTime? since}) async {
-    final params = {
+    final Map<String, String> params = {
       'agent': _agentToString(agent!),
     };
     if (since != null) {
@@ -111,32 +110,33 @@ class RemoteLRS extends LRS {
 
   @override
   Future<LRSResponse<Person>> retrievePerson(Agent? agent) async {
-    final params = {
+    final Map<String, String> params = {
       'agent': _agentToString(agent!),
     };
-    final response = await _makeRequest('agents', 'GET', queryParams: params);
-    if (response?.statusCode == 200) {
+    final dynamic response = await _makeRequest('agents', 'GET', queryParams: params);
+    if (response is http.Response && response.statusCode == 200) {
       //print(response.body);
       return LRSResponse<Person>(
-          success: true, data: Person.fromJson(json.decode(response.body)));
+          success: true,
+          data: Person.fromJson(json.decode(response.body) as Map<String, dynamic>?));
     } else {
-      return LRSResponse(success: false, errMsg: response?.body);
+      return LRSResponse<Person>(success: false, errMsg: (response as http.Response?)?.body);
     }
   }
 
   @override
-  Future<LRSResponse> deleteActivityProfile(ActivityProfileDocument profile) {
-    final params = {
-      'profileId': profile.id,
+  Future<LRSResponse<void>> deleteActivityProfile(ActivityProfileDocument profile) {
+    final Map<String, String> params = {
+      'profileId': profile.id!,
       'activityId': profile.activity!.id.toString(),
     };
     return _deleteDocument('activities/profile', params);
   }
 
   @override
-  Future<LRSResponse> updateActivityProfile(ActivityProfileDocument profile) {
-    final params = {
-      'profileId': profile.id,
+  Future<LRSResponse<void>> updateActivityProfile(ActivityProfileDocument profile) {
+    final Map<String, String> params = {
+      'profileId': profile.id!,
       'activityId': profile.activity!.id.toString(),
     };
 
@@ -144,9 +144,9 @@ class RemoteLRS extends LRS {
   }
 
   @override
-  Future<LRSResponse> saveActivityProfile(ActivityProfileDocument profile) {
-    final params = {
-      'profileId': profile.id,
+  Future<LRSResponse<void>> saveActivityProfile(ActivityProfileDocument profile) {
+    final Map<String, String> params = {
+      'profileId': profile.id!,
       'activityId': profile.activity!.id.toString(),
     };
     return _saveDocument('activities/profile', params, profile);
@@ -155,7 +155,7 @@ class RemoteLRS extends LRS {
   @override
   Future<LRSResponse<ActivityProfileDocument>> retrieveActivityProfile(
       String id, Activity? activity) async {
-    final params = {
+    final Map<String, String> params = {
       'profileId': id,
       'activityId': activity!.id.toString(),
     };
@@ -165,14 +165,14 @@ class RemoteLRS extends LRS {
       activity: activity,
     );
 
-    return await _getActivityProfileDocument(
+    return _getActivityProfileDocument(
         'activities/profile', params, profileDocument);
   }
 
   @override
   Future<LRSResponse<List<String>>> retrieveActivityProfileIds(
       Activity? activity) async {
-    final params = {
+    final Map<String, String> params = {
       'activityId': activity!.id.toString(),
     };
     return _getProfileKeys('activities/profile', params);
@@ -180,84 +180,84 @@ class RemoteLRS extends LRS {
 
   @override
   Future<LRSResponse<Activity>> retrieveActivity(String id) async {
-    final params = {
+    final Map<String, String> params = {
       'activityId': id,
     };
-    final response =
+    final dynamic response =
         await _makeRequest('activities', 'GET', queryParams: params);
 
-    if (response?.statusCode == 200) {
+    if (response is http.Response && response.statusCode == 200) {
       return LRSResponse<Activity>(
         success: true,
-        data: Activity.fromJson(json.decode(response.body)),
+        data: Activity.fromJson(json.decode(response.body) as Map<String, dynamic>?),
       );
     } else {
-      return LRSResponse(
+      return LRSResponse<Activity>(
         success: false,
-        errMsg: response?.body,
+        errMsg: (response as http.Response?)?.body,
       );
     }
   }
 
   @override
-  Future<LRSResponse> clearState(Activity? activity, Agent? agent,
+  Future<LRSResponse<void>> clearState(Activity? activity, Agent? agent,
       {String? registration}) async {
-    final params = {
+    final Map<String, String> params = {
       'activityId': activity!.id.toString(),
       'agent': _agentToString(agent!),
     };
     if (registration != null) {
       params['registration'] = registration;
     }
-    return await _deleteDocument('activities/state', params);
+    return _deleteDocument('activities/state', params);
   }
 
   @override
-  Future<LRSResponse> deleteState(StateDocument state) async {
-    final params = {
-      'stateId': state.id,
+  Future<LRSResponse<void>> deleteState(StateDocument state) async {
+    final Map<String, String> params = {
+      'stateId': state.id!,
       'activityId': state.activity!.id.toString(),
       'agent': _agentToString(state.agent!),
     };
     if (state.registration != null) {
-      params['registration'] = state.registration;
+      params['registration'] = state.registration!;
     }
-    return await _deleteDocument('activities/state', params);
+    return _deleteDocument('activities/state', params);
   }
 
   @override
-  Future<LRSResponse> updateState(StateDocument state) {
-    final params = {
-      'stateId': state.id,
+  Future<LRSResponse<void>> updateState(StateDocument state) {
+    final Map<String, String> params = {
+      'stateId': state.id!,
       'activityId': state.activity!.id.toString(),
       'agent': _agentToString(state.agent!),
     };
     if (state.registration != null) {
-      params['registration'] = state.registration;
+      params['registration'] = state.registration!;
     }
 
     return _updateDocument('activities/state', params, state);
   }
 
   @override
-  Future<LRSResponse> saveState(StateDocument state) async {
-    final params = {
-      'stateId': state.id,
+  Future<LRSResponse<void>> saveState(StateDocument state) async {
+    final Map<String, String> params = {
+      'stateId': state.id!,
       'activityId': state.activity!.id.toString(),
       'agent': _agentToString(state.agent!),
     };
     if (state.registration != null) {
-      params['registration'] = state.registration;
+      params['registration'] = state.registration!;
     }
 
-    return await _saveDocument('activities/state', params, state);
+    return _saveDocument('activities/state', params, state);
   }
 
   @override
   Future<LRSResponse<StateDocument>> retrieveState(
       String? id, Activity? activity, Agent? agent,
       {String? registration}) async {
-    final params = {
+    final Map<String, String?> params = {
       'stateId': id,
       'activityId': activity!.id.toString(),
       'agent': _agentToString(agent!),
@@ -273,14 +273,14 @@ class RemoteLRS extends LRS {
       registration: registration,
     );
 
-    return await _getStateDocument('activities/state', params, document);
+    return _getStateDocument('activities/state', params, document);
   }
 
   @override
   Future<LRSResponse<List<String>>> retrieveStateIds(
       Activity? activity, Agent? agent,
       {String? registration, DateTime? since}) async {
-    final params = {
+    final Map<String, String> params = {
       'activityId': activity!.id.toString(),
       'agent': _agentToString(agent!),
     };
@@ -291,7 +291,7 @@ class RemoteLRS extends LRS {
       params['since'] = since.toIso8601String();
     }
 
-    return await _getProfileKeys('activities/state', params);
+    return _getProfileKeys('activities/state', params);
   }
 
   @override
@@ -303,44 +303,45 @@ class RemoteLRS extends LRS {
     final port = (endpoint!.asUri.port == -1) ? '' : ':${endpoint!.asUri.port}';
     final resource =
         '${endpoint!.asUri.scheme}://${endpoint!.asUri.host}$port$moreURL';
-    final response = await _makeRequest(resource, 'GET');
+    final dynamic response = await _makeRequest(resource, 'GET');
 
-    if (response?.statusCode == 200) {
-      final results = StatementsResult.fromJson(json.decode(response?.body));
+    if (response is http.Response && response.statusCode == 200) {
+      final results = StatementsResult.fromJson(
+          json.decode(response.body) as Map<String, dynamic>?);
       return LRSResponse<StatementsResult>(success: true, data: results);
     } else {
       return LRSResponse<StatementsResult>(
-          success: false, errMsg: response?.body);
+          success: false, errMsg: (response as http.Response?)?.body);
     }
   }
 
   @override
   Future<LRSResponse<StatementsResult>> queryStatements(
       StatementsQuery query) async {
-    final response = await _makeRequest('statements', 'GET',
+    final dynamic response = await _makeRequest('statements', 'GET',
         queryParams: query.toParameterMap(_version));
 
     dynamic responseBody;
-    if (response.runtimeType.toString() == 'StreamedResponse') {
-      http.StreamedResponse streamedResponse = response;
+    if (response is http.StreamedResponse) {
+      final http.StreamedResponse streamedResponse = response;
       final data = await streamedResponse.stream.bytesToString();
       responseBody = data;
     } else {
-      responseBody = response?.body;
+      responseBody = (response as http.Response?)?.body;
     }
-    //print('Response : $responseBody');
+    //print(\u0027Response : $responseBody\u0027);
 
-    if (response?.statusCode == 200) {
+    if (response is http.BaseResponse && response.statusCode == 200) {
       if (response.headers[contentTypeHeader]?.startsWith('multipart/mixed;') ==
           true) {
         // Parse mixed data
         final contentType = response.headers[contentTypeHeader];
         //print(contentType);
         //print(response.body);
-        final boundary = contentType.split('boundary=')[1];
-        //print('boundary - $boundary');
+        final boundary = contentType!.split('boundary=')[1];
+        //print(\u0027boundary - $boundary\u0027);
         final statement =
-            Statement.fromMixedMultipart(boundary, response.bodyBytes);
+            Statement.fromMixedMultipart(boundary, (response as http.Response).bodyBytes);
         return LRSResponse<StatementsResult>(
           success: true,
           data: StatementsResult(
@@ -348,7 +349,7 @@ class RemoteLRS extends LRS {
           ),
         );
       } else {
-        final decoded = json.decode(responseBody);
+        final decoded = json.decode(responseBody as String) as Map<String, dynamic>;
         return LRSResponse<StatementsResult>(
           success: true,
           data: StatementsResult.fromJson(decoded),
@@ -356,7 +357,7 @@ class RemoteLRS extends LRS {
       }
     } else {
       return LRSResponse<StatementsResult>(
-          success: false, errMsg: response?.body);
+          success: false, errMsg: (response as http.Response?)?.body);
     }
   }
 
@@ -365,7 +366,7 @@ class RemoteLRS extends LRS {
       [bool attachments = false]) {
     final paramName =
         (_version == Version.V095) ? 'statementId' : 'voidedStatementId';
-    final params = {
+    final Map<String, String> params = {
       paramName: id,
       'attachments': attachments.toString(),
     };
@@ -376,7 +377,7 @@ class RemoteLRS extends LRS {
   @override
   Future<LRSResponse<Statement>> retrieveStatement(String? id,
       [bool attachments = false]) async {
-    final params = {
+    final Map<String, String?> params = {
       'statementId': id,
       'attachments': attachments.toString(),
     };
@@ -394,33 +395,33 @@ class RemoteLRS extends LRS {
     final body = json.encode(
         statements.map((statement) => statement.toJson(_version)).toList());
     final attachments = <Attachment>[];
-    statements.forEach((statement) {
-      if (statement.attachments?.isNotEmpty == true) {
+    for (var statement in statements) {
+      if (statement.attachments?.isNotEmpty ?? false) {
         attachments.addAll(statement.attachments!);
       }
-    });
-    final response = await _makeRequest('statements', 'POST',
+    }
+    final dynamic response = await _makeRequest('statements', 'POST',
         additionalHeaders: {contentTypeHeader: 'application/json'},
         body: body,
         attachments: (attachments.isEmpty) ? null : attachments);
-    //print('Response status : ${response?.statusCode}');
-    //print('headers: ${response?.headers}');
+    //print(\u0027Response status : ${response?.statusCode}\u0027);
+    //print(\u0027headers: ${response?.headers}\u0027);
 
     dynamic responseBody;
-    if (response.runtimeType.toString() == 'StreamedResponse') {
-      http.StreamedResponse streamedResponse = response;
+    if (response is http.StreamedResponse) {
+      final http.StreamedResponse streamedResponse = response;
       final data = await streamedResponse.stream.bytesToString();
       responseBody = data;
     } else {
-      responseBody = response?.body;
+      responseBody = (response as http.Response?)?.body;
     }
-    //print('Response : $responseBody');
+    //print(\u0027Response : $responseBody\u0027);
 
-    if (response?.statusCode == 200) {
-      final List ids = json.decode(responseBody);
-      List<Statement> saved = [];
+    if (response is http.BaseResponse && response.statusCode == 200) {
+      final List<dynamic> ids = json.decode(responseBody as String) as List<dynamic>;
+      final List<Statement> saved = [];
       for (var ctr = 0; ctr < ids.length; ctr++) {
-        saved.add(statements[ctr].copyWith(id: ids[ctr]));
+        saved.add(statements[ctr].copyWith(id: ids[ctr] as String?));
       }
       return LRSResponse<StatementsResult>(
           success: true,
@@ -435,60 +436,61 @@ class RemoteLRS extends LRS {
   @override
   Future<LRSResponse<Statement>> saveStatement(Statement statement) async {
     final verb = (statement.id == null) ? 'POST' : 'PUT';
-    final params =
-        (statement.id == null) ? null : {'statementId': statement.id};
+    final Map<String, String>? params =
+        (statement.id == null) ? null : {'statementId': statement.id!};
 
     final body = json.encode(statement.toJson(_version));
 
-    final response = await _makeRequest('statements', verb,
+    final dynamic response = await _makeRequest('statements', verb,
         queryParams: params, body: body, attachments: statement.attachments);
     //print(response?.statusCode);
     dynamic responseBody;
-    if (response.runtimeType.toString() == 'StreamedResponse') {
-      http.StreamedResponse streamedResponse = response;
+    if (response is http.StreamedResponse) {
+      final http.StreamedResponse streamedResponse = response;
       final data = await streamedResponse.stream.bytesToString();
       responseBody = data;
     } else {
-      responseBody = response?.body;
+      responseBody = (response as http.Response?)?.body;
     }
 
-    if (response?.statusCode == 200) {
+    if (response is http.BaseResponse && response.statusCode == 200) {
       return LRSResponse<Statement>(
         success: true,
         data: statement.copyWith(
-          id: json.decode(responseBody)[0],
+          id: (json.decode(responseBody as String) as List<dynamic>)[0] as String?,
         ),
       );
-    } else if (response?.statusCode == 204) {
+    } else if (response is http.BaseResponse && response.statusCode == 204) {
       return LRSResponse<Statement>(
         success: true,
         data: statement,
       );
     } else {
-      return LRSResponse<Statement>(success: false, errMsg: responseBody);
+      return LRSResponse<Statement>(success: false, errMsg: responseBody as String?);
     }
   }
 
   @override
   Future<LRSResponse<About>> about() async {
-    final response = await _makeRequest('about', 'GET');
+    final dynamic response = await _makeRequest('about', 'GET');
     //print(response?.statusCode);
     //print(response?.body);
 
-    if (response?.statusCode == 200) {
+    if (response is http.Response && response.statusCode == 200) {
       return LRSResponse<About>(
         success: true,
         data: About.fromJson(
-          json.decode(response?.body),
+          json.decode(response.body) as Map<String, dynamic>?,
         ),
       );
     } else {
-      return LRSResponse<About>(success: false, errMsg: response?.body);
+      return LRSResponse<About>(
+          success: false, errMsg: (response as http.Response?)?.body);
     }
   }
 
   static String? generateAuth(String? username, String? password) {
-    if (username?.isNotEmpty == true && password?.isNotEmpty == true) {
+    if ((username ?? '').isNotEmpty && (password ?? '').isNotEmpty) {
       final token = base64Encode(utf8.encode('$username:$password'));
       return 'Basic $token';
     } else {
@@ -496,7 +498,7 @@ class RemoteLRS extends LRS {
     }
   }
 
-  Future _makeRequest(
+  Future<dynamic> _makeRequest(
     String resource,
     String verb, {
     Map<String, String?>? queryParams,
@@ -507,20 +509,19 @@ class RemoteLRS extends LRS {
     // resource, endpoint (from this), query parameters, headers
     String url = (resource.startsWith('http'))
         ? resource
-        : '${this.endpoint}${resource}';
+        : '$endpoint$resource';
 
-    if (queryParams?.isNotEmpty == true) {
-      url += '?' +
-          queryParams!.entries
+    if (queryParams?.isNotEmpty ?? false) {
+      url += '?${queryParams!.entries
               .map((entry) =>
                   '${Uri.encodeQueryComponent(entry.key)}=${Uri.encodeQueryComponent(entry.value!)}')
-              .join('&');
+              .join('&')}';
     }
-    //print('verb - $verb');
-    //print('url - $url');
+    //print(\u0027verb - $verb\u0027);
+    //print(\u0027url - $url\u0027);
 
-    Map<String, String> headers = {};
-    if (additionalHeaders?.isNotEmpty == true) {
+    final Map<String, String> headers = {};
+    if (additionalHeaders?.isNotEmpty ?? false) {
       headers.addAll(additionalHeaders!);
     }
 
@@ -528,114 +529,101 @@ class RemoteLRS extends LRS {
       headers[contentTypeHeader] = 'application/json';
     }
 
-    final version = TinCanVersion.toJsonString(_version);
-    if (version != null) {
-      headers['X-Experience-API-Version'] = version;
-    }
-    if (this.auth != null) {
-      headers['Authorization'] = this.auth!;
+    final version = _version.jsonString;
+    headers['X-Experience-API-Version'] = version;
+    if (auth != null) {
+      headers['Authorization'] = auth!;
     }
 
     //print(url);
 
-    if (attachments?.isNotEmpty == true) {
+    if (attachments?.isNotEmpty ?? false) {
       final request =
-          MultipartMixedRequest(verb.toUpperCase(), Uri.parse(url), body);
+          MultipartMixedRequest(verb.toUpperCase(), Uri.parse(url), body as String?);
       request.headers.addAll(headers);
       request.attachments!.addAll(attachments!);
-      return await request.send();
+      return request.send();
     } else {
-      Future<Response>? response;
-      switch (verb.toUpperCase()) {
-        case 'GET':
-          response = _client.get(Uri.parse(url), headers: headers);
-          break;
-        case 'POST':
-          response = _client.post(Uri.parse(url), headers: headers, body: body);
-          break;
-        case 'PUT':
-          response = _client.put(Uri.parse(url), headers: headers, body: body);
-          break;
-        case 'DELETE':
-          response = _client.delete(Uri.parse(url), headers: headers);
-          break;
-        case 'PATCH':
-          response =
-              _client.patch(Uri.parse(url), headers: headers, body: body);
-          break;
-      }
-
-      return response;
+      return switch (verb.toUpperCase()) {
+        'GET' => _client.get(Uri.parse(url), headers: headers),
+        'POST' => _client.post(Uri.parse(url), headers: headers, body: body),
+        'PUT' => _client.put(Uri.parse(url), headers: headers, body: body),
+        'DELETE' => _client.delete(Uri.parse(url), headers: headers),
+        'PATCH' => _client.patch(Uri.parse(url), headers: headers, body: body),
+        _ => null,
+      };
     }
   }
 
   String _agentToString(Agent agent) {
-    final map = agent.toJson(_version);
+    final Map<String, dynamic> map = agent.toJson(_version);
     map.remove('objectType');
     return json.encode(map);
   }
 
   Future<LRSResponse<List<String>>> _getProfileKeys(
       String resource, Map<String, String> params) async {
-    final response = await _makeRequest(resource, 'GET', queryParams: params);
-    //print('Response : ${response?.body}');
-    //print('headers : ${response?.headers}');
-    if (response?.statusCode == 200) {
-      final List<dynamic> data = json.decode(response?.body);
+    final dynamic response = await _makeRequest(resource, 'GET', queryParams: params);
+    //print(\u0027Response : ${response?.body}\u0027);
+    //print(\u0027headers : ${response?.headers}\u0027);
+    if (response is http.Response && response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body) as List<dynamic>;
       return LRSResponse<List<String>>(
           success: true, data: data.cast<String>());
     } else {
-      return LRSResponse<List<String>>(success: false, errMsg: response?.body);
+      return LRSResponse<List<String>>(success: false, errMsg: (response as http.Response?)?.body);
     }
   }
 
-  Future<LRSResponse> _deleteDocument(
+  Future<LRSResponse<void>> _deleteDocument(
       String resource, Map<String, String?> params) async {
-    final response =
+    final dynamic response =
         await _makeRequest(resource, 'DELETE', queryParams: params);
-    if (response?.statusCode == 204) {
-      return LRSResponse(success: true);
+    if (response is http.Response && response.statusCode == 204) {
+      return LRSResponse<void>(success: true);
     } else {
-      return LRSResponse(success: false, errMsg: response?.body);
+      return LRSResponse<void>(success: false, errMsg: (response as http.Response?)?.body);
     }
   }
 
-  Future<LRSResponse> _saveDocument(
+  Future<LRSResponse<void>> _saveDocument(
       String resource, Map<String, String?> params, Document document) async {
-    final headers = {
+    final Map<String, String> headers = {
       contentTypeHeader: document.contentType ?? 'application/octet-stream',
     };
+
     if (document.etag != null) {
       headers['If-Match'] = document.etag!;
-    } else {
+    } else if (document is! StateDocument) {
       headers['If-None-Match'] = '*';
     }
 
-    final response = await _makeRequest(resource, 'PUT',
+    final dynamic response = await _makeRequest(resource, 'POST',
         queryParams: params,
         additionalHeaders: headers,
         body: document.content?.asList());
 
-    //print('Response : ${response?.statusCode}');
-    //print('Response : ${response?.body}');
-    //print('headers: ${response?.headers}');
+    //print(\u0027Response : ${response?.statusCode}\u0027);
+    //print(\u0027Response : ${response?.body}\u0027);
+    //print(\u0027headers: ${response?.headers}\u0027);
 
-    if (response?.statusCode == 204) {
-      return LRSResponse(success: true);
+    if (response is http.Response && response.statusCode == 204) {
+      return LRSResponse<void>(success: true);
     } else {
-      if ((response?.body != null && response?.body != 'null') ||
-          response?.statusCode != 412) {
-        return LRSResponse(success: false, errMsg: response?.body);
+      final http.Response? r = response as http.Response?;
+      if ((r?.body != null && r?.body != 'null') ||
+          r?.statusCode != 412) {
+        return LRSResponse<void>(success: false, errMsg: r?.body);
       } else {
-        return LRSResponse(success: false, errMsg: 'Conflict');
+        return LRSResponse<void>(success: false, errMsg: 'Conflict');
       }
     }
   }
 
   Future<LRSResponse<StateDocument>> _getStateDocument(String resource,
       Map<String, String?> params, StateDocument document) async {
-    final response = await _makeRequest(resource, 'GET', queryParams: params);
-    if (response?.statusCode == 200) {
+    final dynamic response = await _makeRequest(resource, 'GET', queryParams: params);
+    if (response is http.Response && response.statusCode == 200) {
       final data = StateDocument(
         id: document.id,
         agent: document.agent,
@@ -643,16 +631,16 @@ class RemoteLRS extends LRS {
         contentType: response.headers[contentTypeHeader],
         content: AttachmentContent.fromUint8List(response.bodyBytes),
         registration: document.registration,
-        etag: (response.headers[etagHeader] as String?)?.replaceAll('"', ''),
+        etag: (response.headers[etagHeader])?.replaceAll('"', ''),
         timestamp: response.headers[lastModifiedHeader] == null
             ? null
-            : DateTime.tryParse(response.headers[lastModifiedHeader]),
+            : DateTime.tryParse(response.headers[lastModifiedHeader]!),
       );
       return LRSResponse<StateDocument>(success: true, data: data);
-    } else if (response?.statusCode == 404) {
+    } else if (response is http.Response && response.statusCode == 404) {
       return LRSResponse<StateDocument>(success: true, data: document);
     } else {
-      return LRSResponse<StateDocument>(success: false, errMsg: response?.body);
+      return LRSResponse<StateDocument>(success: false, errMsg: (response as http.Response?)?.body);
     }
   }
 
@@ -660,21 +648,21 @@ class RemoteLRS extends LRS {
       String resource,
       Map<String, String> params,
       AgentProfileDocument document) async {
-    final response = await _makeRequest(resource, 'GET', queryParams: params);
-    if (response?.statusCode == 200) {
+    final dynamic response = await _makeRequest(resource, 'GET', queryParams: params);
+    if (response is http.Response && response.statusCode == 200) {
       final data = AgentProfileDocument(
         id: document.id,
         agent: document.agent,
         contentType: response.headers[contentTypeHeader],
         content: AttachmentContent.fromUint8List(response.bodyBytes),
-        etag: (response.headers[etagHeader] as String?)?.replaceAll('"', ''),
+        etag: (response.headers[etagHeader])?.replaceAll('"', ''),
         timestamp: response.headers[lastModifiedHeader] == null
             ? null
-            : DateTime.tryParse(response.headers[lastModifiedHeader]),
+            : DateTime.tryParse(response.headers[lastModifiedHeader]!),
       );
       return LRSResponse<AgentProfileDocument>(success: true, data: data);
     } else {
-      return LRSResponse(success: false, errMsg: response?.body);
+      return LRSResponse(success: false, errMsg: (response as http.Response?)?.body);
     }
   }
 
@@ -682,25 +670,25 @@ class RemoteLRS extends LRS {
       String resource,
       Map<String, String> params,
       ActivityProfileDocument document) async {
-    final response = await _makeRequest(resource, 'GET', queryParams: params);
-    if (response?.statusCode == 200) {
+    final dynamic response = await _makeRequest(resource, 'GET', queryParams: params);
+    if (response is http.Response && response.statusCode == 200) {
       final data = ActivityProfileDocument(
         id: document.id,
         activity: document.activity,
         contentType: response.headers[contentTypeHeader],
         content: AttachmentContent.fromUint8List(response.bodyBytes),
-        etag: (response.headers[etagHeader] as String?)?.replaceAll('"', ''),
+        etag: (response.headers[etagHeader])?.replaceAll('"', ''),
         timestamp: response.headers[lastModifiedHeader] == null
             ? null
-            : DateTime.tryParse(response.headers[lastModifiedHeader]),
+            : DateTime.tryParse(response.headers[lastModifiedHeader]!),
       );
       return LRSResponse<ActivityProfileDocument>(success: true, data: data);
     } else {
-      return LRSResponse(success: false, errMsg: response?.body);
+      return LRSResponse(success: false, errMsg: (response as http.Response?)?.body);
     }
   }
 
-  Future<LRSResponse> _updateDocument(
+  Future<LRSResponse<void>> _updateDocument(
       String resource, Map<String, String?> params, Document document) async {
     Map<String, String>? headers;
     if (document.etag != null) {
@@ -715,30 +703,30 @@ class RemoteLRS extends LRS {
       }
     }
 
-    final response = await _makeRequest(resource, 'POST',
+    final dynamic response = await _makeRequest(resource, 'POST',
         queryParams: params,
         additionalHeaders: headers,
         body: document.content?.asList());
 
-    //print('Response code : ${response?.statusCode}');
-    //print('Response body : ${response?.body}');
-    //print('headers: ${response?.headers}');
+    //print(\u0027Response code : ${response?.statusCode}\u0027);
+    //print(\u0027Response body : ${response?.body}\u0027);
+    //print(\u0027headers: ${response?.headers}\u0027);
 
-    if (response?.statusCode == 204) {
-      return LRSResponse(success: true);
+    if (response is http.Response && response.statusCode == 204) {
+      return LRSResponse<void>(success: true);
     } else {
-      return LRSResponse(success: false, errMsg: response?.body);
+      return LRSResponse<void>(success: false, errMsg: (response as http.Response?)?.body);
     }
   }
 
   Future<LRSResponse<Statement>> _getStatement(
     Map<String, String?> params,
   ) async {
-    final http.Response? response =
+    final dynamic response =
         await (_makeRequest('statements', 'GET', queryParams: params));
 
-    if (response?.statusCode == 200) {
-      if (response!.headers[contentTypeHeader]
+    if (response is http.Response && response.statusCode == 200) {
+      if (response.headers[contentTypeHeader]
               ?.startsWith('multipart/mixed;') ==
           true) {
         // Parse mixed data
@@ -752,14 +740,16 @@ class RemoteLRS extends LRS {
           data: statement[0],
         );
       } else {
-        final statement = Statement.fromJson(json.decode(response.body));
+        final statement = Statement.fromJson(
+            json.decode(response.body) as Map<String, dynamic>?);
         return LRSResponse<Statement>(
           success: true,
-          data: statement,
+          data: statement!,
         );
       }
     } else {
-      return LRSResponse<Statement>(success: false, errMsg: response?.body);
+      return LRSResponse<Statement>(
+          success: false, errMsg: (response as http.Response?)?.body);
     }
   }
 }

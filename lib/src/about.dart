@@ -26,8 +26,8 @@ class About {
     }
 
     final versions = <Version>[];
-    json['version']?.forEach((version) {
-      final tcVersion = TinCanVersion.fromJsonString(version);
+    json['version']?.forEach((dynamic version) {
+      final tcVersion = TinCanVersion.fromJsonString(version as String?);
       if (tcVersion != null) {
         versions.add(tcVersion);
       }
@@ -35,7 +35,7 @@ class About {
 
     return About(
       version: versions,
-      extensions: Extensions.fromJson(json['extensions']),
+      extensions: Extensions.fromJson(json['extensions'] as Map<String, dynamic>?),
     );
   }
 }

@@ -1,4 +1,4 @@
-library tincan;
+library;
 
 export 'src/about.dart';
 export 'src/activity.dart';

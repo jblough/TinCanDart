@@ -52,16 +52,16 @@ abstract class LRS {
       {String? registration});
 
   /// Save a state value
-  Future<LRSResponse> saveState(StateDocument state);
+  Future<LRSResponse<void>> saveState(StateDocument state);
 
   /// Update an existing state value
-  Future<LRSResponse> updateState(StateDocument state);
+  Future<LRSResponse<void>> updateState(StateDocument state);
 
   /// Remove a state value
-  Future<LRSResponse> deleteState(StateDocument state);
+  Future<LRSResponse<void>> deleteState(StateDocument state);
 
   /// Remove all state values
-  Future<LRSResponse> clearState(Activity? activity, Agent? agent,
+  Future<LRSResponse<void>> clearState(Activity? activity, Agent? agent,
       {String? registration});
 
   /// Retrieve a full description of an Activity from the LRS
@@ -76,13 +76,13 @@ abstract class LRS {
       String id, Activity? activity);
 
   /// Save an activity profile
-  Future<LRSResponse> saveActivityProfile(ActivityProfileDocument profile);
+  Future<LRSResponse<void>> saveActivityProfile(ActivityProfileDocument profile);
 
   /// Update an existing activity profile
-  Future<LRSResponse> updateActivityProfile(ActivityProfileDocument profile);
+  Future<LRSResponse<void>> updateActivityProfile(ActivityProfileDocument profile);
 
   /// Remove an activity profile
-  Future<LRSResponse> deleteActivityProfile(ActivityProfileDocument profile);
+  Future<LRSResponse<void>> deleteActivityProfile(ActivityProfileDocument profile);
 
   /// Retrieve an agent
   Future<LRSResponse<Person>> retrievePerson(Agent? agent);
@@ -96,11 +96,11 @@ abstract class LRS {
       String id, Agent? agent);
 
   /// Save an agent profile
-  Future<LRSResponse> saveAgentProfile(AgentProfileDocument profile);
+  Future<LRSResponse<void>> saveAgentProfile(AgentProfileDocument profile);
 
   /// Update an existing agent profile
-  Future<LRSResponse> updateAgentProfile(AgentProfileDocument profile);
+  Future<LRSResponse<void>> updateAgentProfile(AgentProfileDocument profile);
 
   /// Remove an agent profile
-  Future<LRSResponse> deleteAgentProfile(AgentProfileDocument profile);
+  Future<LRSResponse<void>> deleteAgentProfile(AgentProfileDocument profile);
 }

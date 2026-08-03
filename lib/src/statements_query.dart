@@ -5,6 +5,7 @@ import './statement_target.dart';
 import './validated_uri.dart';
 import './versions.dart';
 
+// ignore_for_file: constant_identifier_names
 enum QueryResultFormat {
   /// Only return IDs
   IDS,
@@ -90,122 +91,118 @@ class StatementsQuery {
     this.relatedAgents,
     this.format,
     this.attachments,
-  })  : this.verbID = ValidatedUri.fromString(verbID?.toString()),
-        this.activityID = ValidatedUri.fromString(activityID?.toString());
+  })  : verbID = ValidatedUri.fromString(verbID?.toString()),
+        activityID = ValidatedUri.fromString(activityID?.toString());
 
-  Map<String, String?> toParameterMap(Version version) {
-    switch (version) {
-      case Version.V09:
-      case Version.V095:
-        return _toParameterMapVersion095(version);
-      default:
-        return _toParameterMapVersion10x(version);
-    }
-  }
+  Map<String, String?> toParameterMap(Version version) =>
+      switch (version) {
+        Version.V09 || Version.V095 => _toParameterMapVersion095(version),
+        _ => _toParameterMapVersion10x(version)
+      };
 
   Map<String, String?> _toParameterMapVersion095(Version version) {
     final Map<String, String?> params = {};
 
-    if (this.verbID != null) {
-      params['verb'] = this.verbID.toString();
+    if (verbID != null) {
+      params['verb'] = verbID.toString();
     }
 
-    if (this.object != null) {
-      params['object'] = json.encode(this.object!.toJson(version));
+    if (object != null) {
+      params['object'] = json.encode(object!.toJson(version));
     }
 
-    if (this.registration != null) {
-      params['registration'] = this.registration;
+    if (registration != null) {
+      params['registration'] = registration;
     }
 
-    if (this.context != null) {
-      params['context'] = this.context.toString();
+    if (context != null) {
+      params['context'] = context.toString();
     }
 
-    if (this.actor != null) {
-      params['actor'] = json.encode(this.actor!.toJson(version));
+    if (actor != null) {
+      params['actor'] = json.encode(actor!.toJson(version));
     }
 
-    if (this.since != null) {
-      params['since'] = this.since!.toUtc().toIso8601String();
+    if (since != null) {
+      params['since'] = since!.toUtc().toIso8601String();
     }
 
-    if (this.until != null) {
-      params['until'] = this.until!.toUtc().toIso8601String();
+    if (until != null) {
+      params['until'] = until!.toUtc().toIso8601String();
     }
 
-    if (this.limit != null) {
-      params['limit'] = this.limit.toString();
+    if (limit != null) {
+      params['limit'] = limit.toString();
     }
 
-    if (this.authoritative != null) {
-      params['authoritative'] = this.authoritative.toString();
+    if (authoritative != null) {
+      params['authoritative'] = authoritative.toString();
     }
 
-    if (this.sparse != null) {
-      params['sparse'] = this.sparse.toString();
+    if (sparse != null) {
+      params['sparse'] = sparse.toString();
     }
 
-    if (this.instructor != null) {
-      params['instructor'] = json.encode(this.instructor!.toJson(version));
+    if (instructor != null) {
+      params['instructor'] = json.encode(instructor!.toJson(version));
     }
 
-    if (this.ascending != null) {
-      params['ascending'] = this.ascending.toString();
+    if (ascending != null) {
+      params['ascending'] = ascending.toString();
     }
 
     return params;
   }
 
   Map<String, String?> _toParameterMapVersion10x(Version version) {
-    Map<String, String?> params = {};
+    final Map<String, String?> params = {};
 
-    if (this.agent != null) {
-      params['agent'] = json.encode(this.agent!.toJson(version));
+    if (agent != null) {
+      params['agent'] = json.encode(agent!.toJson(version));
     }
 
-    if (this.verbID != null) {
-      params['verb'] = this.verbID.toString();
+    if (verbID != null) {
+      params['verb'] = verbID.toString();
     }
 
-    if (this.activityID != null) {
-      params['activity'] = this.activityID.toString();
+    if (activityID != null) {
+      params['activity'] = activityID.toString();
     }
 
-    if (this.registration != null) {
-      params['registration'] = this.registration;
+    if (registration != null) {
+      params['registration'] = registration;
     }
 
-    if (this.relatedActivities != null) {
-      params['related_activities'] = this.relatedActivities.toString();
+    if (relatedActivities != null) {
+      params['related_activities'] = relatedActivities.toString();
     }
 
-    if (this.relatedAgents != null) {
-      params['related_agents'] = this.relatedAgents.toString();
+    if (relatedAgents != null) {
+      params['related_agents'] = relatedAgents.toString();
     }
 
-    if (this.since != null) {
-      params['since'] = this.since!.toUtc().toIso8601String();
+    if (since != null) {
+      params['since'] = since!.toUtc().toIso8601String();
     }
 
-    if (this.until != null) {
-      params['until'] = this.until!.toUtc().toIso8601String();
+    if (until != null) {
+      params['until'] = until!.toUtc().toIso8601String();
     }
 
-    if (this.limit != null) {
-      params['limit'] = this.limit.toString();
+    if (limit != null) {
+      params['limit'] = limit.toString();
     }
 
-    if (this.format != null) {
-      params['format'] = this.format?.toString().split('.')[1].toLowerCase();
+    if (format != null) {
+      params['format'] = format?.toString().split('.')[1].toLowerCase();
     }
 
-    if (this.ascending != null) {
-      params['ascending'] = this.ascending.toString();
+    if (ascending != null) {
+      params['ascending'] = ascending.toString();
     }
 
-    if (this.attachments != null) {
-      params['attachments'] = this.attachments.toString();
+    if (attachments != null) {
+      params['attachments'] = attachments.toString();
     }
 
     return params;

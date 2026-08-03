@@ -1,15 +1,16 @@
-import 'dart:io';
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:tincan_sample/blocs/lrs_bloc.dart';
+import 'package:tincan_sample/screens/lrs_feedback_screen_state.dart';
 
 class StepperScreen extends StatefulWidget {
   @override
-  _StepperScreenState createState() => _StepperScreenState();
+  State createState() => _StepperScreenState();
 }
 
-class _StepperScreenState extends State<StepperScreen> {
+class _StepperScreenState extends LrsFeedbackScreenState<StepperScreen> {
   int _currentStep = 0;
   DateTime? _start;
   DateTime? _finish;
@@ -19,6 +20,7 @@ class _StepperScreenState extends State<StepperScreen> {
 
   final _data = <String, dynamic>{};
   final _formKey = GlobalKey<FormState>();
+
 
   @override
   void initState() {
@@ -46,46 +48,48 @@ class _StepperScreenState extends State<StepperScreen> {
         ),
         body: Form(
           key: _formKey,
-          child: Column(
-            children: <Widget>[
-              _buildSteps(context),
-              Container(
-                height: 15,
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  //color: Theme.of(context).primaryColor,
-                  //textColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(32.0)),
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                _buildSteps(context),
+                Container(
+                  height: 15,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 16.0, horizontal: 64.0),
-                  child: Text(
-                    "SUBMIT",
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .headlineSmall!
-                        .copyWith(
-                      color: Colors.white,
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    //color: Theme.of(context).primaryColor,
+                    //textColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(32.0)),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16.0, horizontal: 64.0),
+                    child: Text(
+                      "SUBMIT",
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .headlineSmall!
+                          .copyWith(
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                ),
-                onPressed: () {
-                  _finish = DateTime.now();
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    _sendStatements(context);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(
-                            'Please fill in the form completely before submitting')));
-                  }
-                },
-              )
-            ],
+                  onPressed: () {
+                    _finish = DateTime.now();
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
+                      _sendStatements(context);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                              'Please fill in the form completely before submitting')));
+                    }
+                  },
+                )
+              ],
+            ),
           ),
         ));
   }
@@ -211,7 +215,7 @@ class _StepperScreenState extends State<StepperScreen> {
         answered step 3
      */
 
-    final context = Context(
+    final statementContext = Context(
       extensions: Extensions(
         {
           'http://id.tincanapi.com/extension/powered-by':
@@ -233,58 +237,58 @@ class _StepperScreenState extends State<StepperScreen> {
           name: {'en-US': 'Stepper'},
         ),
       ),
-      context: context,
+      context: statementContext,
     );
 
-    await lrsBloc.recordStatement(statement);
+    lrsBloc.recordStatement(statement);
 
     // Answered step 1 statement
     statement = Statement(
       verb: Verb(
           id: 'http://adlnet.gov/expapi/verbs/answered',
           display: {'en-US': 'answered'}),
-      result: Result(response: _data['firstName']),
+      result: Result(response: _data['firstName'] as String?),
       object: Activity(
         id: 'http://example.com/TinCanDart/stepper/one',
         definition: ActivityDefinition(
           name: {'en-US': 'Step 1'},
         ),
       ),
-      context: context,
+      context: statementContext,
     );
 
-    await lrsBloc.recordStatement(statement);
+    lrsBloc.recordStatement(statement);
 
     // Answered step 2 statement
     statement = Statement(
       verb: Verb(
           id: 'http://adlnet.gov/expapi/verbs/answered',
           display: {'en-US': 'answered'}),
-      result: Result(response: _data['lastName']),
+      result: Result(response: _data['lastName'] as String?),
       object: Activity(
         id: 'http://example.com/TinCanDart/stepper/two',
         definition: ActivityDefinition(
           name: {'en-US': 'Step 2'},
         ),
       ),
-      context: context,
+      context: statementContext,
     );
 
-    await lrsBloc.recordStatement(statement);
+    lrsBloc.recordStatement(statement);
 
     // Answered step 3 statement
     statement = Statement(
       verb: Verb(
           id: 'http://adlnet.gov/expapi/verbs/answered',
           display: {'en-US': 'answered'}),
-      result: Result(response: _data['number']),
+      result: Result(response: _data['number'] as String?),
       object: Activity(
         id: 'http://example.com/TinCanDart/stepper/three',
         definition: ActivityDefinition(
           name: {'en-US': 'Step 3'},
         ),
       ),
-      context: context,
+      context: statementContext,
     );
 
     lrsBloc.recordStatement(statement);

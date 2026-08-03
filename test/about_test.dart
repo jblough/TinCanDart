@@ -5,7 +5,7 @@ import 'package:tincan/tincan.dart' show About;
 
 void main() {
   test("should import about", () {
-    final about = About.fromJson(json.decode(_json))!;
+    final about = About.fromJson(json.decode(_json) as Map<String, dynamic>?)!;
     expect(about.version!.length, 3);
     expect(about.extensions!.json!.length, 1);
     expect(about.extensions!.json!.keys.first.toString(),

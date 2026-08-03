@@ -31,4 +31,4 @@ build/
 doc/api/
 
 # Unit test properties file
-test/lrs.properties
+test/lrs.properties*

@@ -4,28 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:tincan_sample/blocs/lrs_bloc.dart';
 
+import 'lrs_feedback_screen_state.dart';
+
 class ImageSelectionScreen extends StatefulWidget {
   @override
-  _ImageSelectionScreenState createState() => _ImageSelectionScreenState();
+  State createState() => _ImageSelectionScreenState();
 }
 
-class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
+class _ImageSelectionScreenState extends LrsFeedbackScreenState<ImageSelectionScreen> {
   final _nameRegex = RegExp('assets/images/(.*).png');
-
-  StreamSubscription<LrsFeedback>? _subscription;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _subscription = lrsBloc.feedback!.listen(_listenForFeedback);
-  }
-
-  @override
-  void dispose() {
-    _subscription?.cancel();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,30 +73,5 @@ class _ImageSelectionScreenState extends State<ImageSelectionScreen> {
         ],
       ),
     );
-  }
-
-  void _showFeedback(LrsFeedback feedback) async {
-    if (feedback.isError) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Row(children: <Widget>[
-          Icon(Icons.error),
-          Container(width: 5, height: 1),
-          Text(feedback.feedback!),
-        ]),
-        backgroundColor: Colors.red,
-      ));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Row(children: <Widget>[
-          Icon(Icons.done),
-          Container(width: 5, height: 1),
-          Text(feedback.feedback!),
-        ]),
-      ));
-    }
-  }
-
-  void _listenForFeedback(LrsFeedback feedback) {
-    _showFeedback(feedback);
   }
 }

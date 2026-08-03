@@ -39,15 +39,15 @@ class Context {
     }
 
     return Context(
-      registration: json['registration'],
-      instructor: Agent.fromJson(json['instructor']),
-      team: Agent.fromJson(json['team']),
-      contextActivities: ContextActivities.fromJson(json['contextActivities']),
-      revision: json['revision'],
-      platform: json['platform'],
-      language: json['language'],
-      statement: StatementRef.fromJson(json['statement']),
-      extensions: Extensions.fromJson(json['extensions']),
+      registration: json['registration'] as String?,
+      instructor: Agent.fromJson(json['instructor'] as Map<String, dynamic>?),
+      team: Agent.fromJson(json['team'] as Map<String, dynamic>?),
+      contextActivities: ContextActivities.fromJson(json['contextActivities'] as Map<String, dynamic>?),
+      revision: json['revision'] as String?,
+      platform: json['platform'] as String?,
+      language: json['language'] as String?,
+      statement: StatementRef.fromJson(json['statement'] as Map<String, dynamic>?),
+      extensions: Extensions.fromJson(json['extensions'] as Map<String, dynamic>?),
     );
   }
 

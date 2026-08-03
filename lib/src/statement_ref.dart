@@ -13,7 +13,7 @@ class StatementRef extends StatementTarget {
     }
 
     return StatementRef(
-      id: json['id'],
+      id: json['id'] as String?,
     );
   }
 

@@ -22,9 +22,9 @@ void compareStatements(Statement statement1, Statement statement2) {
 }
 
 void main() {
-  var endpoint;
-  var username;
-  var password;
+  String endpoint = '';
+  String username = '';
+  String password = '';
 
   late LRS lrs;
   Agent? agent;
@@ -43,7 +43,7 @@ void main() {
   setUpAll(() {
     final config = File('./test/lrs.properties');
     final lines = config.readAsLinesSync();
-    lines.forEach((line) {
+    for (var line in lines) {
       final parts = line.split('=');
       switch (parts[0].toLowerCase()) {
         case 'endpoint':
@@ -58,7 +58,7 @@ void main() {
         default:
           print("Unrecognized variable : ${parts[0]}");
       }
-    });
+    }
 
     agent = Agent(
       mbox: 'mailto:tincandart@tincanapi.com',
@@ -165,6 +165,7 @@ void main() {
 
   test("should retrieve about", () async {
     final about = await lrs.about();
+    expect(about.errMsg, isNull);
     expect(about.success, isTrue);
   });
 
@@ -172,7 +173,7 @@ void main() {
     var obj = RemoteLRS();
     expect(obj.endpoint, isNull);
 
-    String strURL = "http://tincanapi.com/test/TinCanDart";
+    final String strURL = "http://tincanapi.com/test/TinCanDart";
     obj = RemoteLRS(endpoint: strURL);
     expect(obj.endpoint.toString(), '$strURL/');
   });
@@ -198,6 +199,7 @@ void main() {
         endpoint: 'https://cloud.scorm.com/lrs/1Y32ZYODBD/sandbox/');
     final response = await obj.about();
     final data = response.data;
+    expect(response.errMsg, isNull);
     expect(response.success, isTrue);
     expect(data, isNotNull);
   });
@@ -369,6 +371,7 @@ void main() {
   test("should get more statements", () async {
     final query = StatementsQuery(
       format: QueryResultFormat.IDS,
+      since: DateTime.now().subtract(Duration(seconds: 100)),
       limit: 2,
     );
 
@@ -401,9 +404,10 @@ void main() {
 
     final stateResponse = await lrs.retrieveState('test', activity, agent);
     print('state attachment - "${stateResponse.data!.content!.asString()}"');
+    expect(stateResponse.errMsg, isNull);
     expect(stateResponse.success, isTrue);
     expect(
-        stateResponse.data!.etag, 'c140f82cb70e3884ad729b5055b7eaa81c795f1f');
+        stateResponse.data!.etag, '7472f2218fc65ef9fc883040039de8fdde128102');
   });
 
   test("should save state", () async {
@@ -415,12 +419,13 @@ void main() {
     );
 
     final save = await lrs.saveState(doc);
-    print(save.errMsg);
+    expect(save.errMsg, isNull);
     expect(save.success, isTrue);
   });
 
   test("should overwrite state", () async {
     final clear = await lrs.clearState(activity, agent);
+    expect(clear.errMsg, isNull);
     expect(clear.success, isTrue);
 
     final doc = StateDocument(
@@ -431,10 +436,11 @@ void main() {
     );
 
     final save = await lrs.saveState(doc);
+    expect(save.errMsg, isNull);
     expect(save.success, isTrue);
 
     final retrieve = await lrs.retrieveState('test', activity, agent);
-    print(retrieve.data!.toJson());
+    expect(retrieve.errMsg, isNull);
     expect(retrieve.success, isTrue);
 
     final doc2 = StateDocument(
@@ -445,25 +451,26 @@ void main() {
       etag: retrieve.data!.etag,
     );
     final stateResponse = await lrs.saveState(doc2);
+    expect(stateResponse.errMsg, isNull);
     expect(stateResponse.success, isTrue);
   });
 
   test("should update state", () async {
     // What changes are to be made
-    Map<String, String> changeSet = {};
+    final Map<String, String> changeSet = {};
     // What the correct content should be after change
-    Map<String, String> correctSet = {};
+    final Map<String, String> correctSet = {};
     // What the actual content is after change
-    Map<String, String> currentSet = {};
+    final Map<String, String> currentSet = {};
 
     // Load initial change set
     Map<String, String> changeSetMap = {'x': 'foo', 'y': 'bar'};
-    changeSetMap.forEach((key, value) {
+    changeSetMap.forEach((String key, String value) {
       changeSet[key] = value;
     });
-    Map<String, String> correctSetMap =
+    final Map<String, String> correctSetMap =
         changeSetMap; // In the beginning, these are equal
-    correctSetMap.forEach((key, value) {
+    correctSetMap.forEach((String key, String value) {
       correctSet[key] = value;
     });
 
@@ -489,15 +496,15 @@ void main() {
     expect(retrieveBeforeUpdate.success, isTrue);
 
     final beforeDoc = retrieveBeforeUpdate.data!;
-    final c = json.decode(String.fromCharCodes(beforeDoc.content!.asList()!));
-    c.forEach((key, value) {
-      currentSet[key] = value;
+    final c = json.decode(String.fromCharCodes(beforeDoc.content!.asList()!)) as Map<String, dynamic>;
+    c.forEach((String key, dynamic value) {
+      currentSet[key] = value as String;
     });
     expect(currentSet, correctSet);
 
     changeSetMap = {'x': 'bash', 'z': 'faz'};
     changeSet.clear();
-    changeSetMap.forEach((key, value) {
+    changeSetMap.forEach((String key, String value) {
       changeSet[key] = value;
     });
 
@@ -507,7 +514,7 @@ void main() {
     );
 
     // Update the correct set with the changes
-    changeSetMap.forEach((key, value) {
+    changeSetMap.forEach((String key, String value) {
       correctSet[key] = value;
     });
 
@@ -521,9 +528,9 @@ void main() {
     expect(retrieveAfterUpdate.success, isTrue);
 
     final afterDoc = retrieveAfterUpdate.data!;
-    final ac = json.decode(String.fromCharCodes(afterDoc.content!.asList()!));
-    ac.forEach((key, value) {
-      currentSet[key] = value;
+    final ac = json.decode(String.fromCharCodes(afterDoc.content!.asList()!)) as Map<String, dynamic>;
+    ac.forEach((String key, dynamic value) {
+      currentSet[key] = value as String;
     });
 
     expect(currentSet, correctSet);
@@ -574,13 +581,13 @@ void main() {
     );
 
     final save = await lrs.saveActivityProfile(doc2);
-    print(save.errMsg);
+    expect(save.errMsg, isNull);
     expect(save.success, isTrue);
 
     final retrieveResponse =
         await lrs.retrieveActivityProfile('test', activity);
     expect(retrieveResponse.data!.etag,
-        '6e6e6c11d7e0bffe0369873a2a5fd751ab2ea64f');
+        '80d034ca3519d3e6f7c282c1eda19281c71d56db');
     expect(retrieveResponse.success, isTrue);
   });
 
@@ -617,9 +624,11 @@ void main() {
         content: AttachmentContent.fromString('Test value2'),
       ),
     );
+    expect(save.errMsg, isNull);
     expect(save.success, isTrue);
 
     final retrieve = await lrs.retrieveActivityProfile('test', activity);
+    expect(retrieve.errMsg, isNull);
     expect(retrieve.success, isTrue);
 
     final lrsResp = await lrs.saveActivityProfile(ActivityProfileDocument(
@@ -628,6 +637,7 @@ void main() {
       etag: retrieve.data!.etag,
       content: AttachmentContent.fromString('Test value3'),
     ));
+    expect(lrsResp.errMsg, isNull);
     expect(lrsResp.success, isTrue);
   });
 
@@ -636,6 +646,7 @@ void main() {
       id: 'test',
       activity: activity,
     ));
+    expect(response.errMsg, isNull);
     expect(response.success, isTrue);
   });
 
@@ -647,15 +658,17 @@ void main() {
 
     // Delete any pre-existing profiles for this agent
     final deleteResponse = await lrs.deleteAgentProfile(profile);
-    print(deleteResponse.success);
+    expect(deleteResponse.errMsg, isNull);
+    expect(deleteResponse.success, isTrue);
 
     // Create the agent
     final saveResponse = await lrs.saveAgentProfile(profile);
-    print(saveResponse.errMsg);
+    expect(saveResponse.errMsg, isNull);
     expect(saveResponse.success, isTrue);
 
     // Retrieve the agent
     final response = await lrs.retrievePerson(agent);
+    expect(response.errMsg, isNull);
     expect(response.success, isTrue);
 
     final person = response.data!;
@@ -666,6 +679,7 @@ void main() {
 
   test("should retrieve agent profile ids", () async {
     final response = await lrs.retrieveAgentProfileIds(agent);
+    expect(response.errMsg, isNull);
     expect(response.success, isTrue);
   });
 
@@ -685,7 +699,7 @@ void main() {
 
     final retrieve = await lrs.retrieveAgentProfile('test', agent);
     expect(retrieve.success, isTrue);
-    expect(retrieve.data!.etag, 'da16d3e0cbd55e0f13558ad0ecfd2605e2238c71');
+    expect(retrieve.data!.etag, '38c7c2f3f7b325fec545af63e94383faa93304bb');
   });
 
   test("should save agent profile", () async {
@@ -705,11 +719,11 @@ void main() {
 
   test("should update agent profile", () async {
     // What changes are to be made
-    Map<String, String> changeSet = {};
+    final Map<String, String> changeSet = {};
     // What the correct content should be after change
-    Map<String, String> correctSet = {};
+    final Map<String, String> correctSet = {};
     // What the actual content is after change
-    Map<String, String> currentSet = {};
+    final Map<String, String> currentSet = {};
 
     // Load initial change set
     Map<String, String> changeSetMap = {
@@ -717,12 +731,12 @@ void main() {
       'lastName': 'Smith',
       'State': 'CO'
     };
-    changeSetMap.forEach((key, value) {
+    changeSetMap.forEach((String key, String value) {
       changeSet[key] = value;
     });
-    Map<String, String> correctSetMap =
+    final Map<String, String> correctSetMap =
         changeSetMap; // In the beginning, these are equal
-    correctSetMap.forEach((key, value) {
+    correctSetMap.forEach((String key, String value) {
       correctSet[key] = value;
     });
 
@@ -745,15 +759,15 @@ void main() {
     final retrieveBeforeUpdate = await lrs.retrieveAgentProfile('test', agent);
     expect(retrieveBeforeUpdate.success, isTrue);
     final beforeDoc = retrieveBeforeUpdate.data!;
-    final c = json.decode(String.fromCharCodes(beforeDoc.content!.asList()!));
-    c.forEach((key, value) {
-      currentSet[key] = value;
+    final c = json.decode(String.fromCharCodes(beforeDoc.content!.asList()!)) as Map<String, dynamic>;
+    c.forEach((String key, dynamic value) {
+      currentSet[key] = value as String;
     });
     expect(currentSet, correctSet);
 
     changeSetMap = {'lastName': 'Jones', 'City': 'Colorado Springs'};
     changeSet.clear();
-    changeSetMap.forEach((key, value) {
+    changeSetMap.forEach((String key, String value) {
       changeSet[key] = value;
     });
 
@@ -763,7 +777,7 @@ void main() {
     );
 
     // Update the correct set with the changes
-    changeSetMap.forEach((key, value) {
+    changeSetMap.forEach((String key, String value) {
       correctSet[key] = value;
     });
 
@@ -776,9 +790,9 @@ void main() {
     expect(retrieveAfterUpdate.success, isTrue);
 
     final afterDoc = retrieveAfterUpdate.data!;
-    final ac = json.decode(String.fromCharCodes(afterDoc.content!.asList()!));
-    ac.forEach((key, value) {
-      currentSet[key] = value;
+    final ac = json.decode(String.fromCharCodes(afterDoc.content!.asList()!)) as Map<String, dynamic>;
+    ac.forEach((String key, dynamic value) {
+      currentSet[key] = value as String;
     });
 
     expect(currentSet, correctSet);
@@ -789,6 +803,7 @@ void main() {
       id: 'test',
       agent: agent,
     ));
+    expect(response.errMsg, isNull);
     expect(response.success, isTrue);
 
     final save = await lrs.saveAgentProfile(AgentProfileDocument(
@@ -796,6 +811,7 @@ void main() {
       agent: agent,
       content: AttachmentContent.fromString('Test value4'),
     ));
+    expect(save.errMsg, isNull);
     expect(save.success, isTrue);
 
     final retrieve = await lrs.retrieveAgentProfile('test', agent);
@@ -807,6 +823,7 @@ void main() {
       etag: retrieve.data!.etag,
       content: AttachmentContent.fromString('Test value5'),
     ));
+    expect(overwrite.errMsg, isNull);
     expect(overwrite.success, isTrue);
   });
 
@@ -827,7 +844,7 @@ void main() {
     );
 
     final response = await lrs.saveStatement(statement);
-    print(response.errMsg);
+    expect(response.errMsg, isNull);
     expect(response.success, isTrue);
     expect(response.data!.id, isNotNull);
     compareStatements(response.data!, statement);
@@ -879,7 +896,7 @@ void main() {
     );
 
     final saved = await lrs.saveStatement(statement);
-    print(saved.errMsg);
+    expect(saved.errMsg, isNull);
     expect(saved.success, isTrue);
 
     final retrieved = await lrs.retrieveStatement(saved.data!.id, true);
@@ -899,11 +916,11 @@ void main() {
     );
 
     final saved = await lrs.saveStatement(statement);
-    print(saved.errMsg);
+    expect(saved.errMsg, isNull);
     expect(saved.success, isTrue);
 
     final retrieved = await lrs.retrieveStatement(saved.data!.id, true);
-    print(retrieved.errMsg);
+    expect(retrieved.errMsg, isNull);
     expect(retrieved.success, isTrue);
 
     final calculated =
@@ -925,11 +942,15 @@ void main() {
 
     final query = StatementsQuery(
       format: QueryResultFormat.EXACT,
+      activityID: activity?.id,
       limit: 10,
+      since: DateTime.now().subtract(Duration(seconds: 10)),
       attachments: true,
+      ascending: false,
     );
 
     final queryResult = await lrs.queryStatements(query);
+    expect(queryResult.errMsg, isNull);
     expect(queryResult.success, isTrue);
 
     final calculated = sha256.convert(
@@ -940,20 +961,20 @@ void main() {
 
   test("should update activity profile", () async {
     // What changes are to be made
-    Map<String, String> changeSet = {};
+    final Map<String, String> changeSet = {};
     // What the correct content should be after change
-    Map<String, String> correctSet = {};
+    final Map<String, String> correctSet = {};
     // What the actual content is after change
-    Map<String, String> currentSet = {};
+    final Map<String, String> currentSet = {};
 
     // Load initial change set
     Map<String, String> changeSetMap = {'x': 'foo', 'y': 'bar'};
-    changeSetMap.forEach((key, value) {
+    changeSetMap.forEach((String key, String value) {
       changeSet[key] = value;
     });
-    Map<String, String> correctSetMap =
+    final Map<String, String> correctSetMap =
         changeSetMap; // In the beginning, these are equal
-    correctSetMap.forEach((key, value) {
+    correctSetMap.forEach((String key, String value) {
       correctSet[key] = value;
     });
 
@@ -968,7 +989,7 @@ void main() {
     );
 
     final save = await lrs.saveActivityProfile(doc2);
-    print(save.errMsg);
+    expect(save.errMsg, isNull);
     expect(save.success, isTrue);
 
     final retrieveBeforeUpdate =
@@ -976,15 +997,15 @@ void main() {
     expect(retrieveBeforeUpdate.success, isTrue);
 
     final beforeDoc = retrieveBeforeUpdate.data!;
-    final c = json.decode(String.fromCharCodes(beforeDoc.content!.asList()!));
-    c.forEach((key, value) {
-      currentSet[key] = value;
+    final c = json.decode(String.fromCharCodes(beforeDoc.content!.asList()!)) as Map<String, dynamic>;
+    c.forEach((String key, dynamic value) {
+      currentSet[key] = value as String;
     });
     expect(currentSet, correctSet);
 
     changeSetMap = {'x': 'bash', 'z': 'faz'};
     changeSet.clear();
-    changeSetMap.forEach((key, value) {
+    changeSetMap.forEach((String key, String value) {
       changeSet[key] = value;
     });
 
@@ -994,7 +1015,7 @@ void main() {
     );
 
     // Update the correct set with the changes
-    changeSetMap.forEach((key, value) {
+    changeSetMap.forEach((String key, String value) {
       correctSet[key] = value;
     });
 
@@ -1008,9 +1029,9 @@ void main() {
     expect(retrieveAfterUpdate.success, isTrue);
 
     final afterDoc = retrieveAfterUpdate.data!;
-    final ac = json.decode(String.fromCharCodes(afterDoc.content!.asList()!));
-    ac.forEach((key, value) {
-      currentSet[key] = value;
+    final ac = json.decode(String.fromCharCodes(afterDoc.content!.asList()!)) as Map<String, dynamic>;
+    ac.forEach((String key, dynamic value) {
+      currentSet[key] = value as String;
     });
 
     expect(currentSet, correctSet);
@@ -1049,7 +1070,7 @@ void main() {
       agent: sumAgent,
       content: AttachmentContent.fromString('Test value'),
     ));
-    print(save.errMsg);
+    expect(save.errMsg, isNull);
     expect(save.success, isTrue);
   });
 
@@ -1068,7 +1089,7 @@ void main() {
 
     expect(statement.id, isNull);
     final response = await lrs.saveStatement(statement);
-    print(response.errMsg);
+    expect(response.errMsg, isNull);
     expect(response.success, isTrue);
     compareStatements(response.data!, statement);
   });
@@ -1114,7 +1135,7 @@ void main() {
     );
 
     final saved = await lrs.saveStatement(statement);
-    print(saved.errMsg);
+    expect(saved.errMsg, isNull);
     expect(saved.success, isTrue);
 
     final retrieved = await lrs.retrieveStatement(saved.data!.id, true);
