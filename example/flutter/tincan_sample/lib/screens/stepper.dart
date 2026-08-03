@@ -20,11 +20,17 @@ class _StepperScreenState extends State<StepperScreen> {
   final _data = <String, dynamic>{};
   final _formKey = GlobalKey<FormState>();
 
+  StreamSubscription<LrsFeedback>? _subscription;
+
+
   @override
   void initState() {
     super.initState();
 
     _start = DateTime.now();
+
+    _subscription = lrsBloc.feedback!.listen(_listenForFeedback);
+
   }
 
   @override
@@ -32,6 +38,8 @@ class _StepperScreenState extends State<StepperScreen> {
     _stepOneFocus.dispose();
     _stepTwoFocus.dispose();
     _stepThreeFocus.dispose();
+
+    _subscription?.cancel();
 
     super.dispose();
   }
@@ -46,46 +54,48 @@ class _StepperScreenState extends State<StepperScreen> {
         ),
         body: Form(
           key: _formKey,
-          child: Column(
-            children: <Widget>[
-              _buildSteps(context),
-              Container(
-                height: 15,
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  //color: Theme.of(context).primaryColor,
-                  //textColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(32.0)),
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                _buildSteps(context),
+                Container(
+                  height: 15,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 16.0, horizontal: 64.0),
-                  child: Text(
-                    "SUBMIT",
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .headlineSmall!
-                        .copyWith(
-                      color: Colors.white,
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    //color: Theme.of(context).primaryColor,
+                    //textColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(32.0)),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16.0, horizontal: 64.0),
+                    child: Text(
+                      "SUBMIT",
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .headlineSmall!
+                          .copyWith(
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                ),
-                onPressed: () {
-                  _finish = DateTime.now();
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    _sendStatements(context);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(
-                            'Please fill in the form completely before submitting')));
-                  }
-                },
-              )
-            ],
+                  onPressed: () {
+                    _finish = DateTime.now();
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
+                      _sendStatements(context);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                              'Please fill in the form completely before submitting')));
+                    }
+                  },
+                )
+              ],
+            ),
           ),
         ));
   }
@@ -211,7 +221,7 @@ class _StepperScreenState extends State<StepperScreen> {
         answered step 3
      */
 
-    final context = Context(
+    final statementContext = Context(
       extensions: Extensions(
         {
           'http://id.tincanapi.com/extension/powered-by':
@@ -233,7 +243,7 @@ class _StepperScreenState extends State<StepperScreen> {
           name: {'en-US': 'Stepper'},
         ),
       ),
-      context: context,
+      context: statementContext,
     );
 
     lrsBloc.recordStatement(statement);
@@ -250,7 +260,7 @@ class _StepperScreenState extends State<StepperScreen> {
           name: {'en-US': 'Step 1'},
         ),
       ),
-      context: context,
+      context: statementContext,
     );
 
     lrsBloc.recordStatement(statement);
@@ -267,7 +277,7 @@ class _StepperScreenState extends State<StepperScreen> {
           name: {'en-US': 'Step 2'},
         ),
       ),
-      context: context,
+      context: statementContext,
     );
 
     lrsBloc.recordStatement(statement);
@@ -284,9 +294,34 @@ class _StepperScreenState extends State<StepperScreen> {
           name: {'en-US': 'Step 3'},
         ),
       ),
-      context: context,
+      context: statementContext,
     );
 
     lrsBloc.recordStatement(statement);
+  }
+
+  void _showFeedback(LrsFeedback feedback) async {
+    if (feedback.isError) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Row(children: <Widget>[
+          Icon(Icons.error),
+          Container(width: 5, height: 1),
+          Text(feedback.feedback!),
+        ]),
+        backgroundColor: Colors.red,
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Row(children: <Widget>[
+          Icon(Icons.done),
+          Container(width: 5, height: 1),
+          Text(feedback.feedback!),
+        ]),
+      ));
+    }
+  }
+
+  void _listenForFeedback(LrsFeedback feedback) {
+    _showFeedback(feedback);
   }
 }

@@ -17,8 +17,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'TinCan Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.green,
+        theme: ThemeData.from(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+            useMaterial3: false
         ),
         home: MenuScreen());
   }
