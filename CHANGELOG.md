@@ -1,3 +1,6 @@
+## 3.0.1
+- Updated README documentation
+
 ## 3.0.0
 - Added support for xAPI 2.0.0
 - Updated to Flutter 3.24.0
